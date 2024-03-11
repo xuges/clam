@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{483817bd-6335-4dde-8a6b-50a4d5061def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\clamc">
+      <UniqueIdentifier>{d4fa674c-384d-4d17-a980-fdb282c2db82}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\clamc\analyzer.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\ast.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\executor.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\lexer.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\message.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\module.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\parser.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\source.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\stack.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\strings.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\test.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\token.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\vector.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\clamc\generator.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\clamc\analyzer.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\ast.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\executor.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\lexer.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\message.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\module.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\parser.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\source.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\source_location.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\stack.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\strings.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\token.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\type.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\vector.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\generator.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
