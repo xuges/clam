@@ -37,8 +37,10 @@ enum TokenValue
 	TOKEN_VALUE_LITERAL_INT,     // 123
 	TOKEN_VALUE_LITERAL_STRING,  // "abc"
 
-	TOKEN_VALUE_EXPORT,          // export
+	TOKEN_VALUE_VOID,            //void
 	TOKEN_VALUE_INT,             // int
+
+	TOKEN_VALUE_EXPORT,          // export
 	TOKEN_VALUE_RETURN,          // return
 
 	TOKEN_VALUE_IDENT,

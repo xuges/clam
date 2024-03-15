@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "source.h"
 #include "lexer.h"
 #include "parser.h"
@@ -130,7 +133,7 @@ void test_lexer_next_eof()
 
 void test_lexer_print()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { return 0; }");
@@ -138,7 +141,25 @@ void test_lexer_print()
 	Lexer lex;
 	Lexer_init(&lex, &source);
 
-	Token* token = Lexer_peek(&lex);
+	Token* token = Lexer_next(&lex);
+	while (token->value)
+	{
+		printf("%.*s\n", token->literal.length, token->literal.data);
+		token = Lexer_next(&lex);
+	}
+}
+
+void test_lexer_void_comma()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void print(int a, int b) {}");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Token* token = Lexer_next(&lex);
 	while (token->value)
 	{
 		printf("%.*s\n", token->literal.length, token->literal.data);
@@ -148,7 +169,7 @@ void test_lexer_print()
 
 void test_parser_basic()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { }");
@@ -165,7 +186,7 @@ void test_parser_basic()
 
 void test_parser_wrong1()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { 0 return; }");
@@ -182,7 +203,7 @@ void test_parser_wrong1()
 
 void test_parser_wrong2()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int export main() { }");
@@ -199,7 +220,7 @@ void test_parser_wrong2()
 
 void test_parser_wrong3()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export main() { }");
@@ -214,25 +235,9 @@ void test_parser_wrong3()
 	printf("should not go here\n");
 }
 
-void test_parser_duplicate_export()
-{
-	printf(__FUNCTION__"\n");
-
-	Source source;
-	Source_init(&source, "export export int main() { }");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-}
-
 void test_parser_functions()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int foo(){}\n int bar(){}\nint print(){}\nexport int main() { return 0; }");
@@ -256,7 +261,7 @@ void test_parser_functions()
 
 void test_parser_return_int()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { return 666; }");
@@ -276,7 +281,7 @@ void test_parser_return_int()
 
 void test_parser_functions_return_int()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int foo(){return 1;}\nint bar(){return 2;}\nexport int main() { return 666; }");
@@ -303,7 +308,7 @@ void test_parser_functions_return_int()
 
 void test_executor_basic()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { return 12345; }");
@@ -323,7 +328,7 @@ void test_executor_basic()
 
 void test_executor_wrong_main1()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int main() { return 12345; }");
@@ -343,7 +348,7 @@ void test_executor_wrong_main1()
 
 void test_executor_wrong_main2()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export void main() { return 0; }");
@@ -364,7 +369,7 @@ void test_executor_wrong_main2()
 
 void test_executor_function_no_return()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { return; }");
@@ -384,7 +389,7 @@ void test_executor_function_no_return()
 
 void test_executor_function_call1()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int foo() { return 1; }\nexport int main() { return foo(); }");
@@ -404,7 +409,7 @@ void test_executor_function_call1()
 
 void test_executor_function_call2()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int foo() { return 666; }\nint bar() { return foo(); }\nexport int main() { return bar(); }");
@@ -424,7 +429,7 @@ void test_executor_function_call2()
 
 void test_executor_function_call3()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	char* code =
 		"export int main() { return bar(); }\n"
@@ -449,7 +454,7 @@ void test_executor_function_call3()
 
 void test_analyzer_basic()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { return 12345; }");
@@ -476,7 +481,7 @@ void test_analyzer_basic()
 
 void test_analyzer_wrong1()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int main() { return 0; }");  //syntax normal, semantic wrong
@@ -501,7 +506,7 @@ void test_analyzer_wrong1()
 //error: function 'main' must return int
 void test_analyzer_wrong2()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export void main() { return 0; }");  //syntax normal, semantic wrong
@@ -526,7 +531,7 @@ void test_analyzer_wrong2()
 //error: undefined function foo
 void test_analyzer_wrong3()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { return foo(); }");  //syntax normal, semantic wrong
@@ -550,7 +555,7 @@ void test_analyzer_wrong3()
 
 void test_analyzer_multi_wrong1()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int bar() { return test(); }\nexport int main() { return foo(); }");  //syntax normal, semantic wrong
@@ -574,7 +579,7 @@ void test_analyzer_multi_wrong1()
 
 void test_analyzer_multi_wrong2()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "int bar() { return test(); return test2(); }\nexport int main() { return foo(); }");  //syntax normal, semantic wrong
@@ -598,7 +603,7 @@ void test_analyzer_multi_wrong2()
 
 void test_generator_basic()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	Source source;
 	Source_init(&source, "export int main() { return 12345; }");
@@ -625,7 +630,7 @@ void test_generator_basic()
 
 void test_generator_function_call2()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	char* code =
 		"export int main() { return test1(); }\n"
@@ -656,7 +661,7 @@ void test_generator_function_call2()
 
 void test_generator_function_call3()
 {
-	printf(__FUNCTION__"\n");
+	printf("testing %s\n", __FUNCTION__);
 
 	char* code =
 		"export int main() { return bar(); }\n"
@@ -685,7 +690,63 @@ void test_generator_function_call3()
 	printf("generate source:\n" String_FMT "\n\n", String_arg(gen.definitions));
 }
 
-int main()
+typedef void(*test_fn)();
+test_fn tests[] =
 {
-	test_generator_function_call2();
+	test_vector_add,
+	test_stack,
+	test_string_literal,
+	test_string_buffer_basic,
+	test_string_buffer_reset,
+	test_string_buffer_clone,
+	test_lexer_peek_eof,
+	test_lexer_print,
+	test_lexer_void_comma,
+	test_parser_basic,
+	test_parser_wrong1,
+	test_parser_wrong2,
+	test_parser_wrong3,
+	test_parser_functions,
+	test_parser_return_int,
+	test_parser_functions_return_int,
+	test_executor_basic,
+	test_executor_wrong_main1,
+	test_executor_wrong_main2,
+	test_executor_function_no_return,
+	test_executor_function_call1,
+	test_executor_function_call2,
+	test_executor_function_call3,
+	test_analyzer_basic,
+	test_analyzer_wrong1,
+	test_analyzer_wrong2,
+	test_analyzer_wrong3,
+	test_analyzer_multi_wrong1,
+	test_analyzer_multi_wrong2,
+	test_generator_basic,
+	test_generator_function_call2,
+	test_generator_function_call3,
+};
+
+int main(int argc, char** argv)
+{
+	if (argc > 1)
+	{
+		int i = atoi(argv[1]);
+		tests[i]();
+		return 0;
+	}
+
+	char cmd[512];
+	int pos = sprintf(cmd, "%s ", argv[0]);
+
+	for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i)
+	{
+		int len = sprintf(cmd + pos, "%d", i);
+		cmd[pos + len] = 0;
+		//printf("cmd=%s\n", cmd);
+		system(cmd);
+		printf("\n\n");
+	}
+
+	return 0;
 }

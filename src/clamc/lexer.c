@@ -15,9 +15,10 @@ typedef struct Keyword Keyword;
 
 static Keyword keywords[] =
 {
+	{ "void"  , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_VOID   },
+	{ "int"   , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_INT    },
 	{ "export", TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_EXPORT },
 	{ "return", TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_RETURN },
-	{ "int"   , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_INT    },
 };
 
 static bool _Lexer_isEof(Lexer* lex);
@@ -90,6 +91,10 @@ Token* Lexer_next(Lexer* lex)
 		else if (c == '}')
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_RC);
+		}
+		else if (c == ',')
+		{
+			_Lexer_parseDelimiter(lex, TOKEN_VALUE_COMMA);
 		}
 		else if (c == ';')
 		{
