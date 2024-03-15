@@ -76,6 +76,10 @@ Token* Lexer_next(Lexer* lex)
 		{
 			_Lexer_parseNumber(lex);
 		}
+		else if (c == '=')
+		{
+			_Lexer_parseOperator(lex, TOKEN_VALUE_ASSIGN);
+		}
 		else if (c == '(')
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_LP);

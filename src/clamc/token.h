@@ -30,9 +30,11 @@ enum TokenValue
 	TOKEN_VALUE_LC,              // {
 	TOKEN_VALUE_RC,              // }
 
-	TOKEN_VALUE_SEM,             // ;
+	TOKEN_VALUE_ASSIGN,          //=
+
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
+	TOKEN_VALUE_SEM,             // ;
 
 	TOKEN_VALUE_LITERAL_INT,     // 123
 	TOKEN_VALUE_LITERAL_STRING,  // "abc"

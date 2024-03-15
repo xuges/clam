@@ -167,6 +167,23 @@ void test_lexer_void_comma()
 	}
 }
 
+void test_lexer_assign() {
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = 10;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Token* token = Lexer_next(&lex);
+	while (token->value)
+	{
+		printf("%.*s\n", token->literal.length, token->literal.data);
+		token = Lexer_next(&lex);
+	}
+}
+
 void test_parser_basic()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -702,6 +719,7 @@ test_fn tests[] =
 	test_lexer_peek_eof,
 	test_lexer_print,
 	test_lexer_void_comma,
+	test_lexer_assign,
 	test_parser_basic,
 	test_parser_wrong1,
 	test_parser_wrong2,
