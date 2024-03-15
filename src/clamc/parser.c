@@ -74,33 +74,52 @@ void _Parser_declaration(Parser* p)
 			p->decl.location = token->location;
 		}
 
-		p->decl.type = DECL_TYPE_FUNCTION;
-		p->decl.function.resType.name = token->literal;
-		p->decl.function.resType.value = token->value;
+		p->decl.baseType.name = token->literal;
+		p->decl.baseType.value = token->value;
 		break;
 
 	default:
 		error(&token->location, "unexpected '" String_FMT "'", String_arg(token->literal));
 	}
 
-	if (!p->decl.function.resType.value)
-		error(&token->location, "expected function result type");
-
 	token = Lexer_next(p->lex);
-	_Parser_expect(p, TOKEN_VALUE_IDENT, "expected function name");
+	_Parser_expect(p, TOKEN_VALUE_IDENT, "expected declaration name");
+	p->decl.name = token->literal;
 
-	p->decl.function.name = token->literal;
 	Lexer_next(p->lex);
+	switch (token->value)
+	{
+	case TOKEN_VALUE_LP:
+		//function
+		p->decl.type = DECL_TYPE_FUNCTION;
+		//TODO: parse parameter list
+		Lexer_next(p->lex);
+		_Parser_expect(p, TOKEN_VALUE_RP, "expected ')'");
 
-	_Parser_expect(p, TOKEN_VALUE_LP, "expected '(' after function name");
+		Lexer_next(p->lex);
+		//TODO: check interface
+		p->decl.function.block = _Parser_statementBlock(p);
+		return;
+
+	case TOKEN_VALUE_SEM:
+		//variant
+		p->decl.type = DECL_TYPE_VARIANT;
+		p->decl.variant.initExpr = NULL;
+		break;
+
+	case TOKEN_VALUE_ASSIGN:
+		//variant with init expression
+		p->decl.type = DECL_TYPE_VARIANT;
+		Lexer_next(p->lex);
+		p->decl.variant.initExpr = _Parser_expression(p);
+		_Parser_expect(p, TOKEN_VALUE_SEM, "expected ';'");
+		break;
+
+	default:
+		error(&token->location, "unexpected '" String_FMT "'", String_arg(token->literal));
+	}
+
 	Lexer_next(p->lex);
-
-	//TODO: parse parameter list
-	_Parser_expect(p, TOKEN_VALUE_RP, "expected ')'");
-	Lexer_next(p->lex);
-
-	//if not in interface
-	p->decl.function.block = _Parser_statementBlock(p);
 }
 
 Vector _Parser_parameterList(Parser* p)

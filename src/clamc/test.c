@@ -252,6 +252,95 @@ void test_parser_wrong3()
 	printf("should not go here\n");
 }
 
+void test_parser_variant1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a;int b = 10;\nexport int c = 666; export int d;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	for (int i = 0; i < module->declarations.size; i++)
+	{
+		Declaration* decl = (Declaration*)Vector_get(&module->declarations, i);
+		printf("%d:%d: %s%.*s %.*s\n", decl->location.line, decl->location.colum,
+			decl->exported ? "export " : "",
+			String_arg(decl->variant.type.name),
+			String_arg(decl->variant.name));
+	}
+}
+
+void test_parser_variant2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int _a;int a2 = 10; export int a_3 = 0;\nexport int __c = 666; export int _d1_;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	for (int i = 0; i < module->declarations.size; i++)
+	{
+		Declaration* decl = (Declaration*)Vector_get(&module->declarations, i);
+		printf("%d:%d: %s%.*s %.*s\n", decl->location.line, decl->location.colum,
+			decl->exported ? "export " : "",
+			String_arg(decl->variant.type.name),
+			String_arg(decl->variant.name));
+	}
+}
+
+void test_parser_variant_wrong()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int 1a = 1;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	printf("should not go here\n");
+}
+
+void test_parser_void_function()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void print() {}");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	for (int i = 0; i < module->functions.size; i++)
+	{
+		Declaration* decl = (Declaration*)Vector_get(&module->functions, i);
+		printf("%d:%d: %s%.*s %.*s()\n", decl->location.line, decl->location.colum,
+			decl->exported ? "export " : "",
+			decl->function.resType.name.length, decl->function.resType.name.data,
+			decl->function.name.length, decl->function.name.data);
+	}
+}
+
 void test_parser_functions()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -724,6 +813,10 @@ test_fn tests[] =
 	test_parser_wrong1,
 	test_parser_wrong2,
 	test_parser_wrong3,
+	test_parser_variant1,
+	test_parser_variant2,
+	test_parser_variant_wrong,
+	test_parser_void_function,
 	test_parser_functions,
 	test_parser_return_int,
 	test_parser_functions_return_int,
@@ -747,6 +840,8 @@ test_fn tests[] =
 
 int main(int argc, char** argv)
 {
+	//test_parser_functions(); return 0;
+
 	if (argc > 1)
 	{
 		int i = atoi(argv[1]);

@@ -14,6 +14,7 @@ enum DeclType
 {
 	DECL_TYPE_INIT,
 	DECL_TYPE_FUNCTION,
+	DECL_TYPE_VARIANT,
 };
 typedef enum DeclType DeclType;
 
@@ -35,6 +36,15 @@ typedef struct FuncDecl FuncDecl;
 
 void FuncDecl_init(FuncDecl* func);
 
+
+struct VarDecl
+{
+	Type type;
+	String name;
+	struct Expression* initExpr;
+};
+typedef struct VarDecl VarDecl;
+
 struct Declaration
 {
 	SourceLocation location;
@@ -42,7 +52,13 @@ struct Declaration
 	bool exported;
 	union
 	{
+		struct
+		{
+			Type baseType;
+			String name;
+		};
 		FuncDecl function;
+		VarDecl  variant;
 	};
 };
 typedef struct Declaration Declaration;
