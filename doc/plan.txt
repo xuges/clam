@@ -1,5 +1,5 @@
 0.0.1: int, export, return, function, call-expression, int-literal
-0.0.2: void, variant, function parameter, call argument
+0.0.2: void, =, variant, function parameter, call argument, compound-statement
 0.0.3: +, -, *, /, ++, --
 0.0.4: byte, int8/uint8, int16/uint16, int32/uint32, uint, int64/uint64, intptr/uintptr, float, float64
 0.0.5: &, |, ~, ^, <<, >>
