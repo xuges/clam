@@ -8,8 +8,6 @@
 struct Parser
 {
 	Module module;
-	Declaration decl;
-	Statement stat;
 	Lexer* lex;
 };
 typedef struct Parser Parser;

@@ -412,6 +412,29 @@ void test_parser_functions_return_int()
 	}
 }
 
+void test_parser_multi_block()
+{
+	printf("testing %s\n", __FUNCTION__);
+	Source source;
+	Source_init(&source, "export int main()\n{\n\tint a = 1;\n\t{\n\t\tint b = 2;\n\t}\n\treturn a;\n}");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	Declaration* mainDecl = Vector_get(&module->functions, 0);
+	Vector mainBlock = mainDecl->function.block;
+	Statement* blockStat = Vector_get(&mainBlock, 1);
+	Statement* bStat = Vector_get(&blockStat->compound, 0);
+	Declaration* bDecl = &bStat->declaration;
+	printf("%d:%d %.*s %.*s\n", bDecl->location.line, bDecl->location.colum,
+		String_arg(bDecl->variant.type.name),
+		String_arg(bDecl->variant.name));
+}
+
 void test_executor_basic()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -659,54 +682,6 @@ void test_analyzer_wrong3()
 	Analyzer_generate(&anly, module, &gen);
 }
 
-void test_analyzer_multi_wrong1()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "int bar() { return test(); }\nexport int main() { return foo(); }");  //syntax normal, semantic wrong
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
-
-	Analyzer_generate(&anly, module, &gen);
-}
-
-void test_analyzer_multi_wrong2()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "int bar() { return test(); return test2(); }\nexport int main() { return foo(); }");  //syntax normal, semantic wrong
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
-
-	Analyzer_generate(&anly, module, &gen);
-}
-
 void test_generator_basic()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -820,6 +795,7 @@ test_fn tests[] =
 	test_parser_functions,
 	test_parser_return_int,
 	test_parser_functions_return_int,
+	test_parser_multi_block,
 	test_executor_basic,
 	test_executor_wrong_main1,
 	test_executor_wrong_main2,
@@ -831,8 +807,6 @@ test_fn tests[] =
 	test_analyzer_wrong1,
 	test_analyzer_wrong2,
 	test_analyzer_wrong3,
-	test_analyzer_multi_wrong1,
-	test_analyzer_multi_wrong2,
 	test_generator_basic,
 	test_generator_function_call2,
 	test_generator_function_call3,
@@ -840,7 +814,7 @@ test_fn tests[] =
 
 int main(int argc, char** argv)
 {
-	//test_parser_functions(); return 0;
+	//test_executor_function_no_return(); return 0;
 
 	if (argc > 1)
 	{

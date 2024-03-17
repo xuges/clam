@@ -100,8 +100,6 @@ void Generator_enterStatement(Generator* gen, Statement* stat)
 	{
 	case STATEMENT_TYPE_EXPRESSION:
 		
-
-	case STATEMENT_TYPE_RETURN_EXPR:
 	case STATEMENT_TYPE_RETURN:
 		_Generator_indent(gen, &gen->definitions);
 		StringBuffer_append(&gen->definitions, "return ");

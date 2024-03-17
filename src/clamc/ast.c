@@ -13,9 +13,35 @@ void FuncDecl_init(FuncDecl* func)
 	func->resType.value = 0;
 }
 
+void FuncDecl_destroy(FuncDecl* func)
+{
+	Vector_destroy(&func->block);
+	Vector_destroy(&func->parameters);
+}
+
+void VarDecl_destroy(VarDecl* vd)
+{
+	if (vd->initExpr)
+		Expression_destroy(vd->initExpr);
+}
+
 void Declaration_init(Declaration* decl)
 {
 	memset(decl, 0, sizeof(Declaration));
+}
+
+void Declaration_destroy(Declaration* decl)
+{
+	switch (decl->type)
+	{
+	case DECL_TYPE_FUNCTION:
+		FuncDecl_destroy(&decl->function);
+		break;
+
+	case DECL_TYPE_VARIANT:
+		VarDecl_destroy(&decl->variant);
+		break;
+	}
 }
 
 static Expression* _Expression_create(ExprType type, SourceLocation* loc)
@@ -70,17 +96,22 @@ void Expression_destroy(Expression* expr)
 	free(expr);
 }
 
+void Statement_init(Statement* stat)
+{
+	memset(stat, 0, sizeof(Statement));
+}
+
 void Statement_destroy(Statement* stat)
 {
 	switch (stat->type)
 	{
 	case STATEMENT_TYPE_EXPRESSION:
-		Expression_destroy(stat->expr);
+		if (stat->returnExpr)
+			Expression_destroy(stat->returnExpr);
 		break;
 
-	case STATEMENT_TYPE_RETURN_EXPR:
-		Expression_destroy(stat->returnExpr);
-		break;
+	case STATEMENT_TYPE_COMPOUND:
+		Vector_destroy(&stat->compound);
 	}
 
 

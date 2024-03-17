@@ -30,11 +30,12 @@ struct FuncDecl
 	Type resType;
 	String name;
 	Vector parameters;  //Vector<Parameter>
-	Vector block;       //Vector<Statement>
+	Vector block;  //Vector<Statement>
 };
 typedef struct FuncDecl FuncDecl;
 
 void FuncDecl_init(FuncDecl* func);
+void FuncDecl_destroy(FuncDecl* func);
 
 
 struct VarDecl
@@ -44,6 +45,8 @@ struct VarDecl
 	struct Expression* initExpr;
 };
 typedef struct VarDecl VarDecl;
+
+void VarDecl_destroy(VarDecl* vd);
 
 struct Declaration
 {
@@ -64,6 +67,7 @@ struct Declaration
 typedef struct Declaration Declaration;
 
 void Declaration_init(Declaration* decl);
+void Declaration_destroy(Declaration* decl);
 
 
 //expression
@@ -106,9 +110,11 @@ void Expression_destroy(Expression* expr);
 
 enum StatementType
 {
+	STATEMENT_TYPE_EMPTY,
 	STATEMENT_TYPE_RETURN,
-	STATEMENT_TYPE_RETURN_EXPR,
 	STATEMENT_TYPE_EXPRESSION,
+	STATEMENT_TYPE_COMPOUND,
+	STATEMENT_TYPE_DECLARATION,
 };
 typedef enum StatementType StatementType;
 
@@ -120,10 +126,13 @@ struct Statement
 	{
 		Expression* returnExpr;
 		Expression* expr;
+		Vector compound;
+		Declaration declaration;
 	};
 };
 typedef struct Statement Statement;
 
+void Statement_init(Statement* stat);
 void Statement_destroy(Statement* stat);
 
 

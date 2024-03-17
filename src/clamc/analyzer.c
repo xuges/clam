@@ -5,12 +5,11 @@ enum AnalysisResult
 {
 	ANALY_RESULT_NORMAL,
 	ANALY_RESULT_RETURN,
-	ANALY_RESULT_RETURN_EXPR,
 };
 typedef enum AnalysisResult AnalysisResult;
 
 static void _Analyzer_function(Analyzer* anly, Declaration* decl);
-static AnalysisResult _Analyzer_statement(Analyzer* anly, Statement* stat);
+static AnalysisResult _Analyzer_statement(Analyzer* anly, FuncDecl* func, Statement* stat);
 static void _Analyzer_expression(Analyzer* anly, Expression* expr);
 static void _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 
@@ -57,15 +56,10 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 	for (int i = 0; i < func->block.size; i++)
 	{
 		Statement* stat = (Statement*)Vector_get(&func->block, i);
-		AnalysisResult result = _Analyzer_statement(anly, stat);
+		AnalysisResult result = _Analyzer_statement(anly, func, stat);
 		switch (result)
 		{
 		case ANALY_RESULT_RETURN:
-			if (func->resType.value)
-				error(&stat->location, "function return type not 'void', must return a value");
-			goto leave;
-
-		case ANALY_RESULT_RETURN_EXPR:
 			goto leave;
 
 		default:
@@ -77,7 +71,7 @@ leave:
 	Generator_leaveDeclaration(anly->gen, decl);
 }
 
-AnalysisResult _Analyzer_statement(Analyzer* anly, Statement* stat)
+AnalysisResult _Analyzer_statement(Analyzer* anly, FuncDecl* func, Statement* stat)
 {
 	Generator_enterStatement(anly->gen, stat);
 
@@ -87,13 +81,12 @@ AnalysisResult _Analyzer_statement(Analyzer* anly, Statement* stat)
 	case STATEMENT_TYPE_EXPRESSION:
 		_Analyzer_expression(anly, stat->expr);
 
-	case STATEMENT_TYPE_RETURN_EXPR:
-		_Analyzer_expression(anly, stat->returnExpr);
-		result = ANALY_RESULT_RETURN_EXPR;
-		break;
-
 	case STATEMENT_TYPE_RETURN:
 		result = ANALY_RESULT_RETURN;
+		if (stat->returnExpr)
+			_Analyzer_expression(anly, stat->returnExpr);
+		else if (func->resType.value)
+			error(&stat->location, "function return type not 'void', must return a value");
 		break;
 	}
 

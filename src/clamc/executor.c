@@ -26,12 +26,11 @@ enum ExecuteResult
 {
 	EXEC_RESULT_NORMAL,
 	EXEC_RESULT_RETURN,
-	EXEC_RESULT_RETURN_EXPR,
 };
 typedef enum ExecuteResult ExecuteResult;
 
-static void _Executor_function(Executor* exec, Declaration* decl);
-static ExecuteResult _Executor_statement(Executor* exec, Statement* stat);
+static void _Executor_function(Executor* exec, FuncDecl* func);
+static ExecuteResult _Executor_statement(Executor* exec, FuncDecl* func, Statement* stat);
 static void _Executor_expression(Executor* exec, Expression* expr);
 static void _Executor_callExpression(Executor* exec, Expression* callExpr);
 
@@ -60,7 +59,7 @@ void Executor_run(Executor* exec, Module* module)
 			if (decl->function.resType.value != TOKEN_VALUE_INT)
 				error(&decl->location, "function 'main' must return int");
 
-			_Executor_function(exec, decl);
+			_Executor_function(exec, &decl->function);
 
 			Value* ret = (Value*)Stack_pop(&exec->stack);
 			printf("main return %d\n", ret->intValue);
@@ -71,31 +70,21 @@ void Executor_run(Executor* exec, Module* module)
 	error(NULL, 0, 0, "function 'main' not found");
 }
 
-void _Executor_function(Executor* exec, Declaration* decl)
+void _Executor_function(Executor* exec, FuncDecl* func)
 {
-	FuncDecl* func = &decl->function;
-
 	for (int i = 0; i < func->block.size; i++)
 	{
 		Statement* stat = (Statement*)Vector_get(&func->block, i);
-		ExecuteResult result = _Executor_statement(exec, stat);
+		ExecuteResult result = _Executor_statement(exec, func, stat);
 		switch (result)
 		{
 		case EXEC_RESULT_RETURN:
-			if (func->resType.value)
-				error(&stat->location, "function return type not 'void', must return a value");
 			return;
-
-		case EXEC_RESULT_RETURN_EXPR:
-			return;
-
-		default:
-			break;
 		}
 	}
 }
 
-ExecuteResult _Executor_statement(Executor* exec, Statement* stat)
+ExecuteResult _Executor_statement(Executor* exec, FuncDecl* func, Statement* stat)
 {
 	Value value;
 
@@ -103,14 +92,13 @@ ExecuteResult _Executor_statement(Executor* exec, Statement* stat)
 	{
 	case STATEMENT_TYPE_EXPRESSION:
 		_Executor_expression(exec, stat->expr);
-
-	case STATEMENT_TYPE_RETURN_EXPR:
-		_Executor_expression(exec, stat->returnExpr);
-		return EXEC_RESULT_RETURN_EXPR;
+		break;
 
 	case STATEMENT_TYPE_RETURN:
-		value.type = VALUE_TYPE_NULL;
-		Stack_push(&exec->stack, &value);
+		if (stat->returnExpr)
+			_Executor_expression(exec, stat->returnExpr);
+		else if (func->resType.value)
+			error(&stat->location, "function return type not 'void', must return a value");
 		return EXEC_RESULT_RETURN;
 	}
 
@@ -148,7 +136,7 @@ void _Executor_callExpression(Executor* exec, Expression* expr)
 		if (String_compare(&func->identExpr, decl->function.name.data) == 0)
 		{
 			//found function
-			_Executor_function(exec, decl);
+			_Executor_function(exec, &decl->function);
 			return;
 		}
 	}
