@@ -31,8 +31,9 @@
 <function_def>::=[<export>]<type_desc><ident><lp>[<parameter_list>]<rp><compound_statement>
 <parameter_list>::=<type_desc><ident>{<comma><type_desc><ident>}
 
-<statement>::=<empty_statement>|<return_statement>|<expression_statement>|<compound_statement>
-<compound_statement>::=<lc>(<declaration>|<statement>)<rc>
+<statement>::=<declaration_statement><empty_statement>|<return_statement>|<expression_statement>|<compound_statement>
+<declaration_statement>::=<variant_decl>
+<compound_statement>::=<lc>{<statement>}<rc>
 
 <empty_statement>::=<sem>
 <return_statement>::=<return>[<expression>]<sem>
