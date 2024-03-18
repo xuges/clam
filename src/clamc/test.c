@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "source.h"
 #include "lexer.h"
@@ -10,6 +11,7 @@
 
 #include "vector.h"
 #include "stack.h"
+#include "hash_map.h"
 
 
 void test_vector_add()
@@ -495,6 +497,25 @@ void test_executor_wrong_main2()
 	Executor_run(&exec, module);
 }
 
+void test_executor_void_function()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void foo() { }\n export int main() { foo(); return 0; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
 
 void test_executor_function_no_return()
 {
@@ -567,6 +588,186 @@ void test_executor_function_call3()
 
 	Source source;
 	Source_init(&source, code);
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_global_variant1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = 666; export int main() { return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_global_variant2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { return a; }\nint a = 1234;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_global_variant_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = 0;\nexport int main() { return b; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_local_variant1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { int a = 888; return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_local_variant2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { int a = 666; { return a; } }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_local_variant3()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { int a = 123; { int b = a; return b; } }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_local_variant4()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { int a = 1; { int a = 2; return a; } }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_local_variant_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { { int a = 2; } return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Executor exec;
+	Executor_init(&exec);
+	Executor_run(&exec, module);
+}
+
+void test_executor_global_variant_init1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = foo(); int foo() { return 1234; } export int main() { return a; }");
 
 	Lexer lex;
 	Lexer_init(&lex, &source);
@@ -799,10 +1000,20 @@ test_fn tests[] =
 	test_executor_basic,
 	test_executor_wrong_main1,
 	test_executor_wrong_main2,
+	test_executor_void_function,
 	test_executor_function_no_return,
 	test_executor_function_call1,
 	test_executor_function_call2,
 	test_executor_function_call3,
+	test_executor_global_variant1,
+	test_executor_global_variant2,
+	test_executor_global_variant_wrong1,
+	test_executor_local_variant1,
+	test_executor_local_variant2,
+	test_executor_local_variant3,
+	test_executor_local_variant4,
+	test_executor_local_variant_wrong1,
+	test_executor_global_variant_init1,
 	test_analyzer_basic,
 	test_analyzer_wrong1,
 	test_analyzer_wrong2,
@@ -814,7 +1025,7 @@ test_fn tests[] =
 
 int main(int argc, char** argv)
 {
-	//test_executor_function_no_return(); return 0;
+	//test_executor_void_function(); return 0;
 
 	if (argc > 1)
 	{
