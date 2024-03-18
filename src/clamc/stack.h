@@ -1,14 +1,9 @@
 #ifndef CLAM_STACK_H
 #define CLAM_STACK_H
 
-struct Stack
-{
-	char* data;
-	int size;
-	int cap;
-	int elemSize;
-};
-typedef struct Stack Stack;
+#include "vector.h"
+
+typedef Vector Stack;
 
 void Stack_init(Stack* stack, int elemSize);
 void Stack_destroy(Stack* stack);
