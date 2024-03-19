@@ -72,6 +72,16 @@ Declaration _Parser_declaration(Parser* p)
 
 		decl.baseType.name = token->literal;
 		decl.baseType.value = token->value;
+		switch (token->value)
+		{
+		case TOKEN_VALUE_VOID:
+			decl.baseType.id = TYPE_VOID;
+			break;
+		case TOKEN_VALUE_INT:
+			decl.baseType.id = TYPE_INT;
+			break;
+		//case TOKEN_VALUE_IDENT:
+		}
 		break;
 
 	default:

@@ -319,6 +319,27 @@ void test_parser_variant_wrong()
 	printf("should not go here\n");
 }
 
+void test_parser_variant_type()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = 0;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	Declaration* decl = Vector_get(&module->declarations, 0);
+	printf("%.*s:\n\ttype name: %.*s\n\ttype id: %d\n",
+		String_arg(decl->variant.name),
+		String_arg(decl->variant.type.name),
+		decl->variant.type.id);
+}
+
 void test_parser_void_function()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -992,6 +1013,7 @@ test_fn tests[] =
 	test_parser_variant1,
 	test_parser_variant2,
 	test_parser_variant_wrong,
+	test_parser_variant_type,
 	test_parser_void_function,
 	test_parser_functions,
 	test_parser_return_int,
