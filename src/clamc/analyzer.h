@@ -1,13 +1,17 @@
 #ifndef CLAM_ANALYZER_H
 #define CLAM_ANALYZER_H
 
+#include "stack.h"
 #include "module.h"
 #include "generator.h"
 
 struct Analyzer
 {
-	Module*   module;
+	Stack stack;  //Stack<Variant>
+	Module* module;
 	Generator* gen;
+	int level;
+	bool hasReturn;
 };
 typedef struct Analyzer Analyzer;
 
