@@ -78,7 +78,7 @@ void Executor_run(Executor* exec, Module* module)
 			if (!decl->exported)
 				error(&decl->location, "function 'main' must exported");
 
-			if (decl->function.resType.value != TOKEN_VALUE_INT)
+			if (decl->function.resType.id != TYPE_INT)
 				error(&decl->location, "function 'main' must return int");
 
 			Stack fnStack;
@@ -103,7 +103,7 @@ void Executor_run(Executor* exec, Module* module)
 
 void _Executor_variant(Executor* exec, Declaration* decl)
 {
-	if (decl->variant.type.value == TOKEN_VALUE_VOID)
+	if (decl->variant.type.id == TYPE_VOID)
 		error(&decl->location, "variant type cannot be 'void'");
 
 	Stack* stack = Stack_top(&exec->stacks);  //only check current stack
@@ -116,9 +116,9 @@ void _Executor_variant(Executor* exec, Declaration* decl)
 
 	Value value;
 	
-	switch (decl->variant.type.value)
+	switch (decl->variant.type.id)
 	{
-	case TOKEN_VALUE_INT:  //TODO: abstract types
+	case TYPE_INT:  //TODO: abstract types
 		value.type = VALUE_TYPE_INT;
 		value.name = decl->variant.name;
 		value.intValue = 0;
@@ -153,7 +153,7 @@ void _Executor_function(Executor* exec, Declaration* decl)
 			break;
 	}
 
-	if (func->resType.value != TOKEN_VALUE_VOID && result != EXEC_RESULT_RETURN)
+	if (func->resType.id != TYPE_VOID && result != EXEC_RESULT_RETURN)
 		error(&decl->location, "function return type not 'void', must return a value");
 }
 
@@ -182,7 +182,7 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 		break;
 
 	case STATEMENT_TYPE_RETURN:
-		if (func->resType.value != TOKEN_VALUE_VOID && stat->returnExpr == NULL)
+		if (func->resType.id != TYPE_VOID && stat->returnExpr == NULL)
 			error(&stat->location, "function return type not 'void', must return a value");
 
 		if (stat->returnExpr)
@@ -271,7 +271,7 @@ void _Executor_callExpression(Executor* exec, Expression* expr)
 			Stack* stack = Stack_pop(&exec->stacks);  //free function stack
 			Stack_destroy(stack);
 
-			if (decl->function.resType.value != TOKEN_VALUE_VOID)  //has return value
+			if (decl->function.resType.id != TYPE_VOID)  //has return value
 			{
 				Stack* global = Vector_get(&exec->stacks, 0);  //global stack to return value
 				Value* ret = Stack_pop(global);  //get return value

@@ -28,7 +28,7 @@ static void _Analyzer_variant(Analyzer* anly, Declaration* decl);
 static void _Analyzer_function(Analyzer* anly, Declaration* decl);
 static void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat);
 static void _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
-static TypeId _Analyzer_expression(Analyzer* anly, Expression* exr);
+static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
 static void _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
@@ -89,8 +89,8 @@ void _Analyzer_variant(Analyzer* anly, Declaration* decl)
 		variant.level = anly->level;
 		if (decl->variant.initExpr)
 		{
-			TypeId id = _Analyzer_expression(anly, decl->variant.initExpr);
-			if (id != variant.type.id)
+			Type type = _Analyzer_expression(anly, decl->variant.initExpr);
+			if (type.id != variant.type.id)
 				error(&decl->variant.initExpr->location, "variant init expression type not match");
 		}
 		break;
@@ -175,8 +175,8 @@ void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		//return type check
 		if (stat->returnExpr)
 		{
-			TypeId id = _Analyzer_expression(anly, stat->returnExpr);
-			if (id != func->resType.id)
+			Type type = _Analyzer_expression(anly, stat->returnExpr);
+			if (type.id != func->resType.id)
 				error(&stat->location, "function return type missmatch");
 		}
 
@@ -207,7 +207,7 @@ void _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* s
 	anly->level--;
 }
 
-TypeId _Analyzer_expression(Analyzer* anly, Expression* expr)
+Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 {
 	Variant* var = NULL;
 	Declaration* decl = NULL;
@@ -219,23 +219,25 @@ TypeId _Analyzer_expression(Analyzer* anly, Expression* expr)
 		if (!var)
 		{
 			error(&expr->location, "undefined variant '" String_FMT "'", String_arg(expr->identExpr));
-			return TYPE_VOID;
+			return errorType;
 		}
-		return var->type.id;
+		return var->type;
 
 	case EXPR_TYPE_INT:
-		return TYPE_INT;
+		Generator_genPrimaryExpression(anly->gen, expr);
+		return intType;
 
 	case EXPR_TYPE_CALL:
 		decl = _Analyzer_findFunction(anly, expr->callExpr.func->identExpr);
 		if (!decl)
 		{
 			error(&expr->location, "undefined function '" String_FMT "'", String_arg(expr->callExpr.func->identExpr));
-			return TYPE_VOID;
+			return errorType;
 		}
-		return decl->function.resType.id;
+		Generator_genCallExpression(anly->gen, expr);
+		return decl->function.resType;
 	}
-	return TYPE_VOID;
+	return errorType;
 }
 
 void _Analyzer_callExpression(Analyzer* anly, Expression* expr)

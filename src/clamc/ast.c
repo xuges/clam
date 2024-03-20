@@ -10,7 +10,6 @@ void FuncDecl_init(FuncDecl* func)
 	Vector_init(&func->parameters, sizeof(Parameter));
 	String_init(&func->name);
 	String_init(&func->resType.name);
-	func->resType.value = 0;
 }
 
 void FuncDecl_destroy(FuncDecl* func)

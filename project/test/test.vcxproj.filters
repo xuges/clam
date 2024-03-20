@@ -51,6 +51,9 @@
     <ClCompile Include="..\..\src\clamc\generator.c">
       <Filter>src\clamc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\clamc\type.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\clamc\analyzer.h">

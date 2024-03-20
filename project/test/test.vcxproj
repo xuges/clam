@@ -32,6 +32,7 @@
     <ClCompile Include="..\..\src\clamc\strings.c" />
     <ClCompile Include="..\..\src\clamc\test.c" />
     <ClCompile Include="..\..\src\clamc\token.c" />
+    <ClCompile Include="..\..\src\clamc\type.c" />
     <ClCompile Include="..\..\src\clamc\vector.c" />
   </ItemGroup>
   <ItemGroup>

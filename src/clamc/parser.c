@@ -71,7 +71,6 @@ Declaration _Parser_declaration(Parser* p)
 		}
 
 		decl.baseType.name = token->literal;
-		decl.baseType.value = token->value;
 		switch (token->value)
 		{
 		case TOKEN_VALUE_VOID:
