@@ -473,6 +473,10 @@ void test_executor_basic()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -492,6 +496,10 @@ void test_executor_wrong_main1()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -513,6 +521,10 @@ void test_executor_wrong_main2()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -532,6 +544,10 @@ void test_executor_void_function()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -553,6 +569,10 @@ void test_executor_function_no_return()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -573,6 +593,10 @@ void test_executor_function_call1()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -592,6 +616,10 @@ void test_executor_function_call2()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -618,6 +646,10 @@ void test_executor_function_call3()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -637,6 +669,10 @@ void test_executor_global_variant1()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -658,6 +694,10 @@ void test_executor_global_variant2()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -677,6 +717,10 @@ void test_executor_global_variant_wrong1()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -698,6 +742,10 @@ void test_executor_local_variant1()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -717,6 +765,10 @@ void test_executor_local_variant2()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -738,6 +790,10 @@ void test_executor_local_variant3()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -757,6 +813,10 @@ void test_executor_local_variant4()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -778,6 +838,10 @@ void test_executor_local_variant_wrong1()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
+
 	Executor exec;
 	Executor_init(&exec);
 	Executor_run(&exec, module);
@@ -797,6 +861,10 @@ void test_executor_global_variant_init1()
 	Parser_init(&parser);
 
 	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+	Analyzer_analyse(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -1412,6 +1480,16 @@ test_fn tests[] =
 	test_parser_return_int,
 	test_parser_functions_return_int,
 	test_parser_multi_block,
+	test_analyzer_basic,
+	test_analyzer_wrong1,
+	test_analyzer_wrong2,
+	test_analyzer_wrong3,
+	test_analyzer_global_variant1,
+	test_analyzer_global_variant2,
+	test_analyzer_global_variant_wrong1,
+	test_analyzer_global_variant_wrong2,
+	test_analyzer_global_variant_wrong3,
+	test_analyzer_local_variant1,
 	test_executor_basic,
 	test_executor_wrong_main1,
 	test_executor_wrong_main2,
@@ -1429,16 +1507,6 @@ test_fn tests[] =
 	test_executor_local_variant4,
 	test_executor_local_variant_wrong1,
 	test_executor_global_variant_init1,
-	test_analyzer_basic,
-	test_analyzer_wrong1,
-	test_analyzer_wrong2,
-	test_analyzer_wrong3,
-	test_analyzer_global_variant1,
-	test_analyzer_global_variant2,
-	test_analyzer_global_variant_wrong1,
-	test_analyzer_global_variant_wrong2,
-	test_analyzer_global_variant_wrong3,
-	test_analyzer_local_variant1,
 	test_generator_basic,
 	test_generator_function_call2,
 	test_generator_function_call3,
@@ -1453,7 +1521,7 @@ test_fn tests[] =
 
 int main(int argc, char** argv)
 {
-	//test_generator_global_variant3(); return 0;
+	//test_executor_function_call2(); return 0;
 
 	if (argc > 1)
 	{

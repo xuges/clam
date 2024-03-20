@@ -8,8 +8,9 @@
 
 struct Executor
 {
-	Stack stacks;   //Stack<Stack<Value>>
+	Stack stack;   //Stack<Value>
 	Module* module;
+	int level;
 };
 typedef struct Executor Executor;
 
