@@ -121,6 +121,7 @@ void _Generator_variant(Generator* gen, Declaration* decl)
 	}
 
 	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_indent(gen, buf);
 
 	//type
 	StringBuffer_appendString(buf, &var->type.name);
@@ -208,8 +209,6 @@ void _Generator_function(Generator* gen, Declaration* decl)
 
 void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 {
-	_Generator_indent(gen, gen->inMain ? &gen->main : &gen->srcDef);
-
 	switch (stat->type)
 	{
 	case STATEMENT_TYPE_DECLARATION:
@@ -232,10 +231,12 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 
 void _Generator_compoundStatement(Generator* gen, Declaration* decl, Statement* stat)
 {
-	gen->level++;
 	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+
 	_Generator_indent(gen, buf);
 	StringBuffer_append(buf, "{\n");
+
+	gen->level++;
 
 	for (int i = 0; i < stat->compound.size; ++i)
 	{
@@ -243,27 +244,33 @@ void _Generator_compoundStatement(Generator* gen, Declaration* decl, Statement* 
 		_Generator_statement(gen, decl, subStat);
 	}
 
+	gen->level--;
 	_Generator_indent(gen, buf);
 	StringBuffer_append(buf, "}\n");
-	gen->level--;
 }
 
 void _Generator_expressionStatement(Generator* gen, Expression* expr)
 {
 	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_indent(gen, buf);
+
 	_Generator_expression(gen, expr, buf);
+
 	StringBuffer_append(buf, ";\n");
 }
 
 void _Generator_returnStatement(Generator* gen, Statement* stat)
 {
 	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_indent(gen, buf);
+
 	StringBuffer_append(buf, "return");
 	if (stat->returnExpr)
 	{
 		StringBuffer_append(buf, " ");
 		_Generator_expression(gen, stat->returnExpr, buf);
 	}
+
 	StringBuffer_append(buf, ";\n");
 }
 
