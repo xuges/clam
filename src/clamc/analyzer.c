@@ -53,16 +53,14 @@ void Analyzer_analyse(Analyzer* anly, Module* module)
 	for (int i = 0; i < module->declarations.size; i++)
 	{
 		Declaration* decl = (Declaration*)Vector_get(&module->declarations, i);
-		switch (decl->type)
-		{
-		case DECL_TYPE_VARIANT:
+		if (decl->type == DECL_TYPE_VARIANT)
 			_Analyzer_variant(anly, decl);
-			break;
+	}
 
-		case DECL_TYPE_FUNCTION:
-			_Analyzer_function(anly, decl);
-			break;
-		}
+	for (int i = 0; i < module->functions.size; i++)
+	{
+		Declaration* decl = (Declaration*)Vector_get(&module->functions, i);
+		_Analyzer_function(anly, decl);
 	}
 }
 

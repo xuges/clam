@@ -920,6 +920,29 @@ void test_analyzer_global_variant1()
 	printf("test %s over.\n", __FUNCTION__);
 }
 
+void test_analyzer_global_variant2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo() { return a; } int a = 0;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyse(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
 void test_analyzer_global_variant_wrong1()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -1193,6 +1216,40 @@ void test_generator_global_variant2()
 	printf("generate source:\n" String_FMT "\n\n", String_arg(buf));
 }
 
+void test_generator_global_variant3()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { return a; } int a = 9697;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyse(&anly, module);
+
+	Generator gen;
+	Generator_init(&gen, GENERATE_TARGE_C);
+
+	Generator_generate(&gen, module);
+
+	StringBuffer buf;
+	StringBuffer_init(&buf);
+
+	Generator_getSource(&gen, &buf);
+
+	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.header));
+	printf("generate source:\n" String_FMT "\n\n", String_arg(buf));
+}
+
 typedef void(*test_fn)();
 test_fn tests[] =
 {
@@ -1241,6 +1298,7 @@ test_fn tests[] =
 	test_analyzer_wrong2,
 	test_analyzer_wrong3,
 	test_analyzer_global_variant1,
+	test_analyzer_global_variant2,
 	test_analyzer_global_variant_wrong1,
 	test_analyzer_global_variant_wrong2,
 	test_analyzer_global_variant_wrong3,
@@ -1250,11 +1308,12 @@ test_fn tests[] =
 	test_generator_function_call3,
 	test_generator_global_variant1,
 	test_generator_global_variant2,
+	test_generator_global_variant3,
 };
 
 int main(int argc, char** argv)
 {
-	//test_generator_global_variant1(); return 0;
+	//test_generator_global_variant3(); return 0;
 
 	if (argc > 1)
 	{
