@@ -26,9 +26,9 @@ static void Variant_init(Variant* v)
 
 static void _Analyzer_variant(Analyzer* anly, Declaration* decl);
 static void _Analyzer_function(Analyzer* anly, Declaration* decl);
-static void _Analyzer_statement(Analyzer* anly, FuncDecl* func, Statement* stat);
-static void _Analyzer_expression(Analyzer* anly, Expression* expr);
-static TypeId _Analyzer_expressionType(Analyzer* anly, Expression* exr);
+static void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat);
+static void _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
+static TypeId _Analyzer_expression(Analyzer* anly, Expression* exr);
 static void _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
@@ -45,7 +45,6 @@ void Analyzer_destroy(Analyzer* anly)
 	Stack_destroy(&anly->stack);
 }
 
-//TODO: semantic error not exit
 void Analyzer_generate(Analyzer* anly, Module* module, Generator* gen)
 {
 	//TODO: prepare package name
@@ -90,7 +89,7 @@ void _Analyzer_variant(Analyzer* anly, Declaration* decl)
 		variant.level = anly->level;
 		if (decl->variant.initExpr)
 		{
-			TypeId id = _Analyzer_expressionType(anly, decl->variant.initExpr);
+			TypeId id = _Analyzer_expression(anly, decl->variant.initExpr);
 			if (id != variant.type.id)
 				error(&decl->variant.initExpr->location, "variant init expression type not match");
 		}
@@ -123,7 +122,7 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 	for (int i = 0; i < func->block.size; i++)
 	{
 		Statement* stat = (Statement*)Vector_get(&func->block, i);
-		_Analyzer_statement(anly, func, stat);
+		_Analyzer_statement(anly, decl, stat);
 	}
 
 	if (!anly->hasReturn && func->resType.id != TYPE_VOID)
@@ -141,20 +140,46 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 	anly->level--;
 }
 
-void _Analyzer_statement(Analyzer* anly, FuncDecl* func, Statement* stat)
+void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 {
+	FuncDecl* func = &decl->function;
+
 	Generator_enterStatement(anly->gen, stat);
 
 	switch (stat->type)
 	{
+	case STATEMENT_TYPE_DECLARATION:
+		if (stat->declaration.type != DECL_TYPE_VARIANT)
+			error(&stat->declaration.location, "local declaration must be variant");
+		if (stat->declaration.exported)
+			error(&stat->declaration.location, "local declaration cannot export");
+
+		_Analyzer_variant(anly, &stat->declaration);
+		break;
+
+	case STATEMENT_TYPE_COMPOUND:
+		_Analyzer_compoundStatement(anly, decl, stat);
+		break;
+
 	case STATEMENT_TYPE_EXPRESSION:
 		_Analyzer_expression(anly, stat->expr);
+		break;
 
 	case STATEMENT_TYPE_RETURN:
+		//return semantic check
+		if (stat->returnExpr && func->resType.id == TYPE_VOID)
+			error(&stat->location, "function return type is 'void', cannot return value");
+		if (!stat->returnExpr && func->resType.id != TYPE_VOID)
+			error(&stat->location, "function return type not 'void', return statement must with expression");
+
+		//return type check
 		if (stat->returnExpr)
-			_Analyzer_expression(anly, stat->returnExpr);
-		else if (func->resType.id != TYPE_VOID)
-			error(&stat->location, "function return type not 'void', return must with expression");
+		{
+			TypeId id = _Analyzer_expression(anly, stat->returnExpr);
+			if (id != func->resType.id)
+				error(&stat->location, "function return type missmatch");
+		}
+
 		anly->hasReturn = true;
 		break;
 	}
@@ -162,20 +187,27 @@ void _Analyzer_statement(Analyzer* anly, FuncDecl* func, Statement* stat)
 	Generator_leaveStatement(anly->gen, stat);
 }
 
-void _Analyzer_expression(Analyzer* anly, Expression* expr)
+void _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat)
 {
-	switch (expr->type)
+	anly->level++;
+
+	for (int i = 0; i < stat->compound.size; ++i)
 	{
-	case EXPR_TYPE_INT:
-		Generator_genPrimaryExpression(anly->gen, expr);
-		break;
-	case EXPR_TYPE_CALL:
-		_Analyzer_callExpression(anly, expr);
-		break;
+		Statement* subStat = Vector_get(&stat->compound, i);
+		_Analyzer_statement(anly, decl, subStat);
 	}
+
+	while (anly->stack.size)  //clean variants
+	{
+		Variant* v = Stack_top(&anly->stack);
+		if (v->level != anly->level)
+			break;
+		Stack_pop(&anly->stack);
+	}
+	anly->level--;
 }
 
-TypeId _Analyzer_expressionType(Analyzer* anly, Expression* expr)
+TypeId _Analyzer_expression(Analyzer* anly, Expression* expr)
 {
 	Variant* var = NULL;
 	Declaration* decl = NULL;

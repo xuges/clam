@@ -1000,6 +1000,33 @@ void test_analyzer_global_variant_wrong3()
 	Analyzer_generate(&anly, module, &gen);
 }
 
+void test_analyzer_local_variant1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { int a = 0; { int b = a; } return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Generator gen;
+	Generator_init(&gen, GENERATE_TARGE_C);
+
+	Analyzer_generate(&anly, module, &gen);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+
 void test_generator_basic()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -1140,6 +1167,7 @@ test_fn tests[] =
 	test_analyzer_global_variant_wrong1,
 	test_analyzer_global_variant_wrong2,
 	test_analyzer_global_variant_wrong3,
+	test_analyzer_local_variant1,
 	test_generator_basic,
 	test_generator_function_call2,
 	test_generator_function_call3,
@@ -1147,7 +1175,7 @@ test_fn tests[] =
 
 int main(int argc, char** argv)
 {
-	//test_generator_basic(); return 0;
+	//test_analyzer_local_variant1(); return 0;
 
 	if (argc > 1)
 	{
