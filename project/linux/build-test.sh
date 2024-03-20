@@ -13,5 +13,6 @@ gcc -g -L. -o $DIR/clamc-test \
 	stack.c \
 	strings.c \
 	token.c \
+	type.c \
 	vector.c \
 	test.c
