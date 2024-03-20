@@ -45,7 +45,7 @@ void Analyzer_destroy(Analyzer* anly)
 	Stack_destroy(&anly->stack);
 }
 
-void Analyzer_analyse(Analyzer* anly, Module* module)
+void Analyzer_analyze(Analyzer* anly, Module* module)
 {
 	//TODO: prepare package name
 	anly->module = module;

@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 		Analyzer anly;
 		Analyzer_init(&anly);
 
-		Analyzer_analyse(&anly, module);
+		Analyzer_analyze(&anly, module);
 
 		Generator gen;
 		Generator_init(&gen, GENERATE_TARGE_C);

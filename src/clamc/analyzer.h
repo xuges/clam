@@ -17,7 +17,7 @@ typedef struct Analyzer Analyzer;
 void Analyzer_init(Analyzer* anly);
 void Analyzer_destroy(Analyzer* anly);
 
-void Analyzer_analyse(Analyzer* anly, Module* module);
+void Analyzer_analyze(Analyzer* anly, Module* module);
 
 
 

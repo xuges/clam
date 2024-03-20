@@ -475,7 +475,7 @@ void test_executor_basic()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -499,7 +499,7 @@ void test_executor_wrong_main1()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -523,7 +523,7 @@ void test_executor_wrong_main2()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -547,7 +547,7 @@ void test_executor_void_function()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -571,7 +571,7 @@ void test_executor_function_no_return()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -595,7 +595,7 @@ void test_executor_function_call1()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -619,7 +619,7 @@ void test_executor_function_call2()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -648,7 +648,7 @@ void test_executor_function_call3()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -672,7 +672,7 @@ void test_executor_global_variant1()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -696,7 +696,7 @@ void test_executor_global_variant2()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -720,7 +720,7 @@ void test_executor_global_variant_wrong1()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -744,7 +744,7 @@ void test_executor_local_variant1()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -768,7 +768,7 @@ void test_executor_local_variant2()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -792,7 +792,7 @@ void test_executor_local_variant3()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -816,7 +816,7 @@ void test_executor_local_variant4()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -840,7 +840,7 @@ void test_executor_local_variant_wrong1()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -864,7 +864,7 @@ void test_executor_global_variant_init1()
 
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Executor exec;
 	Executor_init(&exec);
@@ -889,7 +889,7 @@ void test_analyzer_basic()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -912,7 +912,7 @@ void test_analyzer_wrong1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("should not go here\n");
 }
@@ -936,7 +936,7 @@ void test_analyzer_wrong2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("should not go here\n");
 }
@@ -960,7 +960,7 @@ void test_analyzer_wrong3()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("should not go here\n");
 }
@@ -983,7 +983,7 @@ void test_analyzer_global_variant1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -1006,7 +1006,7 @@ void test_analyzer_global_variant2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -1029,7 +1029,7 @@ void test_analyzer_global_variant_wrong1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -1052,7 +1052,7 @@ void test_analyzer_global_variant_wrong2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -1075,7 +1075,7 @@ void test_analyzer_global_variant_wrong3()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -1098,7 +1098,7 @@ void test_analyzer_local_variant1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -1122,7 +1122,7 @@ void test_generator_basic()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1161,7 +1161,7 @@ void test_generator_function_call2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1200,7 +1200,7 @@ void test_generator_function_call3()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1234,7 +1234,7 @@ void test_generator_global_variant1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1268,7 +1268,7 @@ void test_generator_global_variant2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1302,7 +1302,7 @@ void test_generator_global_variant3()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1336,7 +1336,7 @@ void test_generator_local_variant1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1370,7 +1370,7 @@ void test_generator_local_variant2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1404,7 +1404,7 @@ void test_generator_local_variant_wrong1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -1438,7 +1438,7 @@ void test_generator_local_variant_wrong2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Analyzer_analyse(&anly, module);
+	Analyzer_analyze(&anly, module);
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
