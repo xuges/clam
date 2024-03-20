@@ -19,7 +19,7 @@ void usage()
 		"usage: clamc [options] [file]\n"
 		"-r\trun code\n"
 		"-h\tshow usage\n"
-		"-v\tshow version\n"		
+		"-v\tshow version\n"
 	);
 }
 
@@ -71,25 +71,32 @@ int main(int argc, char** argv)
 	Parser p;
 	Parser_init(&p);
 
-	Module* mod = Parser_translate(&p, &lex);
+	Module* module = Parser_translate(&p, &lex);
 
 	if (run)
 	{
 		Executor exec;
 		Executor_init(&exec);
-		Executor_run(&exec, mod);
+		Executor_run(&exec, module);
 	}
 	else
 	{
+		Analyzer anly;
+		Analyzer_init(&anly);
+
+		Analyzer_analyse(&anly, module);
+
 		Generator gen;
 		Generator_init(&gen, GENERATE_TARGE_C);
 
-		Analyzer anly;
-		Analyzer_init(&anly);
-		Analyzer_generate(&anly, mod, &gen);
+		Generator_generate(&gen, module);
 
-		printf(String_FMT, String_arg(gen.declarations));
-		printf(String_FMT, String_arg(gen.definitions));
+		StringBuffer src;
+		StringBuffer_init(&src);
+
+		Generator_getSource(&gen, &src);
+
+		printf(String_FMT, String_arg(src));
 	}
 
 	return 0;

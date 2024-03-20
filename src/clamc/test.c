@@ -821,13 +821,9 @@ void test_analyzer_basic()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
-
-	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.declarations));
-	printf("generate source:\n" String_FMT "\n\n", String_arg(gen.definitions));
+	printf("test %s over.\n", __FUNCTION__);
 }
 
 void test_analyzer_wrong1()
@@ -848,10 +844,9 @@ void test_analyzer_wrong1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
+	printf("should not go here\n");
 }
 
 //error: function 'main' must return int
@@ -873,10 +868,9 @@ void test_analyzer_wrong2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
+	printf("should not go here\n");
 }
 
 //error: undefined function foo
@@ -898,10 +892,9 @@ void test_analyzer_wrong3()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
+	printf("should not go here\n");
 }
 
 void test_analyzer_global_variant1()
@@ -922,10 +915,9 @@ void test_analyzer_global_variant1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
+	printf("test %s over.\n", __FUNCTION__);
 }
 
 void test_analyzer_global_variant_wrong1()
@@ -946,10 +938,9 @@ void test_analyzer_global_variant_wrong1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
+	printf("test %s over.\n", __FUNCTION__);
 }
 
 void test_analyzer_global_variant_wrong2()
@@ -970,10 +961,9 @@ void test_analyzer_global_variant_wrong2()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
+	printf("test %s over.\n", __FUNCTION__);
 }
 
 void test_analyzer_global_variant_wrong3()
@@ -994,10 +984,9 @@ void test_analyzer_global_variant_wrong3()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
+	Analyzer_analyse(&anly, module);
 
-	Analyzer_generate(&anly, module, &gen);
+	printf("test %s over.\n", __FUNCTION__);
 }
 
 void test_analyzer_local_variant1()
@@ -1018,10 +1007,7 @@ void test_analyzer_local_variant1()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
-	Generator gen;
-	Generator_init(&gen, GENERATE_TARGE_C);
-
-	Analyzer_generate(&anly, module, &gen);
+	Analyzer_analyse(&anly, module);
 
 	printf("test %s over.\n", __FUNCTION__);
 }
@@ -1045,13 +1031,20 @@ void test_generator_basic()
 	Analyzer anly;
 	Analyzer_init(&anly);
 
+	Analyzer_analyse(&anly, module);
+
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
 
-	Analyzer_generate(&anly, module, &gen);
+	Generator_generate(&gen, module);
 
-	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.declarations));
-	printf("generate source:\n" String_FMT "\n\n", String_arg(gen.definitions));
+	StringBuffer buf;
+	StringBuffer_init(&buf);
+
+	Generator_getSource(&gen, &buf);
+
+	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.header));
+	printf("generate source:\n" String_FMT "\n\n", String_arg(buf));
 }
 
 void test_generator_function_call2()
@@ -1074,15 +1067,23 @@ void test_generator_function_call2()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyse(&anly, module);
+
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
 
-	Analyzer anly;
-	Analyzer_init(&anly);
-	Analyzer_generate(&anly, module, &gen);
+	Generator_generate(&gen, module);
 
-	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.declarations));
-	printf("generate source:\n" String_FMT "\n\n", String_arg(gen.definitions));
+	StringBuffer buf;
+	StringBuffer_init(&buf);
+
+	Generator_getSource(&gen, &buf);
+
+	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.header));
+	printf("generate source:\n" String_FMT "\n\n", String_arg(buf));
 }
 
 void test_generator_function_call3()
@@ -1105,15 +1106,91 @@ void test_generator_function_call3()
 
 	Module* module = Parser_translate(&parser, &lex);
 
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyse(&anly, module);
+
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
 
+	Generator_generate(&gen, module);
+
+	StringBuffer buf;
+	StringBuffer_init(&buf);
+
+	Generator_getSource(&gen, &buf);
+
+	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.header));
+	printf("generate source:\n" String_FMT "\n\n", String_arg(buf));
+}
+
+void test_generator_global_variant1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = 0; export int b = 1; export int main() { return b; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
 	Analyzer anly;
 	Analyzer_init(&anly);
-	Analyzer_generate(&anly, module, &gen);
 
-	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.declarations));
-	printf("generate source:\n" String_FMT "\n\n", String_arg(gen.definitions));
+	Analyzer_analyse(&anly, module);
+
+	Generator gen;
+	Generator_init(&gen, GENERATE_TARGE_C);
+
+	Generator_generate(&gen, module);
+
+	StringBuffer buf;
+	StringBuffer_init(&buf);
+
+	Generator_getSource(&gen, &buf);
+
+	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.header));
+	printf("generate source:\n" String_FMT "\n\n", String_arg(buf));
+}
+
+void test_generator_global_variant2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = foo(); int foo() { return 9527; } export int main() { return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyse(&anly, module);
+
+	Generator gen;
+	Generator_init(&gen, GENERATE_TARGE_C);
+
+	Generator_generate(&gen, module);
+
+	StringBuffer buf;
+	StringBuffer_init(&buf);
+
+	Generator_getSource(&gen, &buf);
+
+	printf("generate header:\n" String_FMT "\n\n", String_arg(gen.header));
+	printf("generate source:\n" String_FMT "\n\n", String_arg(buf));
 }
 
 typedef void(*test_fn)();
@@ -1171,11 +1248,13 @@ test_fn tests[] =
 	test_generator_basic,
 	test_generator_function_call2,
 	test_generator_function_call3,
+	test_generator_global_variant1,
+	test_generator_global_variant2,
 };
 
 int main(int argc, char** argv)
 {
-	//test_analyzer_local_variant1(); return 0;
+	//test_generator_global_variant1(); return 0;
 
 	if (argc > 1)
 	{

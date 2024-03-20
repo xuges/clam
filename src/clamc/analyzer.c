@@ -45,11 +45,10 @@ void Analyzer_destroy(Analyzer* anly)
 	Stack_destroy(&anly->stack);
 }
 
-void Analyzer_generate(Analyzer* anly, Module* module, Generator* gen)
+void Analyzer_analyse(Analyzer* anly, Module* module)
 {
 	//TODO: prepare package name
 	anly->module = module;
-	anly->gen = gen;
 
 	for (int i = 0; i < module->declarations.size; i++)
 	{
@@ -117,8 +116,6 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 			error(&decl->location, "function 'main' must return int");
 	}
 
-	Generator_enterDeclaration(anly->gen, decl);
-
 	for (int i = 0; i < func->block.size; i++)
 	{
 		Statement* stat = (Statement*)Vector_get(&func->block, i);
@@ -127,8 +124,6 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 
 	if (!anly->hasReturn && func->resType.id != TYPE_VOID)
 		error(&decl->location, "function return type not 'void', must return a value");
-
-	Generator_leaveDeclaration(anly->gen, decl);
 
 	while (anly->stack.size)  //clean variants
 	{
@@ -143,8 +138,6 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 {
 	FuncDecl* func = &decl->function;
-
-	Generator_enterStatement(anly->gen, stat);
 
 	switch (stat->type)
 	{
@@ -183,8 +176,6 @@ void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		anly->hasReturn = true;
 		break;
 	}
-
-	Generator_leaveStatement(anly->gen, stat);
 }
 
 void _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat)
@@ -224,7 +215,6 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 		return var->type;
 
 	case EXPR_TYPE_INT:
-		Generator_genPrimaryExpression(anly->gen, expr);
 		return intType;
 
 	case EXPR_TYPE_CALL:
@@ -234,7 +224,6 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 			error(&expr->location, "undefined function '" String_FMT "'", String_arg(expr->callExpr.func->identExpr));
 			return errorType;
 		}
-		Generator_genCallExpression(anly->gen, expr);
 		return decl->function.resType;
 	}
 	return errorType;
@@ -253,7 +242,7 @@ void _Analyzer_callExpression(Analyzer* anly, Expression* expr)
 		if (String_compare(&func->identExpr, decl->function.name.data) == 0)
 		{
 			//found function
-			Generator_genCallExpression(anly->gen, expr);
+
 			return;
 		}
 	}

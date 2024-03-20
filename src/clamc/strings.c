@@ -75,12 +75,15 @@ void StringBuffer_append(StringBuffer* buf, const char* s)
 
 void StringBuffer_appendN(StringBuffer* buf, const char* s, int length)
 {
-	int over = buf->length + length;
-	if (over > buf->cap)
-		StringBuffer_reserve(buf, CLAM_MAX(over, buf->length * 1.5));
-	memcpy(buf->data + buf->length, s, length);
-	buf->data[over] = 0;
-	buf->length = over;
+	if (length > 0)
+	{
+		int over = buf->length + length;
+		if (over > buf->cap)
+			StringBuffer_reserve(buf, CLAM_MAX(over, buf->length * 1.5));
+		memcpy(buf->data + buf->length, s, length);
+		buf->data[over] = 0;
+		buf->length = over;
+	}
 }
 
 void StringBuffer_appendString(StringBuffer* buf, String* s)

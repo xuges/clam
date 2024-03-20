@@ -5,140 +5,301 @@
 #include "generator.h"
 #include "message.h"
 
-void _Generator_indent(Generator* gen, StringBuffer* buf);
+static void _Generator_variant(Generator* gen, Declaration* decl);
+static void _Generator_function(Generator* gen, Declaration* decl);
+static void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat);
+static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Statement* stat);
+static void _Generator_expressionStatement(Generator* gen, Expression* expr);
+static void _Generator_returnStatement(Generator* gen, Statement* stat);
+static void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf);
+static void _Generator_callExpression(Generator* gen, CallExpression* call, StringBuffer* buf);
+
+static void _Generator_indent(Generator* gen, StringBuffer* buf);
 
 void Generator_init(Generator* gen, GenerateTarget target)
 {
-	//switch (target)
-	//{
-	//case GENERATE_TARGE_C:
-	//	StringBuffer_init(&gen->declarations);
-	//	StringBuffer_init(&gen->definitions);
-	//	break;
-	//
-	//case GENERATE_TARGE_C_FILE:
-	//	gen->declFile = NULL;
-	//	gen->defFile = NULL;
-	//	break;
-	//}
-
-	StringBuffer_init(&gen->declarations);
-	StringBuffer_init(&gen->definitions);
+	StringBuffer_init(&gen->header);
+	StringBuffer_init(&gen->srcDecl);
+	StringBuffer_init(&gen->srcDef);
+	StringBuffer_init(&gen->initGlobal);
+	StringBuffer_init(&gen->main);
+	gen->module = NULL;
 	gen->target = target;
-	gen->indentLevel = 0;
+	gen->level = 0;
+	gen->inMain = false;
 }
 
 void Generator_destroy(Generator* gen)
 {
-	StringBuffer_destroy(&gen->declarations);
-	StringBuffer_destroy(&gen->definitions);
-	
-	//switch (gen->target)
-	//{
-	//case GENERATE_TARGE_C:
-	//	StringBuffer_destroy(&gen->declarations);
-	//	StringBuffer_destroy(&gen->definitions);
-	//	break;
-	//
-	//case GENERATE_TARGE_C_FILE:
-	//	if (gen->declFile)
-	//	{
-	//		fclose((FILE*)gen->declFile);
-	//		gen->declFile = NULL;
-	//	}
-	//
-	//	if (gen->defFile)
-	//	{
-	//		fclose((FILE*)gen->defFile);
-	//		gen->defFile = NULL;
-	//	}
-	//	break;
-	//}
+	StringBuffer_destroy(&gen->header);
+	StringBuffer_destroy(&gen->srcDecl);
+	StringBuffer_destroy(&gen->srcDef);
+	StringBuffer_destroy(&gen->initGlobal);
 }
 
-void Generator_enterDeclaration(Generator* gen, Declaration* decl)
+void Generator_generate(Generator* gen, Module* module)
 {
-	gen->indentLevel++;
+	gen->module = module;
 
-	if (decl->type == DECL_TYPE_FUNCTION)
+	for (int i = 0; i < module->declarations.size; i++)
 	{
-		FuncDecl* func = &decl->function;
-
-		if (String_compare(&func->name, "main") != 0)  //not 'main'
+		Declaration* decl = (Declaration*)Vector_get(&module->declarations, i);
+		switch (decl->type)
 		{
-			if (!decl->exported)
-				StringBuffer_append(&gen->declarations, "static ");
+		case DECL_TYPE_VARIANT:
+			_Generator_variant(gen, decl);
+			break;
 
-			StringBuffer_appendString(&gen->declarations, &func->resType.name);
-			StringBuffer_append(&gen->declarations, " ");
+		case DECL_TYPE_FUNCTION:
+			_Generator_function(gen, decl);
+			break;
+		}
+	}
+}
 
-			StringBuffer_appendString(&gen->declarations, &func->name);
-			StringBuffer_append(&gen->declarations, "();\n");    //TODO: add parameter list
+void Generator_getSource(Generator* gen, StringBuffer* source)
+{
+	StringBuffer_appendString(source, (String*)&gen->srcDecl);
+	StringBuffer_appendString(source, (String*)&gen->srcDef);
+
+	StringBuffer_append(source, "int main()\n{\n");
+	StringBuffer_appendString(source, (String*)&gen->initGlobal);
+	StringBuffer_appendString(source, (String*)&gen->main);
+	StringBuffer_append(source, "}\n");
+}
+
+void _Generator_variant(Generator* gen, Declaration* decl)
+{
+	VarDecl* var = &decl->variant;
+	if (gen->level == 0 && decl->exported)
+	{
+		//extern
+		StringBuffer_append(&gen->header, "extern ");
+
+		//type
+		StringBuffer_appendString(&gen->header, &var->type.name);
+		StringBuffer_append(&gen->header, " ");
+
+		//name
+		StringBuffer_appendString(&gen->header, &var->name);
+
+		StringBuffer_append(&gen->header, ";\n");
+	}
+
+	if (gen->level == 0)
+	{
+		//static
+		if (!decl->exported)
+			StringBuffer_append(&gen->srcDecl, "static ");
+
+		//type
+		StringBuffer_appendString(&gen->srcDecl, &var->type.name);
+		StringBuffer_append(&gen->srcDecl, " ");
+
+		//name
+		StringBuffer_appendString(&gen->srcDecl, &var->name);
+
+		if (var->initExpr)
+		{
+			if (var->initExpr->type == EXPR_TYPE_CALL)
+			{
+				StringBuffer_append(&gen->initGlobal, "\t");
+				StringBuffer_appendString(&gen->initGlobal, &var->name);
+				StringBuffer_append(&gen->initGlobal, " = ");
+				_Generator_expression(gen, var->initExpr, &gen->initGlobal);
+				StringBuffer_append(&gen->initGlobal, ";\n");
+			}
+			else
+			{
+				StringBuffer_append(&gen->srcDecl, " = ");
+				_Generator_expression(gen, var->initExpr, &gen->srcDecl);
+			}
 		}
 
-		StringBuffer_appendString(&gen->definitions, &func->resType.name);
-		StringBuffer_append(&gen->definitions, " ");
-
-		StringBuffer_appendString(&gen->definitions,  &func->name);
-		StringBuffer_append(&gen->definitions, "() {\n");
-	}
-}
-
-void Generator_leaveDeclaration(Generator* gen, Declaration* decl)
-{
-	if (decl->type == DECL_TYPE_FUNCTION)
-	{
-		gen->indentLevel--;
-		_Generator_indent(gen, &gen->definitions);
-		StringBuffer_append(&gen->definitions, "}\n");
-	}
-}
-
-void Generator_enterStatement(Generator* gen, Statement* stat)
-{
-	switch (stat->type)
-	{
-	case STATEMENT_TYPE_EXPRESSION:
-		
-	case STATEMENT_TYPE_RETURN:
-		_Generator_indent(gen, &gen->definitions);
-		StringBuffer_append(&gen->definitions, "return ");
+		StringBuffer_append(&gen->srcDecl, ";\n");
 		return;
 	}
 
-}
+	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
 
-void Generator_leaveStatement(Generator* gen, Statement* stat)
-{
-	//TODO: check statement type
-	StringBuffer_append(&gen->definitions, ";\n");
-}
+	//type
+	StringBuffer_appendString(buf, &var->type.name);
+	StringBuffer_append(buf, " ");
 
-void Generator_genPrimaryExpression(Generator* gen, Expression* expr)
-{
-	char buf[64];
-	int len;
+	//name
+	StringBuffer_appendString(buf, &var->name);
 
-	switch (expr->type)
+	if (var->initExpr)
 	{
-	case EXPR_TYPE_INT:
-		len = snprintf(buf, sizeof(buf), "%d", expr->intExpr);
-		StringBuffer_appendN(&gen->definitions, buf, len);
+		StringBuffer_append(buf, " = ");
+		_Generator_expression(gen, var->initExpr, buf);
+	}
+
+	StringBuffer_append(buf, ";\n");
+}
+
+void _Generator_function(Generator* gen, Declaration* decl)
+{
+	gen->level++;
+	
+	FuncDecl* func = &decl->function;
+
+	if (String_compare(&func->name, "main") != 0)  //not 'main'
+	{
+		if (decl->exported)
+		{
+			//extern
+			StringBuffer_append(&gen->header, "extern ");
+
+			//type
+			StringBuffer_appendString(&gen->header, &func->resType.name);
+			StringBuffer_append(&gen->header, " ");
+
+			//name
+			StringBuffer_appendString(&gen->header, &func->name);
+
+			StringBuffer_append(&gen->header, "();\n");    //TODO: add parameter list
+		}
+		else
+		{
+			//static
+			StringBuffer_append(&gen->srcDecl, "static ");
+
+			//type
+			StringBuffer_appendString(&gen->srcDecl, &func->resType.name);
+			StringBuffer_append(&gen->srcDecl, " ");
+
+			//name
+			StringBuffer_appendString(&gen->srcDecl, &func->name);
+
+			StringBuffer_append(&gen->srcDecl, "();\n");    //TODO: add parameter list
+		}
+
+		//type
+		StringBuffer_appendString(&gen->srcDef, &func->resType.name);
+		StringBuffer_append(&gen->srcDef, " ");
+
+		//name
+		StringBuffer_appendString(&gen->srcDef, &func->name);
+
+		StringBuffer_append(&gen->srcDef, "() {\n");    //TODO: add parameter list
+
+		for (int i = 0; i < func->block.size; ++i)
+		{
+			Statement* stat = Vector_get(&func->block, i);
+			_Generator_statement(gen, decl, stat);
+		}
+
+		gen->level--;
+		StringBuffer_append(&gen->srcDef, "}\n");
+		return;
+	}
+
+	gen->inMain = true;
+	for (int i = 0; i < func->block.size; ++i)
+	{
+		Statement* stat = Vector_get(&func->block, i);
+		_Generator_statement(gen, decl, stat);
+	}
+	gen->inMain = false;
+
+	gen->level--;
+}
+
+void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
+{
+	_Generator_indent(gen, gen->inMain ? &gen->main : &gen->srcDef);
+
+	switch (stat->type)
+	{
+	case STATEMENT_TYPE_DECLARATION:
+		_Generator_variant(gen, &stat->declaration);
+		break;
+
+	case STATEMENT_TYPE_COMPOUND:
+		_Generator_compoundStatement(gen, decl, stat);
+		break;
+		
+	case STATEMENT_TYPE_EXPRESSION:
+		_Generator_expressionStatement(gen, stat->expr);
+		break;
+
+	case STATEMENT_TYPE_RETURN:
+		_Generator_returnStatement(gen, stat);
 		break;
 	}
 }
 
-void Generator_genCallExpression(Generator* gen, Expression* expr)
+void _Generator_compoundStatement(Generator* gen, Declaration* decl, Statement* stat)
 {
-	Expression* func = expr->callExpr.func;
-	StringBuffer_appendString(&gen->definitions, &func->identExpr);
-	StringBuffer_append(&gen->definitions, "(");
+	gen->level++;
+	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_indent(gen, buf);
+	StringBuffer_append(buf, "{\n");
+
+	for (int i = 0; i < stat->compound.size; ++i)
+	{
+		Statement* subStat = Vector_get(&stat->compound, i);
+		_Generator_statement(gen, decl, subStat);
+	}
+
+	_Generator_indent(gen, buf);
+	StringBuffer_append(buf, "}\n");
+	gen->level--;
+}
+
+void _Generator_expressionStatement(Generator* gen, Expression* expr)
+{
+	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_expression(gen, expr, buf);
+	StringBuffer_append(buf, ";\n");
+}
+
+void _Generator_returnStatement(Generator* gen, Statement* stat)
+{
+	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	StringBuffer_append(buf, "return");
+	if (stat->returnExpr)
+	{
+		StringBuffer_append(buf, " ");
+		_Generator_expression(gen, stat->returnExpr, buf);
+	}
+	StringBuffer_append(buf, ";\n");
+}
+
+void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
+{
+	char tmp[64];
+	int len;
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_IDENT:
+		StringBuffer_appendString(buf, &expr->identExpr);
+		break;
+
+	case EXPR_TYPE_INT:
+		len = snprintf(tmp, sizeof(tmp), "%d", expr->intExpr);
+		StringBuffer_appendN(buf, tmp, len);
+		break;
+
+	case EXPR_TYPE_CALL:
+		_Generator_callExpression(gen, &expr->callExpr, buf);
+		break;
+	}
+}
+
+void _Generator_callExpression(Generator* gen, CallExpression* call, StringBuffer* buf)
+{
+	Expression* func = call->func;
+	StringBuffer_appendString(buf, &func->identExpr);
+	StringBuffer_append(buf, "(");
 	//TODO: add arguments
-	StringBuffer_append(&gen->definitions, ")");
+	StringBuffer_append(buf, ")");
 }
 
 void _Generator_indent(Generator* gen, StringBuffer* buf)
 {
-	for (int i = 0; i < gen->indentLevel; ++i)
+	for (int i = 0; i < gen->level; ++i)
 		StringBuffer_append(buf, "\t");
 }

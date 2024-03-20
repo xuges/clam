@@ -9,7 +9,6 @@ struct Analyzer
 {
 	Stack stack;  //Stack<Variant>
 	Module* module;
-	Generator* gen;
 	int level;
 	bool hasReturn;
 };
@@ -18,7 +17,7 @@ typedef struct Analyzer Analyzer;
 void Analyzer_init(Analyzer* anly);
 void Analyzer_destroy(Analyzer* anly);
 
-void Analyzer_generate(Analyzer* anly, Module* module, Generator* gen);
+void Analyzer_analyse(Analyzer* anly, Module* module);
 
 
 
