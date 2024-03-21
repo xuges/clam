@@ -136,6 +136,7 @@
     <ClCompile Include="..\..\src\clamc\message.c" />
     <ClCompile Include="..\..\src\clamc\module.c" />
     <ClCompile Include="..\..\src\clamc\parser.c" />
+    <ClCompile Include="..\..\src\clamc\printer.c" />
     <ClCompile Include="..\..\src\clamc\source.c" />
     <ClCompile Include="..\..\src\clamc\stack.c" />
     <ClCompile Include="..\..\src\clamc\strings.c" />
@@ -153,6 +154,7 @@
     <ClInclude Include="..\..\src\clamc\message.h" />
     <ClInclude Include="..\..\src\clamc\module.h" />
     <ClInclude Include="..\..\src\clamc\parser.h" />
+    <ClInclude Include="..\..\src\clamc\printer.h" />
     <ClInclude Include="..\..\src\clamc\source.h" />
     <ClInclude Include="..\..\src\clamc\source_location.h" />
     <ClInclude Include="..\..\src\clamc\stack.h" />

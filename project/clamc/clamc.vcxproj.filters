@@ -54,6 +54,9 @@
     <ClCompile Include="..\..\src\clamc\type.c">
       <Filter>src\clamc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\clamc\printer.c">
+      <Filter>src\clamc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\clamc\analyzer.h">
@@ -102,6 +105,9 @@
       <Filter>src\clamc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\clamc\vector.h">
+      <Filter>src\clamc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\clamc\printer.h">
       <Filter>src\clamc</Filter>
     </ClInclude>
   </ItemGroup>
