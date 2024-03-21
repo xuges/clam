@@ -5,6 +5,7 @@
 
 static void _Parser_toplevel(Parser* p);
 static Declaration _Parser_declaration(Parser* p);
+static Type _Parser_typeDesc(Parser* p);
 static Vector _Parser_parameterList(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
 static Statement _Parser_statement(Parser* p);
@@ -61,33 +62,12 @@ Declaration _Parser_declaration(Parser* p)
 		Lexer_next(p->lex);
 	}
 
-	switch (token->type)
-	{
-	case TOKEN_TYPE_KEYWORD_TYPE:
-	case TOKEN_TYPE_IDENT:
-		if (!decl.exported)
-		{
-			decl.location = token->location;
-		}
+	if (!decl.exported)
+		decl.location = token->location;
 
-		decl.baseType.name = token->literal;
-		switch (token->value)
-		{
-		case TOKEN_VALUE_VOID:
-			decl.baseType.id = TYPE_VOID;
-			break;
-		case TOKEN_VALUE_INT:
-			decl.baseType.id = TYPE_INT;
-			break;
-		//case TOKEN_VALUE_IDENT:
-		}
-		break;
+	//type
+	decl.baseType = _Parser_typeDesc(p);
 
-	default:
-		error(&token->location, "unexpected '" String_FMT "'", String_arg(token->literal));
-	}
-
-	token = Lexer_next(p->lex);
 	_Parser_expect(p, TOKEN_VALUE_IDENT, "expected declaration name");
 	decl.name = token->literal;
 
@@ -126,6 +106,35 @@ Declaration _Parser_declaration(Parser* p)
 	return decl;
 }
 
+Type _Parser_typeDesc(Parser* p)
+{
+	Type type = errorType;
+	Token* token = Lexer_peek(p->lex);
+
+	switch (token->type)
+	{
+	case TOKEN_TYPE_KEYWORD_TYPE:
+		switch (token->value)
+		{
+		case TOKEN_VALUE_VOID:
+			type = voidType;
+			break;
+
+		case TOKEN_VALUE_INT:
+			type = intType;
+			break;
+		}
+		break;
+
+	default:
+		error(&token->location, "unknown type '" String_FMT "'", String_arg(token->literal));
+		break;
+	}
+
+	Lexer_next(p->lex);
+	return type;
+}
+
 Vector _Parser_parameterList(Parser* p)
 {
 	Vector list;
@@ -134,10 +143,26 @@ Vector _Parser_parameterList(Parser* p)
 	Token* token = Lexer_peek(p->lex);
 	Lexer_next(p->lex);
 
-	//TODO: parse parameter type and name
+	Parameter param;
+
 	while (token->value != TOKEN_VALUE_EOF && token->value != TOKEN_VALUE_RP)
 	{
+		Parameter_init(&param);
+
+		//type
+		param.type = _Parser_typeDesc(p);
+
+		//name
+		token = _Parser_expect(p, TOKEN_VALUE_IDENT, "expected parameter name");
+		param.name = token->literal;
 		Lexer_next(p->lex);
+
+		Vector_add(&list, &param);
+
+		if (token->value == TOKEN_VALUE_COMMA)
+			Lexer_next(p->lex);
+		else if (token->value != TOKEN_VALUE_RP)
+			error(&token->location, "unexpected '" String_FMT "'", String_arg(token->literal));
 	}
 	_Parser_expect(p, TOKEN_VALUE_RP, "expected ')'");
 

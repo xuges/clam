@@ -25,6 +25,8 @@ struct Parameter
 };
 typedef struct Parameter Parameter;
 
+void Parameter_init(Parameter* param);
+
 struct FuncDecl
 {
 	Type resType;

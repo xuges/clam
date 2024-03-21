@@ -408,6 +408,87 @@ void test_parser_return_int()
 	printf("main return %d\n", stat->returnExpr->intExpr);        //block[0].returnExpr.intExpr
 }
 
+void test_parser_function_parameter1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void print(int a, int b) { }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	Declaration* decl = Vector_get(&module->functions, 0);
+	FuncDecl* func = &decl->function;
+	printf("%.*s %.*s(", String_arg(func->resType.name), String_arg(func->name));
+	for (int i = 0; i < func->parameters.size; ++i)
+	{
+		if (i != 0)
+			printf(", ");
+		Parameter* param = Vector_get(&func->parameters, i);
+		printf("%.*s %.*s", String_arg(param->type.name), String_arg(param->name));
+	}
+	printf(")\n");
+}
+
+void test_parser_function_parameter2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void print(int a,  int b,) { }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	Declaration* decl = Vector_get(&module->functions, 0);
+	FuncDecl* func = &decl->function;
+	printf("%.*s %.*s(", String_arg(func->resType.name), String_arg(func->name));
+	for (int i = 0; i < func->parameters.size; ++i)
+	{
+		if (i != 0)
+			printf(", ");
+		Parameter* param = Vector_get(&func->parameters, i);
+		printf("%.*s %.*s", String_arg(param->type.name), String_arg(param->name));
+	}
+	printf(")\n");
+}
+
+void test_parser_function_parameter_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void print(int a; int b) { }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+	Declaration* decl = Vector_get(&module->functions, 0);
+	FuncDecl* func = &decl->function;
+	printf("%.*s %.*s(", String_arg(func->resType.name), String_arg(func->name));
+	for (int i = 0; i < func->parameters.size; ++i)
+	{
+		if (i != 0)
+			printf(", ");
+		Parameter* param = Vector_get(&func->parameters, i);
+		printf("%.*s %.*s", String_arg(param->type.name), String_arg(param->name));
+	}
+	printf(")\n");
+}
+
 void test_parser_functions_return_int()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -1477,6 +1558,9 @@ test_fn tests[] =
 	test_parser_variant_type,
 	test_parser_void_function,
 	test_parser_functions,
+	test_parser_function_parameter1,
+	test_parser_function_parameter2,
+	test_parser_function_parameter_wrong1,
 	test_parser_return_int,
 	test_parser_functions_return_int,
 	test_parser_multi_block,
@@ -1521,7 +1605,7 @@ test_fn tests[] =
 
 int main(int argc, char** argv)
 {
-	//test_executor_function_call2(); return 0;
+	//test_parser_function_parameter_wrong1(); return 0;
 
 	if (argc > 1)
 	{

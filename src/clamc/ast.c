@@ -4,6 +4,12 @@
 #include "ast.h"
 #include "message.h"
 
+void Parameter_init(Parameter* param)
+{
+	String_init(&param->name);
+	Type_init(&param->type);
+}
+
 void FuncDecl_init(FuncDecl* func)
 {
 	Vector_init(&func->block, sizeof(Statement));
