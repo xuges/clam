@@ -128,7 +128,7 @@ Type _Parser_typeDesc(Parser* p)
 		break;
 
 	default:
-		error(&token->location, "unknown type '" String_FMT "'", String_arg(token->literal));
+		type = errorType;
 		break;
 	}
 
