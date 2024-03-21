@@ -12,6 +12,7 @@ static Vector _Parser_compoundStatement(Parser* p);
 static Expression* _Parser_expression(Parser* p);
 static Expression* _Parser_postfixExpression(Parser* p);
 static Expression* _Parser_primaryExpression(Parser* p);
+static Vector _Parser_argumentList(Parser* p);
 static Token* _Parser_until(Parser* p, TokenValue value, const char* msg);
 static Token* _Parser_expect(Parser* p, TokenValue value, const char* msg);
 
@@ -269,11 +270,7 @@ Expression* _Parser_postfixExpression(Parser* p)
 		{
 		case TOKEN_VALUE_LP:
 			expr = Expression_createCall(&loc, expr);
-			token = Lexer_next(p->lex);
-			while (token->value != TOKEN_VALUE_EOF && token->value != TOKEN_VALUE_RP)  //skip args TODO: parse arguments
-				token = Lexer_next(p->lex);
-			_Parser_expect(p, TOKEN_VALUE_RP, "expected ')'");
-			Lexer_next(p->lex);
+			expr->callExpr.args = _Parser_argumentList(p);
 			break;
 		}
 		token = Lexer_peek(p->lex);
@@ -299,6 +296,33 @@ Expression* _Parser_primaryExpression(Parser* p)
 	}
 
 	return expr;
+}
+
+Vector _Parser_argumentList(Parser* p)
+{
+	_Parser_expect(p, TOKEN_VALUE_LP, "expected '('");
+	Lexer_next(p->lex);
+
+	Vector list;
+	Vector_init(&list, sizeof(Expression));
+
+	Token* token = Lexer_peek(p->lex);
+	while (token->value != TOKEN_VALUE_EOF && token->value != TOKEN_VALUE_RP)
+	{
+		Expression* expr = _Parser_expression(p);
+		Vector_add(&list, expr);
+
+		token = Lexer_peek(p->lex);
+		if (token->value == TOKEN_VALUE_COMMA)
+			Lexer_next(p->lex);
+		else if (token->value != TOKEN_VALUE_RP)
+			error(&token->location, "unexpected '" String_FMT "'", String_arg(token->literal));
+	}
+
+	_Parser_expect(p, TOKEN_VALUE_RP, "expected ')'");
+	Lexer_next(p->lex);
+
+	return list;
 }
 
 Token* _Parser_until(Parser* p, TokenValue value, const char* msg)

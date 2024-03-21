@@ -83,6 +83,7 @@ Expression* Expression_createCall(SourceLocation* loc, Expression* func)
 {
 	Expression* expr = _Expression_create(EXPR_TYPE_CALL, loc);
 	expr->callExpr.func = func;
+	Vector_init(&expr->callExpr.args, sizeof(Expression));
 	return expr;
 }
 
@@ -96,7 +97,12 @@ Expression* Expression_createIdent(SourceLocation* loc, Token* token)
 void Expression_destroy(Expression* expr)
 {
 	if (expr->type == EXPR_TYPE_CALL)
+	{
 		Expression_destroy(expr->callExpr.func);
+		for (int i = 0; i < expr->callExpr.args.size; ++i)
+			free(Vector_get(&expr->callExpr.args, i));
+		Vector_destroy(&expr->callExpr.args);
+	}
 
 	free(expr);
 }

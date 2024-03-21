@@ -85,6 +85,7 @@ typedef enum ExprType ExprType;
 struct CallExpression
 {
 	struct Expression* func;
+	Vector args;  //Vector<Expression>
 
 };
 typedef struct CallExpression CallExpression;
@@ -103,7 +104,7 @@ struct Expression
 typedef struct Expression Expression;
 
 Expression* Expression_createLiteral(ExprType type, Token* token);
-Expression* Expression_createCall(SourceLocation* loc, Expression* func);   //TODO: add args list
+Expression* Expression_createCall(SourceLocation* loc, Expression* func);
 Expression* Expression_createIdent(SourceLocation* loc, Token* token);
 
 void Expression_destroy(Expression* expr);

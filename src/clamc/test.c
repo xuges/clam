@@ -489,6 +489,100 @@ void test_parser_function_parameter_wrong1()
 	printf(")\n");
 }
 
+void test_parser_function_argument1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void print(int a, int b) { } export int main() { print(1, 2); return 0; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Declaration* decl = Vector_get(&module->functions, 1);  //main
+	Statement* stat = Vector_get(&decl->function.block, 0);  //call print
+	Vector* args = &stat->expr->callExpr.args;
+	printf("%.*s(", String_arg(stat->expr->callExpr.func->identExpr));
+	for (int i = 0; i < args->size; ++i)
+	{
+		if (i != 0)
+			printf(", ");
+		Expression* expr = Vector_get(args, i);
+		printf("%d", expr->intExpr);
+	}
+	printf(")\n");
+}
+
+void test_parser_function_argument2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void print(int a, int b) { } export int main() { print(1, 2, 3,); return 0; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Declaration* decl = Vector_get(&module->functions, 1);  //main
+	Statement* stat = Vector_get(&decl->function.block, 0);  //call print
+	Vector* args = &stat->expr->callExpr.args;
+	printf("%.*s(", String_arg(stat->expr->callExpr.func->identExpr));
+	for (int i = 0; i < args->size; ++i)
+	{
+		if (i != 0)
+			printf(", ");
+		Expression* expr = Vector_get(args, i);
+		printf("%d", expr->intExpr);
+	}
+	printf(")\n");
+}
+
+void test_parser_function_argument_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b) { return a; } export int main() { return foo(1 2); }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_parser_function_argument_wrong2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b) { return a; } export int main() { return foo(1;2); }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
 void test_parser_functions_return_int()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -1561,6 +1655,10 @@ test_fn tests[] =
 	test_parser_function_parameter1,
 	test_parser_function_parameter2,
 	test_parser_function_parameter_wrong1,
+	test_parser_function_argument1,
+	test_parser_function_argument2,
+	test_parser_function_argument_wrong1,
+	test_parser_function_argument_wrong2,
 	test_parser_return_int,
 	test_parser_functions_return_int,
 	test_parser_multi_block,
@@ -1605,7 +1703,7 @@ test_fn tests[] =
 
 int main(int argc, char** argv)
 {
-	//test_parser_function_parameter_wrong1(); return 0;
+	//test_parser_function_argument_wrong1(); return 0;
 
 	if (argc > 1)
 	{
