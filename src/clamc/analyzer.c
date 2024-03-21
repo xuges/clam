@@ -4,13 +4,6 @@
 #include "analyzer.h"
 #include "message.h"
 
-enum AnalysisResult
-{
-	ANALY_RESULT_NORMAL,
-	ANALY_RESULT_RETURN,
-};
-typedef enum AnalysisResult AnalysisResult;
-
 struct Variant
 {
 	Type type;
@@ -26,10 +19,10 @@ static void Variant_init(Variant* v)
 
 static void _Analyzer_variant(Analyzer* anly, Declaration* decl);
 static void _Analyzer_function(Analyzer* anly, Declaration* decl);
-static void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat);
-static void _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
+static bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat);
+static bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
 static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
-static void _Analyzer_callExpression(Analyzer* anly, Expression* expr);
+static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
 
@@ -37,7 +30,6 @@ void Analyzer_init(Analyzer* anly)
 {
 	Stack_init(&anly->stack, sizeof(Variant));
 	anly->level = 0;
-	anly->hasReturn = false;
 }
 
 void Analyzer_destroy(Analyzer* anly)
@@ -102,10 +94,10 @@ void _Analyzer_variant(Analyzer* anly, Declaration* decl)
 void _Analyzer_function(Analyzer* anly, Declaration* decl)
 {
 	anly->level++;
-	anly->hasReturn = false;
+	int lastSize = anly->stack.size;
 
 	FuncDecl* func = &decl->function;
-	if (String_compare(&func->name, "main") == 0)
+	if (String_compare(&func->name, "main") == 0)  //check special function 'main' signature
 	{
 		if (!decl->exported)
 			error(&decl->location, "function 'main' must exported");
@@ -114,27 +106,34 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 			error(&decl->location, "function 'main' must return int");
 	}
 
-	for (int i = 0; i < func->block.size; i++)
+	for (int i = 0; i < func->parameters.size; ++i)
+	{
+		Parameter* param = Vector_get(&func->parameters, i);
+		Variant v;
+		v.type = param->type;  //TODO: check type realy existed.
+		v.name = param->name;
+		v.level = anly->level;
+		Stack_push(&anly->stack, &v);
+	}
+
+	int hasReturn = 0;
+	for (int i = 0; i < func->block.size; ++i)
 	{
 		Statement* stat = (Statement*)Vector_get(&func->block, i);
-		_Analyzer_statement(anly, decl, stat);
+		bool has = _Analyzer_statement(anly, decl, stat);
+		hasReturn += has;
 	}
 
-	if (!anly->hasReturn && func->resType.id != TYPE_VOID)
-		error(&decl->location, "function return type not 'void', must return a value");
+	if (!hasReturn && func->resType.id != TYPE_VOID)  //check has or hasn't return statement
+		error(&decl->location, "function return type not 'void', missing return statement");
 
-	while (anly->stack.size)  //clean variants
-	{
-		Variant* v = Stack_top(&anly->stack);
-		if (v->level != anly->level)
-			break;
-		Stack_pop(&anly->stack);
-	}
+	Vector_resize(&anly->stack, lastSize);
 	anly->level--;
 }
 
-void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
+bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 {
+	bool hasReturn = false;
 	FuncDecl* func = &decl->function;
 
 	switch (stat->type)
@@ -149,7 +148,7 @@ void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		break;
 
 	case STATEMENT_TYPE_COMPOUND:
-		_Analyzer_compoundStatement(anly, decl, stat);
+		hasReturn = _Analyzer_compoundStatement(anly, decl, stat);
 		break;
 
 	case STATEMENT_TYPE_EXPRESSION:
@@ -167,33 +166,34 @@ void _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		if (stat->returnExpr)
 		{
 			Type type = _Analyzer_expression(anly, stat->returnExpr);
-			if (type.id != func->resType.id)
+			if (type.id != func->resType.id)  //TODO: support implict type cast
 				error(&stat->location, "function return type missmatch");
 		}
 
-		anly->hasReturn = true;
+		hasReturn = true;
 		break;
 	}
+
+	return hasReturn;
 }
 
-void _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat)
+bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat)
 {
 	anly->level++;
+	int lastSize = anly->stack.size;
 
+	int hasReturn = 0;
 	for (int i = 0; i < stat->compound.size; ++i)
 	{
 		Statement* subStat = Vector_get(&stat->compound, i);
-		_Analyzer_statement(anly, decl, subStat);
+		bool has = _Analyzer_statement(anly, decl, subStat);
+		hasReturn += has;
 	}
 
-	while (anly->stack.size)  //clean variants
-	{
-		Variant* v = Stack_top(&anly->stack);
-		if (v->level != anly->level)
-			break;
-		Stack_pop(&anly->stack);
-	}
+	Vector_resize(&anly->stack, lastSize);
 	anly->level--;
+
+	return hasReturn != 0;
 }
 
 Type _Analyzer_expression(Analyzer* anly, Expression* expr)
@@ -216,36 +216,39 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 		return intType;
 
 	case EXPR_TYPE_CALL:
-		decl = _Analyzer_findFunction(anly, expr->callExpr.func->identExpr);
-		if (!decl)
-		{
-			error(&expr->location, "undefined function '" String_FMT "'", String_arg(expr->callExpr.func->identExpr));
-			return errorType;
-		}
-		return decl->function.resType;
+		return _Analyzer_callExpression(anly, expr);
 	}
 	return errorType;
 }
 
-void _Analyzer_callExpression(Analyzer* anly, Expression* expr)
+Type _Analyzer_callExpression(Analyzer* anly, Expression* expr)
 {
 	if (expr->callExpr.func->type != EXPR_TYPE_IDENT)
 		error(&expr->callExpr.func->location, "invalid function identifier");
 
-	Expression* func = expr->callExpr.func;
-
-	for (int i = 0; i < anly->module->functions.size; i++)
+	Declaration* decl = _Analyzer_findFunction(anly, expr->callExpr.func->identExpr);  //check the function exists
+	if (!decl)
 	{
-		Declaration* decl = (Declaration*)Vector_get(&anly->module->functions, i);
-		if (String_compare(&func->identExpr, decl->function.name.data) == 0)
-		{
-			//found function
-
-			return;
-		}
+		error(&expr->location, "undefined function '" String_FMT "'", String_arg(expr->callExpr.func->identExpr));
+		return errorType;
 	}
 
-	error(&expr->callExpr.func->location, "undefined function '"String_FMT"'", String_arg(func->identExpr));
+	if (expr->callExpr.args.size != decl->function.parameters.size)  //TODO: support variadic parameter
+	{
+		error(&expr->location, "function argument count not match");  //TODO: show difference
+		return errorType;
+	}
+
+	for (int i = 0; i < expr->callExpr.args.size; ++i)
+	{
+		Parameter* param = Vector_get(&decl->function.parameters, i);
+		Expression* arg = Vector_get(&expr->callExpr.args, i);
+		Type type = _Analyzer_expression(anly, arg);
+		if (type.id != param->type.id)  //TODO: support implict type cast
+			error(&arg->location, "function argument type not match");  //TODO: show details
+	}
+
+	return decl->function.resType;
 }
 
 Variant* _Analyzer_findVariant(Analyzer* anly, String name)

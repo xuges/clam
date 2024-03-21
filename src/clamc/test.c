@@ -633,6 +633,401 @@ void test_parser_multi_block()
 		String_arg(bDecl->variant.name));
 }
 
+
+void test_analyzer_basic()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { return 12345; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int main() { return 0; }");  //syntax normal, semantic wrong
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("should not go here\n");
+}
+
+//error: function 'main' must return int
+void test_analyzer_wrong2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export void main() { return 0; }");  //syntax normal, semantic wrong
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("should not go here\n");
+}
+
+//error: undefined function foo
+void test_analyzer_wrong3()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { return foo(); }");  //syntax normal, semantic wrong
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("should not go here\n");
+}
+
+void test_analyzer_global_variant1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int a;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_global_variant2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo() { return a; } int a = 0;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_global_variant_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int a = 0; int a = 1;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_global_variant_wrong2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "void a;");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_global_variant_wrong3()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int a = \"1\";");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_local_variant1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "export int main() { int a = 0; { int b = a; } return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_function_parameter1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b) { return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_function_parameter2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b, int c, int d) { return a; return b; return c; return d; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_function_parameter_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b, int c, int d) { int a = 0; return a; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_function_argument1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b) { return a; } export int main() { return foo(1, 2); }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_function_argument2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b) { return a; } int bar() { return 1; } export int main() { return foo(bar(), 2); }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_function_argument_wrong1()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b) { return a; } export int main() { foo(1, 2, 3); return 0; }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+void test_analyzer_function_argument_wrong2()
+{
+	printf("testing %s\n", __FUNCTION__);
+
+	Source source;
+	Source_init(&source, "int foo(int a, int b) { return a; } void print() {} export int main() { return foo(1, print()); }");
+
+	Lexer lex;
+	Lexer_init(&lex, &source);
+
+	Parser parser;
+	Parser_init(&parser);
+
+	Module* module = Parser_translate(&parser, &lex);
+
+	Analyzer anly;
+	Analyzer_init(&anly);
+
+	Analyzer_analyze(&anly, module);
+
+	printf("test %s over.\n", __FUNCTION__);
+}
+
+
 void test_executor_basic()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -1046,239 +1441,6 @@ void test_executor_global_variant_init1()
 	Executor_run(&exec, module);
 }
 
-void test_analyzer_basic()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "export int main() { return 12345; }");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("test %s over.\n", __FUNCTION__);
-}
-
-void test_analyzer_wrong1()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "int main() { return 0; }");  //syntax normal, semantic wrong
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("should not go here\n");
-}
-
-//error: function 'main' must return int
-void test_analyzer_wrong2()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "export void main() { return 0; }");  //syntax normal, semantic wrong
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("should not go here\n");
-}
-
-//error: undefined function foo
-void test_analyzer_wrong3()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "export int main() { return foo(); }");  //syntax normal, semantic wrong
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("should not go here\n");
-}
-
-void test_analyzer_global_variant1()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "export int a;");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("test %s over.\n", __FUNCTION__);
-}
-
-void test_analyzer_global_variant2()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "int foo() { return a; } int a = 0;");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("test %s over.\n", __FUNCTION__);
-}
-
-void test_analyzer_global_variant_wrong1()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "export int a = 0; int a = 1;");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("test %s over.\n", __FUNCTION__);
-}
-
-void test_analyzer_global_variant_wrong2()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "void a;");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("test %s over.\n", __FUNCTION__);
-}
-
-void test_analyzer_global_variant_wrong3()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "int a = \"1\";");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("test %s over.\n", __FUNCTION__);
-}
-
-void test_analyzer_local_variant1()
-{
-	printf("testing %s\n", __FUNCTION__);
-
-	Source source;
-	Source_init(&source, "export int main() { int a = 0; { int b = a; } return a; }");
-
-	Lexer lex;
-	Lexer_init(&lex, &source);
-
-	Parser parser;
-	Parser_init(&parser);
-
-	Module* module = Parser_translate(&parser, &lex);
-
-	Analyzer anly;
-	Analyzer_init(&anly);
-
-	Analyzer_analyze(&anly, module);
-
-	printf("test %s over.\n", __FUNCTION__);
-}
-
-
 void test_generator_basic()
 {
 	printf("testing %s\n", __FUNCTION__);
@@ -1672,6 +1834,13 @@ test_fn tests[] =
 	test_analyzer_global_variant_wrong2,
 	test_analyzer_global_variant_wrong3,
 	test_analyzer_local_variant1,
+	test_analyzer_function_parameter1,
+	test_analyzer_function_parameter2,
+	test_analyzer_function_parameter_wrong1,
+	test_analyzer_function_argument1,
+	test_analyzer_function_argument2,
+	test_analyzer_function_argument_wrong1,
+	test_analyzer_function_argument_wrong2,
 	test_executor_basic,
 	test_executor_wrong_main1,
 	test_executor_wrong_main2,
@@ -1700,6 +1869,8 @@ test_fn tests[] =
 	test_generator_local_variant_wrong1,
 	test_generator_local_variant_wrong2,
 };
+
+#define RAW(STR) #STR
 
 int main(int argc, char** argv)
 {

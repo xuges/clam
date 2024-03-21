@@ -10,7 +10,6 @@ struct Analyzer
 	Stack stack;  //Stack<Variant>
 	Module* module;
 	int level;
-	bool hasReturn;
 };
 typedef struct Analyzer Analyzer;
 
