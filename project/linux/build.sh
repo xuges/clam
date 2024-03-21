@@ -15,4 +15,5 @@ gcc -g -L. -o $DIR/clamc \
 	token.c \
 	type.c \
 	vector.c \
+	printer.c \
 	main.c
