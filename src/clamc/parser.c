@@ -7,8 +7,8 @@ static void _Parser_toplevel(Parser* p);
 static Declaration _Parser_declaration(Parser* p);
 static Type _Parser_typeDesc(Parser* p);
 static Vector _Parser_parameterList(Parser* p);
-static Vector _Parser_compoundStatement(Parser* p);
 static Statement _Parser_statement(Parser* p);
+static Vector _Parser_compoundStatement(Parser* p);
 static Expression* _Parser_expression(Parser* p);
 static Expression* _Parser_postfixExpression(Parser* p);
 static Expression* _Parser_primaryExpression(Parser* p);
@@ -183,15 +183,6 @@ Vector _Parser_compoundStatement(Parser* p)
 	Lexer_next(p->lex);
 	while (token->value != TOKEN_VALUE_EOF && token->value != TOKEN_VALUE_RC)
 	{
-		if (token->value == TOKEN_VALUE_EXPORT || token->type == TOKEN_TYPE_KEYWORD_TYPE)
-		{
-			stat.type = STATEMENT_TYPE_DECLARATION;
-			stat.location = token->location;
-			stat.declaration = _Parser_declaration(p);
-			Vector_add(&cs, &stat);
-			continue;
-		}
-
 		stat = _Parser_statement(p);
 		Vector_add(&cs, &stat);
 	}
@@ -231,8 +222,24 @@ Statement _Parser_statement(Parser* p)
 		Lexer_next(p->lex);
 		break;
 
+	case TOKEN_VALUE_EXPORT:  //syntax correct but semantic incorrect
+		stat.type = STATEMENT_TYPE_DECLARATION;
+		stat.location = token->location;
+		stat.declaration = _Parser_declaration(p);
+		break;
+
+	//case TOKEN_VALUE_IDENT:  //TODO: support custom type
+
 	default:
 		stat.location = token->location;
+
+		if (token->type == TOKEN_TYPE_KEYWORD_TYPE)
+		{
+			stat.type = STATEMENT_TYPE_DECLARATION;
+			stat.declaration = _Parser_declaration(p);
+			break;
+		}
+
 		stat.type = STATEMENT_TYPE_EXPRESSION;
 		stat.expr = _Parser_expression(p);
 		_Parser_expect(p, TOKEN_VALUE_SEM, "expected ';'");
