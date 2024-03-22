@@ -8,7 +8,8 @@
 
 struct Executor
 {
-	Stack stack;   //Stack<Value>
+	Vector global;  //Vector<Value>
+	Stack stack;    //Stack<Value>
 	Module* module;
 	int level;
 };

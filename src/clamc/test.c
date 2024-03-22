@@ -165,11 +165,7 @@ static void test_analyzer(const char* code)
 	Analyzer_init(&anly);
 	Analyzer_analyze(&anly, module);
 
-	printf("sematic analysis done. AST dump:\n");
-
-	Printer p;
-	Printer_init(&p);
-	Printer_printAst(&p, module);
+	printf("sematic analysis done.\n");
 }
 
 static void test_executor(const char* code)
@@ -190,12 +186,6 @@ static void test_executor(const char* code)
 	Analyzer anly;
 	Analyzer_init(&anly);
 	Analyzer_analyze(&anly, module);
-
-	printf("sematic analysis done. AST dump:\n");
-
-	Printer p;
-	Printer_init(&p);
-	Printer_printAst(&p, module);
 
 	printf("interpret output:\n");
 
@@ -222,13 +212,6 @@ static void test_generator(const char* code)
 	Analyzer anly;
 	Analyzer_init(&anly);
 	Analyzer_analyze(&anly, module);
-
-	printf("sematic analysis done. AST dump:\n");
-
-	Printer p;
-	Printer_init(&p);
-	Printer_printAst(&p, module);
-
 
 	Generator gen;
 	Generator_init(&gen, GENERATE_TARGE_C);
@@ -306,11 +289,16 @@ static TestCase tests[] =
 	TEST(test_executor, "function_call3",       "export int main() { return bar(); } int bar() { return foo(); } int foo() { return 666; }")
 	TEST(test_executor, "global_variant1",      "int a = 666; export int main() { return a; }")
 	TEST(test_executor, "global_variant2",      "export int main() { return a; }\nint a = 1234;")
+	TEST(test_executor, "global_variant_init1", "int a = foo(); int foo() { return 1234; } export int main() { return a; }")
 	TEST(test_executor, "local_variant1",       "export int main() { int a = 888; return a; }")
 	TEST(test_executor, "local_variant2",       "export int main() { int a = 666; { return a; } }")
 	TEST(test_executor, "local_variant3",       "export int main() { int a = 123; { int b = a; return b; } }")
 	TEST(test_executor, "local_variant4",       "export int main() { int a = 1; { int a = 2; return a; } }")
-	TEST(test_executor, "global_variant_init1", "int a = foo(); int foo() { return 1234; } export int main() { return a; }")
+	TEST(test_executor, "multi_block1",          "export int main() { int a = 1; { int a = 2; { int b = a; return b; } } }")
+	TEST(test_executor, "multi_block2",          "export int main() { int a = 1; { int b = 2; } int b = 3; { int a = 4; int b = 5;} return b; }")
+	TEST(test_executor, "function_argument1",   "int foo(int a, int b) { return a; } export int main() { return foo(1, 2); }")
+	TEST(test_executor, "function_argument2",   "int foo(int a, int b) { return a; } int bar() { return 6; } export int main() { return foo(bar(), 2); }")
+	TEST(test_executor, "function_argument3",   "int f1(int a) { return a; } int f2(int b) { return b; } int f3(int c) { return c; } export int main() { return f1(f2(f3(4))); }")
 
 	TEST_WRONG(test_executor, "main_wrong1",           "int main() { return 12345; }")
 	TEST_WRONG(test_executor, "main_wrong2",           "export void main() { return 0; }")
@@ -335,9 +323,9 @@ static TestCase tests[] =
 #undef TEST_WRONG
 
 #define TEST(base, name, code) \
-	do { TestCase test = { base, #base, name, false }; TestCase_run(&test); } while(0); return 0;
+	do { TestCase test = { base, #base, name, code, false }; TestCase_run(&test);  return 0; } while(0);
 #define TEST_WRONG(base, name, code) \
-	do { TestCase test = { base, #base, name, true  }; TestCase_run(&test); } while(0); return 0;
+	do { TestCase test = { base, #base, name, code, true  }; TestCase_run(&test);  return 0; } while(0);
 
 static void usage()
 {
@@ -355,11 +343,13 @@ static void usage()
 
 int main(int argc, char** argv)
 {
+
 	//options
 	bool all = true;
 	bool run = false;
 	int id = 0;
 	bool list = false;
+	//TODO: add -t option
 
 	//parse
 	int c = argc;
