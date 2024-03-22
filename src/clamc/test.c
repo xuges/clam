@@ -333,7 +333,7 @@ static void usage()
 		"usage: clamc-test [options]\n"
 		"-l\tshow test case list\n"
 		"-r <id>\trun specified test case\n"
-		//"-t <base> <file>\t run test file\n"
+		"-t <base> <file>\t test code file\n"
 		"-h\tshow usage\n"
 		//"-v\tshow version\n"
 		"\n"
@@ -349,13 +349,14 @@ int main(int argc, char** argv)
 	bool run = false;
 	int id = 0;
 	bool list = false;
-	//TODO: add -t option
+	bool test = false;
+	const char* base = NULL;
+	const char* file = NULL;
 
 	//parse
 	int c = argc;
 	char** v = argv;
-	--c;
-	++v;
+	--c; ++v;
 	while (c)
 	{
 		if (strcmp(*v, "-h") == 0)
@@ -363,14 +364,19 @@ int main(int argc, char** argv)
 			usage();
 			return 0;
 		}
+		else if (strcmp(*v, "-l") == 0)
+		{
+			all = false;
+			list = true;
+		}
 		//else if (strcmp(*argv, "-v") == 0)
 		//	version();
 		else if (strcmp(*v, "-r") == 0)
 		{
 			all = false;
 			run = true;
-			--c;
-			++v;
+
+			--c; ++v;
 			if (!c)
 			{
 				printf("no id provided!\n");
@@ -378,10 +384,26 @@ int main(int argc, char** argv)
 			}
 			id = atoi(*v);
 		}
-		else if (strcmp(*v, "-l") == 0)
+		else if (strcmp(*v, "-t") == 0)
 		{
 			all = false;
-			list = true;
+			test = true;
+
+			--c; ++v;
+			if (!c)
+			{
+				printf("no base provided!\n");
+				return 0;
+			}
+			base = *v;
+
+			--c; ++v;
+			if (!c)
+			{
+				printf("no file provided!\n");
+				return 0;
+			}
+			file = *v;
 		}
 		else if ((*v)[0] == '-')
 		{
@@ -391,8 +413,7 @@ int main(int argc, char** argv)
 		else
 			break;
 
-		--c;
-		++v;
+		--c; ++v;
 	}
 
 	const int count = sizeof(tests) / sizeof(tests[0]);
@@ -416,6 +437,67 @@ int main(int argc, char** argv)
 		}
 
 		TestCase_run(&tests[id]);
+		return 0;
+	}
+
+	if (test)
+	{
+		//open file
+		FILE* f = fopen(file, "rb");
+		if (!f)
+			return false;
+
+		//get file size
+		int beg = ftell(f);
+		fseek(f, 0, SEEK_END);
+		int end = ftell(f);
+		int size = end - beg;
+		fseek(f, beg, SEEK_SET);
+
+		if (!size)
+		{
+			fclose(f);
+			printf("empty file!\n");
+			return 0;
+		}
+
+		char* buf = (char*)malloc(size + 1);  //TODO: mmap large file
+		if (!buf)
+		{
+			fclose(f);
+			printf("open file out of memory!\n");
+			return 0;
+		}
+		buf[size] = 0;    //null terminal
+
+		fread(buf, 1, size, f);
+		fclose(f);
+
+		if (strcmp(base, "lexer") == 0)
+		{
+			TEST(test_lexer, file, buf)
+		}
+		else if (strcmp(base, "parser") == 0)
+		{
+			TEST(test_parser, file, buf)
+		}
+		else if (strcmp(base, "analyzer") == 0)
+		{
+			TEST(test_analyzer, file, buf)
+		}
+		else if (strcmp(base, "executor") == 0)
+		{
+			TEST(test_executor, file, buf)
+		}
+		else if (strcmp(base, "generator") == 0)
+		{
+			TEST(test_generator, file, buf)
+		}
+		else
+		{
+			printf("unknown base %s!\n", base);
+		}
+
 		return 0;
 	}
 
