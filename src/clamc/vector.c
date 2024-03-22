@@ -51,11 +51,11 @@ void Vector_add(Vector* vec, void* elem)
 	if (vec->size + 1 > vec->cap)
 		Vector_reserve(vec, vec->size * 2);
 
-	memcpy(vec->data + vec->size * vec->elemSize, elem, vec->elemSize);
+	memcpy((char*)vec->data + vec->size * vec->elemSize, elem, vec->elemSize);
 	vec->size++;
 }
 
 void* Vector_get(Vector* vec, int index)
 {
-	return vec->data + index * vec->elemSize;
+	return (char*)vec->data + index * vec->elemSize;
 }

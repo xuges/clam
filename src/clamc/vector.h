@@ -3,7 +3,7 @@
 
 struct Vector
 {
-	char* data;
+	void* data;
 	int size;
 	int cap;
 	int elemSize;
