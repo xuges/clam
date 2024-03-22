@@ -48,7 +48,8 @@ static const char* exprTypeToString[] =
 {
 	"EXPR_TYPE_INT",
 	"EXPR_TYPE_CALL",
-	"EXPR_TYPE_IDENT"
+	"EXPR_TYPE_IDENT",
+	"EXPR_TYPE_ASSIGN"
 };
 
 static const char* statTypeToString[] =
@@ -130,14 +131,21 @@ void _Printer_declaration(Printer* p, Declaration* decl)
 		break;
 
 	case DECL_TYPE_VARIANT:
-		_Printer_indent(p); printf("variant.type=" T_FMT "\n", T_arg(decl->variant.type));
-		_Printer_indent(p); printf("variant.name=" String_FMT "\n", String_arg(decl->variant.name));
-		_Printer_indent(p); printf("variant.initExpr=%s\n", decl->variant.initExpr ? "" : "NULL");
-
-		if (decl->variant.initExpr)
+		_Printer_indent(p); printf("variant=\n");
 		{
 			p->level++;
-			_Printer_expression(p, decl->variant.initExpr);
+
+			_Printer_indent(p); printf("type=" T_FMT "\n", T_arg(decl->variant.type));
+			_Printer_indent(p); printf("name=" String_FMT "\n", String_arg(decl->variant.name));
+			_Printer_indent(p); printf("initExpr=%s\n", decl->variant.initExpr ? "" : "NULL");
+
+			if (decl->variant.initExpr)
+			{
+				p->level++;
+				_Printer_expression(p, decl->variant.initExpr);
+				p->level--;
+			}
+
 			p->level--;
 		}
 
@@ -235,14 +243,35 @@ void _Printer_expression(Printer* p, Expression* expr)
 
 	case EXPR_TYPE_CALL:
 		_Printer_indent(p); printf("callExpr=\n");
-		p->level++;
-		_Printer_callExpression(p, expr);
-		p->level--;
+		{
+			p->level++;
+			_Printer_callExpression(p, expr);
+			p->level--;
+		}
 		break;
 
 	case EXPR_TYPE_IDENT:
 		_Printer_indent(p); printf("identExpr=" String_FMT "\n", String_arg(expr->identExpr));
 		break;
+
+	case EXPR_TYPE_ASSIGN:
+		_Printer_indent(p); printf("assignExpr=\n");
+		{
+			p->level++;
+			_Printer_indent(p); printf("lvalueExpr=\n");
+			{
+				p->level++;
+				_Printer_expression(p, expr->assignExpr.lvalueExpr);
+				p->level--;
+			}
+			_Printer_indent(p); printf("rvalueExpr=\n");
+			{
+				p->level++;
+				_Printer_expression(p, expr->assignExpr.rvalueExpr);
+				p->level--;
+			}
+			p->level--;
+		}
 	}
 
 }
@@ -269,5 +298,5 @@ void _Printer_callExpression(Printer* p, Expression* expr)
 void _Printer_indent(Printer* p)
 {
 	for (int i = 0; i < p->level; ++i)
-		printf("\t");
+		printf("  ");
 }

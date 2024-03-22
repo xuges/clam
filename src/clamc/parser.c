@@ -10,6 +10,7 @@ static Vector _Parser_parameterList(Parser* p);
 static Statement _Parser_statement(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
 static Expression* _Parser_expression(Parser* p);
+static Expression* _Parser_assignExpression(Parser* p);
 static Expression* _Parser_postfixExpression(Parser* p);
 static Expression* _Parser_primaryExpression(Parser* p);
 static Vector _Parser_argumentList(Parser* p);
@@ -252,7 +253,31 @@ Statement _Parser_statement(Parser* p)
 
 Expression* _Parser_expression(Parser* p)
 {
-	return _Parser_postfixExpression(p);
+	return _Parser_assignExpression(p);
+}
+
+Expression* _Parser_assignExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	Expression* lvalue = _Parser_postfixExpression(p);
+
+	ExprType exprType;
+	switch (token->value)
+	{
+	case TOKEN_VALUE_ASSIGN:
+		exprType = EXPR_TYPE_ASSIGN;
+		break;
+
+	default:
+		return lvalue;
+	}
+
+	Lexer_next(p->lex);
+
+	Expression* rvalue = _Parser_expression(p);  //TODO: check lvalue
+	return Expression_createAssign(&loc, exprType, lvalue, rvalue);
 }
 
 Expression* _Parser_postfixExpression(Parser* p)

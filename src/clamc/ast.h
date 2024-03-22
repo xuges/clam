@@ -79,8 +79,16 @@ enum ExprType
 	EXPR_TYPE_INT,
 	EXPR_TYPE_CALL,
 	EXPR_TYPE_IDENT,
+	EXPR_TYPE_ASSIGN,
 };
 typedef enum ExprType ExprType;
+
+struct AssignExpression
+{
+	struct Expression* lvalueExpr;
+	struct Expression* rvalueExpr;
+};
+typedef struct AssignExpression AssignExpression;
 
 struct CallExpression
 {
@@ -99,6 +107,7 @@ struct Expression
 		int intExpr;
 		CallExpression callExpr;
 		String identExpr;
+		AssignExpression assignExpr;
 	};
 };
 typedef struct Expression Expression;
@@ -106,6 +115,7 @@ typedef struct Expression Expression;
 Expression* Expression_createLiteral(ExprType type, Token* token);
 Expression* Expression_createCall(SourceLocation* loc, Expression* func);
 Expression* Expression_createIdent(SourceLocation* loc, Token* token);
+Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* lvalue, Expression* rvalue);
 
 void Expression_destroy(Expression* expr);
 

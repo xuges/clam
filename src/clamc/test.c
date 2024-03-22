@@ -254,6 +254,9 @@ static TestCase tests[] =
 	TEST(test_parser, "functions_return_int", "int foo(){return 1;}\nint bar(){return 2;}\nexport int main() { return 666; }")
 	TEST(test_parser, "multi_block1",          "export int main() { int a = 1; { int b = 2; } return a; }")
 	TEST(test_parser, "multi_block2",          "export int main() { int a = 1; { int b = 2; { int c = 3; { int d = a; } } } return a; }")
+	TEST(test_parser, "variant_assign1",       "int a = 0; void func() { a = 1; }")
+	TEST(test_parser, "variant_assign2",       "int a = 0; void func() { int b = 2; a = 1; }")
+	TEST(test_parser, "variant_assign3",       "int a = 0; void func() { int b = 2; { a = 1; } }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
