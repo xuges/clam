@@ -7,8 +7,9 @@
 
 static void _Generator_variant(Generator* gen, Declaration* decl);
 static void _Generator_function(Generator* gen, Declaration* decl);
+static void _Generator_parameterList(Generator* gen, Vector params, StringBuffer* buf);
 static void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat);
-static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Statement* stat);
+static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vector block);
 static void _Generator_expressionStatement(Generator* gen, Expression* expr);
 static void _Generator_returnStatement(Generator* gen, Statement* stat);
 static void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf);
@@ -141,8 +142,6 @@ void _Generator_variant(Generator* gen, Declaration* decl)
 
 void _Generator_function(Generator* gen, Declaration* decl)
 {
-	gen->level++;
-	
 	FuncDecl* func = &decl->function;
 
 	if (String_compare(&func->name, "main") != 0)  //not 'main'
@@ -159,7 +158,10 @@ void _Generator_function(Generator* gen, Declaration* decl)
 			//name
 			StringBuffer_appendString(&gen->header, &func->name);
 
-			StringBuffer_append(&gen->header, "();\n");    //TODO: add parameter list
+			//parameters
+			_Generator_parameterList(gen, func->parameters, &gen->header);
+
+			StringBuffer_append(&gen->header, ";\n");
 		}
 		else
 		{
@@ -173,7 +175,10 @@ void _Generator_function(Generator* gen, Declaration* decl)
 			//name
 			StringBuffer_appendString(&gen->srcDecl, &func->name);
 
-			StringBuffer_append(&gen->srcDecl, "();\n");    //TODO: add parameter list
+			//parameters
+			_Generator_parameterList(gen, func->parameters, &gen->srcDecl);
+
+			StringBuffer_append(&gen->srcDecl, ";\n");
 		}
 
 		//type
@@ -183,28 +188,52 @@ void _Generator_function(Generator* gen, Declaration* decl)
 		//name
 		StringBuffer_appendString(&gen->srcDef, &func->name);
 
-		StringBuffer_append(&gen->srcDef, "() {\n");    //TODO: add parameter list
+		//parameters
+		_Generator_parameterList(gen, func->parameters, &gen->srcDef);
 
-		for (int i = 0; i < func->block.size; ++i)
-		{
-			Statement* stat = Vector_get(&func->block, i);
-			_Generator_statement(gen, decl, stat);
-		}
+		StringBuffer_append(&gen->srcDef, " ");
 
-		gen->level--;
-		StringBuffer_append(&gen->srcDef, "}\n");
+		//block
+		_Generator_compoundStatement(gen, decl, func->block);
+
 		return;
 	}
 
+	//statements
 	gen->inMain = true;
+	gen->level++;
+
 	for (int i = 0; i < func->block.size; ++i)
 	{
-		Statement* stat = Vector_get(&func->block, i);
-		_Generator_statement(gen, decl, stat);
+		Statement* subStat = Vector_get(&func->block, i);
+		_Generator_statement(gen, decl, subStat);
 	}
-	gen->inMain = false;
 
 	gen->level--;
+	gen->inMain = false;
+}
+
+void _Generator_parameterList(Generator* gen, Vector params, StringBuffer* buf)
+{
+	StringBuffer_append(buf, "(");
+
+	for (int i = 0; i < params.size; ++i)
+	{
+		if (i != 0)
+			StringBuffer_append(buf, ", ");
+
+		Parameter* p = Vector_get(&params, i);
+
+		//type
+		StringBuffer_appendString(buf, &p->type.name);
+
+		StringBuffer_append(buf, " ");
+
+		//name
+		StringBuffer_appendString(buf, &p->name);
+	}
+
+	StringBuffer_append(buf, ")");
 }
 
 void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
@@ -216,7 +245,7 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 		break;
 
 	case STATEMENT_TYPE_COMPOUND:
-		_Generator_compoundStatement(gen, decl, stat);
+		_Generator_compoundStatement(gen, decl, stat->compound);
 		break;
 		
 	case STATEMENT_TYPE_EXPRESSION:
@@ -229,7 +258,7 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 	}
 }
 
-void _Generator_compoundStatement(Generator* gen, Declaration* decl, Statement* stat)
+void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vector block)
 {
 	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
 
@@ -238,9 +267,9 @@ void _Generator_compoundStatement(Generator* gen, Declaration* decl, Statement* 
 
 	gen->level++;
 
-	for (int i = 0; i < stat->compound.size; ++i)
+	for (int i = 0; i < block.size; ++i)
 	{
-		Statement* subStat = Vector_get(&stat->compound, i);
+		Statement* subStat = Vector_get(&block, i);
 		_Generator_statement(gen, decl, subStat);
 	}
 
@@ -301,7 +330,16 @@ void _Generator_callExpression(Generator* gen, CallExpression* call, StringBuffe
 	Expression* func = call->func;
 	StringBuffer_appendString(buf, &func->identExpr);
 	StringBuffer_append(buf, "(");
-	//TODO: add arguments
+
+	for (int i = 0; i < call->args.size; ++i)
+	{
+		if (i != 0)
+			StringBuffer_append(buf, ", ");
+
+		Expression* arg = Vector_get(&call->args, i);
+		_Generator_expression(gen, arg, buf);
+	}
+
 	StringBuffer_append(buf, ")");
 }
 
