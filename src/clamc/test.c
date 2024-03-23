@@ -333,6 +333,11 @@ static TestCase tests[] =
 	TEST(test_generator, "function_argument1",  "int foo(int a, int b) { return a; } export int main() { return foo(1, 2); }")
 	TEST(test_generator, "function_argument2",  "int foo(int a, int b) { return a; } export int main() { return foo(1, 2,); }")
 	TEST(test_generator, "function_argument3",  "int f1(int a) { return a; } int f2(int b) { return b; } int f3(int c) { return c; } export int main() { return f1(f2(f3(4))); }")
+	TEST(test_generator, "variant_assign1", "int a = 0; export int main() { a = 1; return a; }")
+	TEST(test_generator, "variant_assign2", "export int main() { int a = 1; a = 2; return a; }")
+	TEST(test_generator, "variant_assign3", "export int main() { int a = 2; return a = 3; }")
+	TEST(test_generator, "variant_assign4", "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
+	TEST(test_generator, "variant_assign5", "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
 
 	TEST_WRONG(test_generator, "local_variant_wrong1", "export int main() { int a = b; { int b = 0; } return 0; }")
 	TEST_WRONG(test_generator, "local_variant_wrong2", "export int main() { int a = 0; { int b = a; } return b; }")

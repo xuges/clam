@@ -13,7 +13,8 @@ static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vect
 static void _Generator_expressionStatement(Generator* gen, Expression* expr);
 static void _Generator_returnStatement(Generator* gen, Statement* stat);
 static void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf);
-static void _Generator_callExpression(Generator* gen, CallExpression* call, StringBuffer* buf);
+static void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf);
+static void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 
 static void _Generator_indent(Generator* gen, StringBuffer* buf);
 
@@ -320,27 +321,37 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 		break;
 
 	case EXPR_TYPE_CALL:
-		_Generator_callExpression(gen, &expr->callExpr, buf);
+		_Generator_callExpression(gen, expr, buf);
+		break;
+
+	case EXPR_TYPE_ASSIGN:
+		_Generator_assignExpression(gen, expr, buf);
 		break;
 	}
 }
 
-void _Generator_callExpression(Generator* gen, CallExpression* call, StringBuffer* buf)
+void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf)
 {
-	Expression* func = call->func;
-	StringBuffer_appendString(buf, &func->identExpr);
+	StringBuffer_appendString(buf, &expr->callExpr.func->identExpr);
 	StringBuffer_append(buf, "(");
 
-	for (int i = 0; i < call->args.size; ++i)
+	for (int i = 0; i < expr->callExpr.args.size; ++i)
 	{
 		if (i != 0)
 			StringBuffer_append(buf, ", ");
 
-		Expression* arg = Vector_get(&call->args, i);
+		Expression* arg = Vector_get(&expr->callExpr.args, i);
 		_Generator_expression(gen, arg, buf);
 	}
 
 	StringBuffer_append(buf, ")");
+}
+
+void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer* buf)
+{
+	_Generator_expression(gen, expr->assignExpr.lvalueExpr, buf);
+	StringBuffer_append(buf, " = ");
+	_Generator_expression(gen, expr->assignExpr.rvalueExpr, buf);
 }
 
 void _Generator_indent(Generator* gen, StringBuffer* buf)
