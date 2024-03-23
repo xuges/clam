@@ -35,7 +35,8 @@ static void _Executor_function(Executor* exec, Declaration* decl, Vector args);
 static ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* stat);
 static ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* decl,  Statement* stat);
 static void _Executor_expression(Executor* exec, Expression* expr);
-static void _Executor_callExpression(Executor* exec, Expression* callExpr);
+static void _Executor_callExpression(Executor* exec, Expression* expr);
+static void _Executor_assignExpression(Executor* exec, Expression* expr);
 static Value* _Executor_findVariant(Executor* exec, String name);
 static Declaration* _Executor_fincFunction(Executor* exec, String name);
 static void _Executor_enterBlock(Executor* exec);
@@ -209,6 +210,10 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_CALL:
 		_Executor_callExpression(exec, expr);
 		break;
+
+	case EXPR_TYPE_ASSIGN:
+		_Executor_assignExpression(exec, expr);
+		break;
 	}
 }
 
@@ -219,6 +224,22 @@ void _Executor_callExpression(Executor* exec, Expression* expr)
 
 	//call function
 	_Executor_function(exec, decl, expr->callExpr.args);
+}
+
+void _Executor_assignExpression(Executor* exec, Expression* expr)
+{
+	//find lvalue variant
+	Value* lvalue = _Executor_findVariant(exec, expr->assignExpr.lvalueExpr->identExpr);  //TODO: process expression first
+
+	//eval rvalue
+	_Executor_expression(exec, expr->assignExpr.rvalueExpr);
+	Value* rvalue = Stack_pop(&exec->stack);
+
+	//assign
+	lvalue->intValue = rvalue->intValue;
+
+	//push
+	Stack_push(&exec->stack, lvalue);
 }
 
 Value* _Executor_findVariant(Executor* exec, String name)

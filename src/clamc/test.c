@@ -257,6 +257,8 @@ static TestCase tests[] =
 	TEST(test_parser, "variant_assign1",       "int a = 0; void func() { a = 1; }")
 	TEST(test_parser, "variant_assign2",       "int a = 0; void func() { int b = 2; a = 1; }")
 	TEST(test_parser, "variant_assign3",       "int a = 0; void func() { int b = 2; { a = 1; } }")
+	TEST(test_parser, "variant_assign4",       "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
+	TEST(test_parser, "variant_assign5",       "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
@@ -305,6 +307,11 @@ static TestCase tests[] =
 	TEST(test_executor, "function_argument1",   "int foo(int a, int b) { return a; } export int main() { return foo(1, 2); }")
 	TEST(test_executor, "function_argument2",   "int foo(int a, int b) { return a; } int bar() { return 6; } export int main() { return foo(bar(), 2); }")
 	TEST(test_executor, "function_argument3",   "int f1(int a) { return a; } int f2(int b) { return b; } int f3(int c) { return c; } export int main() { return f1(f2(f3(4))); }")
+	TEST(test_executor, "variant_assign1",      "int a = 0; export int main() { a = 1; return a; }")
+	TEST(test_executor, "variant_assign2",      "export int main() { int a = 1; a = 2; return a; }")
+	TEST(test_executor, "variant_assign3",      "export int main() { int a = 2; return a = 3; }")
+	TEST(test_executor, "variant_assign4",      "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
+	TEST(test_executor, "variant_assign5",      "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
 
 	TEST_WRONG(test_executor, "main_wrong1",           "int main() { return 12345; }")
 	TEST_WRONG(test_executor, "main_wrong2",           "export void main() { return 0; }")
