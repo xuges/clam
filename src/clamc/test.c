@@ -274,6 +274,7 @@ static TestCase tests[] =
 	TEST(test_analyzer,       "function_parameter2", "int foo(int a, int b, int c, int d) { return a; return b; return c; return d; }")
 	TEST(test_analyzer,       "function_argument1",  "int foo(int a, int b) { return a; } export int main() { return foo(1, 2); }")
 	TEST(test_analyzer,       "function_argument2",  "int foo(int a, int b) { return a; } int bar() { return 1; } export int main() { return foo(bar(), 2); }")
+	TEST(test_analyzer,       "variant_assign",      "int a = 0; void func() { a = 1; }")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -284,6 +285,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "function_parameter_wrong1", "int foo(int a, int b, int c, int d) { int a = 0; return a; }")
 	TEST_WRONG(test_analyzer, "function_argument_wrong1",  "int foo(int a, int b) { return a; } export int main() { foo(1, 2, 3); return 0; }")
 	TEST_WRONG(test_analyzer, "function_argument_wrong2",  "int foo(int a, int b) { return a; } void print() {} export int main() { return foo(1, print()); }")
+	TEST_WRONG(test_analyzer, "variant_assign_wrong1",     "void func() { 1 = 0; }")
+	TEST_WRONG(test_analyzer, "variant_assign_wrong2",     "void foo() {} void func() { int a; a = foo(); }")
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
 	TEST(test_executor, "void_function",        "void foo() { } export int main() { foo(); return 0; }")

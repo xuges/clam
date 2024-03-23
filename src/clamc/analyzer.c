@@ -23,6 +23,7 @@ static bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* st
 static bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
 static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
 static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
+static Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
 
@@ -217,6 +218,10 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 
 	case EXPR_TYPE_CALL:
 		return _Analyzer_callExpression(anly, expr);
+
+	case EXPR_TYPE_ASSIGN:
+		return _Analyzer_assignExpression(anly, expr);
+
 	}
 	return errorType;
 }
@@ -249,6 +254,19 @@ Type _Analyzer_callExpression(Analyzer* anly, Expression* expr)
 	}
 
 	return decl->function.resType;
+}
+
+Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr)
+{
+	if (expr->assignExpr.lvalueExpr->type != EXPR_TYPE_IDENT)  //TODO: more regular (simulate eval and lvalue rvalue xvalue)
+		error(&expr->location, "expected lvalue");
+
+	Type ltype = _Analyzer_expression(anly, expr->assignExpr.lvalueExpr);
+	Type rtype = _Analyzer_expression(anly, expr->assignExpr.rvalueExpr);
+	if (ltype.id != rtype.id)  //TODO: implict type cast
+		error(&expr->location, "lvalue and rvalue type not match");
+
+	return ltype;
 }
 
 Variant* _Analyzer_findVariant(Analyzer* anly, String name)
