@@ -11,6 +11,9 @@ static Statement _Parser_statement(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
 static Expression* _Parser_expression(Parser* p);
 static Expression* _Parser_assignExpression(Parser* p);
+static Expression* _Parser_unaryExpression(Parser* p);
+static Expression* _Parser_additiveExpression(Parser* p);
+//static Expression* _Parser_multiplicativeExpression(Parser* p);
 static Expression* _Parser_postfixExpression(Parser* p);
 static Expression* _Parser_primaryExpression(Parser* p);
 static Vector _Parser_argumentList(Parser* p);
@@ -261,7 +264,7 @@ Expression* _Parser_assignExpression(Parser* p)
 	Token* token = Lexer_peek(p->lex);
 	SourceLocation loc = token->location;
 
-	Expression* lvalue = _Parser_postfixExpression(p);
+	Expression* left = _Parser_additiveExpression(p);
 
 	ExprType exprType;
 	switch (token->value)
@@ -271,13 +274,65 @@ Expression* _Parser_assignExpression(Parser* p)
 		break;
 
 	default:
-		return lvalue;
+		return left;
 	}
 
 	Lexer_next(p->lex);
 
-	Expression* rvalue = _Parser_expression(p);  //TODO: check lvalue
-	return Expression_createAssign(&loc, exprType, lvalue, rvalue);
+	Expression* right = _Parser_expression(p);
+	return Expression_createAssign(&loc, exprType, left, right);
+}
+
+Expression* _Parser_additiveExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	//Expression* left = _Parser_multiplicativeExpression(p);
+	Expression* left = _Parser_unaryExpression(p);
+
+	while (token->value == TOKEN_VALUE_ADD)
+	{
+		ExprType exprType;
+		switch (token->value)
+		{
+		case TOKEN_VALUE_ADD:
+			exprType = EXPR_TYPE_ADD;
+			break;
+		}
+
+		Lexer_next(p->lex);
+
+		//Expression* right = _Parser_multiplicativeExpression(p);
+		Expression* right = _Parser_unaryExpression(p);
+		left = Expression_createBinary(&loc, exprType, left, right);
+		token = Lexer_peek(p->lex);
+		loc = token->location;
+	}
+
+	return left;
+}
+
+Expression* _Parser_unaryExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	ExprType exprType;
+	switch (token->value)
+	{
+	case TOKEN_VALUE_ADD:
+		exprType = EXPR_TYPE_PLUS;
+		break;
+
+	default:
+		return _Parser_postfixExpression(p);
+	}
+
+	Lexer_next(p->lex);
+
+	Expression* right = _Parser_unaryExpression(p);
+	return Expression_createUnary(&loc, exprType, right);
 }
 
 Expression* _Parser_postfixExpression(Parser* p)

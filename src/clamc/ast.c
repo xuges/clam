@@ -94,22 +94,53 @@ Expression* Expression_createIdent(SourceLocation* loc, Token* token)
 	return expr;
 }
 
-Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* lvalue, Expression* rvalue)
+Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* left, Expression* right)
 {
 	Expression* expr = _Expression_create(type, loc);
-	expr->assignExpr.leftExpr = lvalue;
-	expr->assignExpr.rightExpr = rvalue;
+	expr->assignExpr.leftExpr = left;
+	expr->assignExpr.rightExpr = right;
+	return expr;
+}
+
+Expression* Expression_createUnary(SourceLocation* loc, ExprType type, Expression* right)
+{
+	Expression* expr = _Expression_create(type, loc);
+	expr->unaryExpr = right;
+	return expr;
+}
+
+Expression* Expression_createBinary(SourceLocation* loc, ExprType type, Expression* left, Expression* right)
+{
+	Expression* expr = _Expression_create(type, loc);
+	expr->binaryExpr.leftExpr = left;
+	expr->binaryExpr.rightExpr = right;
 	return expr;
 }
 
 void Expression_destroy(Expression* expr)
 {
-	if (expr->type == EXPR_TYPE_CALL)
+	switch (expr->type)
 	{
+	case EXPR_TYPE_CALL:
 		Expression_destroy(expr->callExpr.func);
+		free(expr->callExpr.func);
 		for (int i = 0; i < expr->callExpr.args.size; ++i)
 			free(Vector_get(&expr->callExpr.args, i));
 		Vector_destroy(&expr->callExpr.args);
+		break;
+
+	case EXPR_TYPE_ASSIGN:
+	case EXPR_TYPE_ADD:
+		Expression_destroy(expr->assignExpr.leftExpr);
+		Expression_destroy(expr->assignExpr.rightExpr);
+		free(expr->assignExpr.leftExpr);
+		free(expr->assignExpr.rightExpr);
+		break;
+
+	case EXPR_TYPE_PLUS:
+		Expression_destroy(expr->unaryExpr);
+		free(expr->unaryExpr);
+		break;
 	}
 
 	free(expr);

@@ -50,7 +50,9 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_INT",
 	"EXPR_TYPE_CALL",
 	"EXPR_TYPE_IDENT",
-	"EXPR_TYPE_ASSIGN"
+	"EXPR_TYPE_ASSIGN",
+	"EXPR_TYPE_PLUS",
+	"EXPR_TYPE_ADD",
 };
 
 static const char* statTypeToString[] =
@@ -87,6 +89,7 @@ static void _Printer_declaration(Printer* p, Declaration* decl);
 static void _Printer_function(Printer* p, Declaration* decl);
 static void _Printer_statement(Printer* p, Statement* stat);
 static void _Printer_expression(Printer* p, Expression* expr);
+static void _Printer_binaryExpression(Printer* p, Expression* expr);
 static void _Printer_callExpression(Printer* p, Expression* expr);
 static void _Printer_indent(Printer* p);
 
@@ -244,11 +247,9 @@ void _Printer_expression(Printer* p, Expression* expr)
 
 	case EXPR_TYPE_CALL:
 		_Printer_indent(p); printf("callExpr=\n");
-		{
-			p->level++;
-			_Printer_callExpression(p, expr);
-			p->level--;
-		}
+		p->level++;
+		_Printer_callExpression(p, expr);
+		p->level--;
 		break;
 
 	case EXPR_TYPE_IDENT:
@@ -257,24 +258,43 @@ void _Printer_expression(Printer* p, Expression* expr)
 
 	case EXPR_TYPE_ASSIGN:
 		_Printer_indent(p); printf("assignExpr=\n");
-		{
-			p->level++;
-			_Printer_indent(p); printf("leftExpr=\n");
-			{
-				p->level++;
-				_Printer_expression(p, expr->assignExpr.leftExpr);
-				p->level--;
-			}
-			_Printer_indent(p); printf("rightExpr=\n");
-			{
-				p->level++;
-				_Printer_expression(p, expr->assignExpr.rightExpr);
-				p->level--;
-			}
-			p->level--;
-		}
+		p->level++;
+		_Printer_binaryExpression(p, expr);
+		p->level--;
+		break;
+
+	case EXPR_TYPE_PLUS:
+		_Printer_indent(p); printf("unaryExpr=\n");
+		p->level++;
+		_Printer_expression(p, expr->unaryExpr);
+		p->level--;
+		break;
+
+	case EXPR_TYPE_ADD:
+		_Printer_indent(p); printf("binaryExpr=\n");
+		p->level++;
+		_Printer_binaryExpression(p, expr);
+		p->level--;
+		break;
+
 	}
 
+}
+
+void _Printer_binaryExpression(Printer* p, Expression* expr)
+{
+	_Printer_indent(p); printf("leftExpr=\n");
+	{
+		p->level++;
+		_Printer_expression(p, expr->binaryExpr.leftExpr);
+		p->level--;
+	}
+	_Printer_indent(p); printf("rightExpr=\n");
+	{
+		p->level++;
+		_Printer_expression(p, expr->binaryExpr.rightExpr);
+		p->level--;
+	}
 }
 
 void _Printer_callExpression(Printer* p, Expression* expr)

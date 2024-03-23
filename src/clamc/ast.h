@@ -80,6 +80,8 @@ enum ExprType
 	EXPR_TYPE_CALL,
 	EXPR_TYPE_IDENT,
 	EXPR_TYPE_ASSIGN,
+	EXPR_TYPE_PLUS,   //unary
+	EXPR_TYPE_ADD,    //binary
 };
 typedef enum ExprType ExprType;
 
@@ -119,7 +121,9 @@ typedef struct Expression Expression;
 Expression* Expression_createLiteral(ExprType type, Token* token);
 Expression* Expression_createCall(SourceLocation* loc, Expression* func);
 Expression* Expression_createIdent(SourceLocation* loc, Token* token);
-Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* lvalue, Expression* rvalue);
+Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* left, Expression* right);
+Expression* Expression_createUnary(SourceLocation* loc, ExprType type, Expression* right);
+Expression* Expression_createBinary(SourceLocation* loc, ExprType type, Expression* left, Expression* right);
 
 void Expression_destroy(Expression* expr);
 

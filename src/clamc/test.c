@@ -260,6 +260,9 @@ static TestCase tests[] =
 	TEST(test_parser, "variant_assign3",       "int a = 0; void func() { int b = 2; { a = 1; } }")
 	TEST(test_parser, "variant_assign4",       "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
 	TEST(test_parser, "variant_assign5",       "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
+	TEST(test_parser, "add_expression1",        "export int main() { int a = 1 + 1; return a; }")
+	TEST(test_parser, "add_expression2",        "export int main() { int a = 1 + 2 + 3; return a; }")
+	TEST(test_parser, "plus_expression",        "export int main() { int a = 1; a = +1; return a; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
@@ -367,7 +370,7 @@ static void usage()
 
 int main(int argc, char** argv)
 {
-
+	TEST(test_parser, "plus_expression", "export int main() { int a = 1; a = +1; return a; }")
 	//options
 	bool all = true;
 	bool run = false;
