@@ -259,16 +259,16 @@ void _Printer_expression(Printer* p, Expression* expr)
 		_Printer_indent(p); printf("assignExpr=\n");
 		{
 			p->level++;
-			_Printer_indent(p); printf("lvalueExpr=\n");
+			_Printer_indent(p); printf("leftExpr=\n");
 			{
 				p->level++;
-				_Printer_expression(p, expr->assignExpr.lvalueExpr);
+				_Printer_expression(p, expr->assignExpr.leftExpr);
 				p->level--;
 			}
-			_Printer_indent(p); printf("rvalueExpr=\n");
+			_Printer_indent(p); printf("rightExpr=\n");
 			{
 				p->level++;
-				_Printer_expression(p, expr->assignExpr.rvalueExpr);
+				_Printer_expression(p, expr->assignExpr.rightExpr);
 				p->level--;
 			}
 			p->level--;

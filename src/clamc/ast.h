@@ -83,12 +83,14 @@ enum ExprType
 };
 typedef enum ExprType ExprType;
 
-struct AssignExpression
+struct BinaryExpression
 {
-	struct Expression* lvalueExpr;
-	struct Expression* rvalueExpr;
+	struct Expression* leftExpr;
+	struct Expression* rightExpr;
 };
-typedef struct AssignExpression AssignExpression;
+typedef struct BinaryExpression BinaryExpression;
+
+typedef struct BinaryExpression AssignExpression;
 
 struct CallExpression
 {
@@ -108,6 +110,8 @@ struct Expression
 		CallExpression callExpr;
 		String identExpr;
 		AssignExpression assignExpr;
+		struct Expression* unaryExpr;
+		BinaryExpression binaryExpr;
 	};
 };
 typedef struct Expression Expression;

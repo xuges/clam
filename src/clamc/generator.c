@@ -349,9 +349,9 @@ void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* b
 
 void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer* buf)
 {
-	_Generator_expression(gen, expr->assignExpr.lvalueExpr, buf);
+	_Generator_expression(gen, expr->assignExpr.leftExpr, buf);
 	StringBuffer_append(buf, " = ");
-	_Generator_expression(gen, expr->assignExpr.rvalueExpr, buf);
+	_Generator_expression(gen, expr->assignExpr.rightExpr, buf);
 }
 
 void _Generator_indent(Generator* gen, StringBuffer* buf)

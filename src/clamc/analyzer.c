@@ -258,11 +258,11 @@ Type _Analyzer_callExpression(Analyzer* anly, Expression* expr)
 
 Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr)
 {
-	if (expr->assignExpr.lvalueExpr->type != EXPR_TYPE_IDENT)  //TODO: more regular (simulate eval and lvalue rvalue xvalue)
+	if (expr->assignExpr.leftExpr->type != EXPR_TYPE_IDENT)  //TODO: more regular (simulate eval and lvalue rvalue xvalue)
 		error(&expr->location, "expected lvalue");
 
-	Type ltype = _Analyzer_expression(anly, expr->assignExpr.lvalueExpr);
-	Type rtype = _Analyzer_expression(anly, expr->assignExpr.rvalueExpr);
+	Type ltype = _Analyzer_expression(anly, expr->assignExpr.leftExpr);
+	Type rtype = _Analyzer_expression(anly, expr->assignExpr.rightExpr);
 	if (ltype.id != rtype.id)  //TODO: implict type cast
 		error(&expr->location, "lvalue and rvalue type not match");
 

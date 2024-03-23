@@ -97,8 +97,8 @@ Expression* Expression_createIdent(SourceLocation* loc, Token* token)
 Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* lvalue, Expression* rvalue)
 {
 	Expression* expr = _Expression_create(type, loc);
-	expr->assignExpr.lvalueExpr = lvalue;
-	expr->assignExpr.rvalueExpr = rvalue;
+	expr->assignExpr.leftExpr = lvalue;
+	expr->assignExpr.rightExpr = rvalue;
 	return expr;
 }
 

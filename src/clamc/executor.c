@@ -229,10 +229,10 @@ void _Executor_callExpression(Executor* exec, Expression* expr)
 void _Executor_assignExpression(Executor* exec, Expression* expr)
 {
 	//find lvalue variant
-	Value* lvalue = _Executor_findVariant(exec, expr->assignExpr.lvalueExpr->identExpr);  //TODO: process expression first
+	Value* lvalue = _Executor_findVariant(exec, expr->assignExpr.leftExpr->identExpr);  //TODO: process expression first
 
 	//eval rvalue
-	_Executor_expression(exec, expr->assignExpr.rvalueExpr);
+	_Executor_expression(exec, expr->assignExpr.rightExpr);
 	Value* rvalue = Stack_pop(&exec->stack);
 
 	//assign
