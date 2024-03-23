@@ -1,5 +1,19 @@
+--- 2024-03-23 clam-0.0.2 ---
+1. 增加void类型。
+   Add void type.
+2. 增加变量声明。
+   Add variant declaration.
+3. 增加赋值表达式。
+   Add assign expression.
+4. 增加函数形参、调用实参。
+   Add function parameter and argument.
+5. 修改语法设计。
+   Modify language grammar design.
+6. 优化调整部分代码。
+   Refactor some code.
+
 --- 2024-03-11 clam-0.0.1 ---
 1. 创建项目工程文件。
    Create clam project.
 2. 设计并完成最简语言形式。
-	Design and complete the basic language form.
+   Design and complete the basic language form.
