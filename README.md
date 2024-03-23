@@ -5,18 +5,34 @@
 
 ## Example
 
-**v0.0.1 **
-
 ```
-export int main() {
-	return foo();
+int a = 1;
+int b = 2;
+int c = foo();
+int d = first(4, 5, 6);
+
+int foo()
+{
+	return 3;
 }
 
-int foo() {
-	return bar();
+export int first(int arg1, int arg2, int arg3)
+{
+	return arg1;
 }
 
-int bar() {
-	return 666;
+export int main()
+{
+	{
+		int d = 8;
+		{
+			a = d;
+		}
+	}
+	
+	a = first(d, c, b);
+	a = b = c = d = 8;
+	
+	return a;
 }
 ```
