@@ -40,7 +40,7 @@ static void _Executor_assignExpression(Executor* exec, Expression* expr);
 static void _Executor_unaryExpression(Executor* exec, Expression* expr);
 static void _Executor_binaryExpression(Executor* exec, Expression* expr);
 static Value* _Executor_findVariant(Executor* exec, String name);
-static Declaration* _Executor_fincFunction(Executor* exec, String name);
+static Declaration* _Executor_findFunction(Executor* exec, String name);
 static void _Executor_enterBlock(Executor* exec);
 static void _Executor_leaveBlock(Executor* exec);
 static Stack _Executor_enterFunction(Executor* exec, int argc);
@@ -75,9 +75,9 @@ void Executor_run(Executor* exec, Module* module)
 
 	//find main
 	String main = String_literal("main");
-	Declaration* decl = _Executor_fincFunction(exec, main);
+	Declaration* decl = _Executor_findFunction(exec, main);
 	if (!decl)
-		error(NULL, 0, 0, "function 'main' not found");
+		error(NULL, "function 'main' not found");
 
 	//call main
 	Vector args;
@@ -218,10 +218,12 @@ void _Executor_expression(Executor* exec, Expression* expr)
 		break;
 
 	case EXPR_TYPE_PLUS:
+	case EXPR_TYPE_MINUS:
 		_Executor_unaryExpression(exec, expr);
 		break;
 
 	case EXPR_TYPE_ADD:
+	case EXPR_TYPE_SUB:
 		_Executor_binaryExpression(exec, expr);
 		break;
 	}
@@ -230,7 +232,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 void _Executor_callExpression(Executor* exec, Expression* expr)
 {
 	//find function
-	Declaration* decl = _Executor_fincFunction(exec, expr->callExpr.func->identExpr);
+	Declaration* decl = _Executor_findFunction(exec, expr->callExpr.func->identExpr);
 
 	//call function
 	_Executor_function(exec, decl, expr->callExpr.args);
@@ -254,17 +256,25 @@ void _Executor_assignExpression(Executor* exec, Expression* expr)
 
 void _Executor_unaryExpression(Executor* exec, Expression* expr)
 {
-	Value* v;
+	_Executor_expression(exec, expr->unaryExpr);
+	Value* value = Stack_top(&exec->stack);
 
 	switch (expr->type)
 	{
 	case EXPR_TYPE_PLUS:
-		_Executor_expression(exec, expr->unaryExpr);
-		v = Stack_top(&exec->stack);
-		switch (v->type.id)
+		switch (value->type.id)
 		{
 		case TYPE_INT:
-			v->intValue = +v->intValue;
+			value->intValue = +value->intValue;
+			break;
+		}
+		break;
+
+	case EXPR_TYPE_MINUS:
+		switch (value->type.id)
+		{
+		case TYPE_INT:
+			value->intValue = -value->intValue;
 			break;
 		}
 		break;
@@ -288,7 +298,16 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 			lvalue->intValue += rvalue->intValue;
 			break;
 		}
-		
+		break;
+
+	case EXPR_TYPE_SUB:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			lvalue->intValue -= rvalue->intValue;
+			break;
+		}
+		break;
 	}
 }
 
@@ -311,7 +330,7 @@ Value* _Executor_findVariant(Executor* exec, String name)
 	return NULL;
 }
 
-Declaration* _Executor_fincFunction(Executor* exec, String name)
+Declaration* _Executor_findFunction(Executor* exec, String name)
 {
 	for (int i = 0; i < exec->module->functions.size; i++)
 	{
