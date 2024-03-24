@@ -230,6 +230,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
 		return _Analyzer_binaryExpression(anly, expr);
 	}
 	return errorType;
@@ -313,6 +314,7 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	{
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
 		//TODO: more operation type regular
 		switch (ltype.id)
 		{

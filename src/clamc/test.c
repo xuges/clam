@@ -269,6 +269,7 @@ static TestCase tests[] =
 	TEST(test_parser, "mul_expression1",      "int a =  2 * 2; int b = a * 2;")
 	TEST(test_parser, "mul_expression2",      "int a =  2 * 2; int b = a * 2; int c = foo() * a * bar();")
 	TEST(test_parser, "operation1",           "int a = 1 + 2 - 4; int b = a + 3 + 4 - 1; int c = b - a; int d = a + b - c;")
+	TEST(test_parser, "operation2",           "int a = 1 * 2 + 3 * 4 - 5 * 6;")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
@@ -297,7 +298,10 @@ static TestCase tests[] =
 	TEST(test_analyzer, "sub_expression2",     "int a = 3 - 2 - 1;")
 	TEST(test_analyzer, "minus_expression1",   "int a = -1; int b = -a;")
 	TEST(test_analyzer, "minus_expression2",   "int a = -1; int b = -a; int c = foo(); int foo() { return 0; }")
+	TEST(test_analyzer, "mul_expression1",     "int a = 2 * 2; int b = a * 2;")
+	TEST(test_analyzer, "mul_expression2",     "int a = 2 * foo(); int foo() { return 2; }")
 	TEST(test_analyzer, "operation1",          "int a = -1; int b = -a; int c = -a + -b; int d = +a - -b;")
+	TEST(test_analyzer, "operation2",          "int a = 1 * 2 + 3 * 4 - 5 * 6;")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -318,6 +322,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "sub_expression_wrong2",     "int a = 1 - foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "minus_expression_wrong1",   "int a = -b;")
 	TEST_WRONG(test_analyzer, "minus_expression_wrong2",   "int a = -foo(); void foo() {}")
+	TEST_WRONG(test_analyzer, "mul_expression_wrong1",     "int a = 2 * b;")
+	TEST_WRONG(test_analyzer, "mul_expression_wrong2",     "int a = 2 * foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "operation_wrong1",          "int a = a - b + 1;")
 	TEST_WRONG(test_analyzer, "operation_wrong2",          "int a = 1 + foo() - bar(); int foo() { return 0; } void bar() {}")
 
