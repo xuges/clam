@@ -84,6 +84,7 @@ enum ExprType
 	EXPR_TYPE_MINUS,
 	EXPR_TYPE_ADD,    //binary
 	EXPR_TYPE_SUB,
+	EXPR_TYPE_MUL,
 };
 typedef enum ExprType ExprType;
 

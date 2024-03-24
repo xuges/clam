@@ -13,7 +13,7 @@ static Expression* _Parser_expression(Parser* p);
 static Expression* _Parser_assignExpression(Parser* p);
 static Expression* _Parser_unaryExpression(Parser* p);
 static Expression* _Parser_additiveExpression(Parser* p);
-//static Expression* _Parser_multiplicativeExpression(Parser* p);
+static Expression* _Parser_multiplicativeExpression(Parser* p);
 static Expression* _Parser_postfixExpression(Parser* p);
 static Expression* _Parser_primaryExpression(Parser* p);
 static Vector _Parser_argumentList(Parser* p);
@@ -288,9 +288,8 @@ Expression* _Parser_additiveExpression(Parser* p)
 	Token* token = Lexer_peek(p->lex);
 	SourceLocation loc = token->location;
 
-	//Expression* left = _Parser_multiplicativeExpression(p);
-	Expression* left = _Parser_unaryExpression(p);
-
+	Expression* left = _Parser_multiplicativeExpression(p);
+	
 	while (token->value == TOKEN_VALUE_ADD || token->value == TOKEN_VALUE_SUB)
 	{
 		ExprType exprType;
@@ -307,7 +306,34 @@ Expression* _Parser_additiveExpression(Parser* p)
 
 		Lexer_next(p->lex);
 
-		//Expression* right = _Parser_multiplicativeExpression(p);
+		Expression* right = _Parser_multiplicativeExpression(p);
+		left = Expression_createBinary(&loc, exprType, left, right);
+		token = Lexer_peek(p->lex);
+		loc = token->location;
+	}
+
+	return left;
+}
+
+Expression* _Parser_multiplicativeExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	Expression* left = _Parser_unaryExpression(p);
+
+	while (token->value == TOKEN_VALUE_STAR)
+	{
+		ExprType exprType;
+		switch (token->value)
+		{
+		case TOKEN_VALUE_STAR:
+			exprType = EXPR_TYPE_MUL;
+			break;
+		}
+
+		Lexer_next(p->lex);
+
 		Expression* right = _Parser_unaryExpression(p);
 		left = Expression_createBinary(&loc, exprType, left, right);
 		token = Lexer_peek(p->lex);

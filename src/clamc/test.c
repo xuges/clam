@@ -266,6 +266,8 @@ static TestCase tests[] =
 	TEST(test_parser, "plus_expression2",     "export int main() { int a = 1; int b = 2; a = +b; return a; }")
 	TEST(test_parser, "sub_expression1",      "int a = 1 - 1; int b = 1 - a; int c = 3 - 2 - 1 - a;")
 	TEST(test_parser, "minus_expression1",    "int a = -1; int b = -a;")
+	TEST(test_parser, "mul_expression1",      "int a =  2 * 2; int b = a * 2;")
+	TEST(test_parser, "mul_expression2",      "int a =  2 * 2; int b = a * 2; int c = foo() * a * bar();")
 	TEST(test_parser, "operation1",           "int a = 1 + 2 - 4; int b = a + 3 + 4 - 1; int c = b - a; int d = a + b - c;")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
