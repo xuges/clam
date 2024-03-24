@@ -377,6 +377,12 @@ static TestCase tests[] =
 	TEST(test_generator, "plus_expression1",    "int a = +1; int b = +a; export int main() { return b; }")
 	TEST(test_generator, "plus_expression2",    "int a = +foo(); int foo() { return 1; } export int main() { return a; }")
 	TEST(test_generator, "plus_expression3",    "int a = 1 + +foo(); int foo() { return 1; } export int main() { return a; }")
+	TEST(test_generator, "sub_expression1",     "int a = 1 - 1; export int main() { return a; }")
+	TEST(test_generator, "sub_expression2",     "int a = 3 - 2 - 1; export int main() { return a; }")
+	TEST(test_generator, "minus_expression1",   "int a = -1; int b = -a; export int main() { return b; }")
+	TEST(test_generator, "minus_expression2",   "int a = -1; int b = -a; int c = foo(); int foo() { return 0; } export int main() { return b; }")
+	TEST(test_generator, "operation1",          "int a = -1; int b = -a; int c = -a + -b; int d = +a - -b; export int main() { return a; }")
+
 };
 #undef TEST
 #undef TEST_WRONG
