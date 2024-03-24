@@ -291,13 +291,17 @@ Expression* _Parser_additiveExpression(Parser* p)
 	//Expression* left = _Parser_multiplicativeExpression(p);
 	Expression* left = _Parser_unaryExpression(p);
 
-	while (token->value == TOKEN_VALUE_ADD)
+	while (token->value == TOKEN_VALUE_ADD || token->value == TOKEN_VALUE_SUB)
 	{
 		ExprType exprType;
 		switch (token->value)
 		{
 		case TOKEN_VALUE_ADD:
 			exprType = EXPR_TYPE_ADD;
+			break;
+
+		case TOKEN_VALUE_SUB:
+			exprType = EXPR_TYPE_SUB;
 			break;
 		}
 
@@ -323,6 +327,10 @@ Expression* _Parser_unaryExpression(Parser* p)
 	{
 	case TOKEN_VALUE_ADD:
 		exprType = EXPR_TYPE_PLUS;
+		break;
+
+	case TOKEN_VALUE_SUB:
+		exprType = EXPR_TYPE_MINUS;
 		break;
 
 	default:

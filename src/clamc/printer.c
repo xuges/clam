@@ -53,7 +53,9 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_IDENT",
 	"EXPR_TYPE_ASSIGN",
 	"EXPR_TYPE_PLUS",
+	"EXPR_TYPE_MINUS",
 	"EXPR_TYPE_ADD",
+	"EXPR_TYPE_SUB"
 };
 
 static const char* statTypeToString[] =
@@ -265,6 +267,7 @@ void _Printer_expression(Printer* p, Expression* expr)
 		break;
 
 	case EXPR_TYPE_PLUS:
+	case EXPR_TYPE_MINUS:
 		_Printer_indent(p); printf("unaryExpr=\n");
 		p->level++;
 		_Printer_expression(p, expr->unaryExpr);
@@ -272,6 +275,7 @@ void _Printer_expression(Printer* p, Expression* expr)
 		break;
 
 	case EXPR_TYPE_ADD:
+	case EXPR_TYPE_SUB:
 		_Printer_indent(p); printf("binaryExpr=\n");
 		p->level++;
 		_Printer_binaryExpression(p, expr);
