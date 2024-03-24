@@ -13,8 +13,11 @@ static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vect
 static void _Generator_expressionStatement(Generator* gen, Expression* expr);
 static void _Generator_returnStatement(Generator* gen, Statement* stat);
 static void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf);
+static void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
+static void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer* buf);
+static bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType exprType);
 
 static void _Generator_indent(Generator* gen, StringBuffer* buf);
 
@@ -103,7 +106,7 @@ void _Generator_variant(Generator* gen, Declaration* decl)
 
 		if (var->initExpr)
 		{
-			if (var->initExpr->type == EXPR_TYPE_CALL)
+			if (_Generator_expressionContains(gen, var->initExpr, EXPR_TYPE_CALL))
 			{
 				StringBuffer_append(&gen->initGlobal, "\t");
 				StringBuffer_appendString(&gen->initGlobal, &var->name);
@@ -327,7 +330,41 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 	case EXPR_TYPE_ASSIGN:
 		_Generator_assignExpression(gen, expr, buf);
 		break;
+
+	case EXPR_TYPE_PLUS:
+		_Generator_unaryExpression(gen, expr, buf);
+		break;
+
+	case EXPR_TYPE_ADD:
+		_Generator_binaryExpression(gen, expr, buf);
+		break;
 	}
+}
+
+void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* buf)
+{
+	switch (expr->type)
+	{
+	case EXPR_TYPE_PLUS:
+		StringBuffer_append(buf, "+");
+		break;
+	}
+
+	_Generator_expression(gen, expr->unaryExpr, buf);
+}
+
+void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer* buf)
+{
+	_Generator_expression(gen, expr->binaryExpr.leftExpr, buf);
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_ADD:
+		StringBuffer_append(buf, " + ");
+		break;
+	}
+
+	_Generator_expression(gen, expr->binaryExpr.rightExpr, buf);
 }
 
 void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf)
@@ -352,6 +389,37 @@ void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer*
 	_Generator_expression(gen, expr->assignExpr.leftExpr, buf);
 	StringBuffer_append(buf, " = ");
 	_Generator_expression(gen, expr->assignExpr.rightExpr, buf);
+}
+
+bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType exprType)
+{
+	if (expr->type == exprType)
+		return true;
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_CALL:
+		for (int i = 0; i < expr->callExpr.args.size; ++i)
+		{
+			Expression* arg = Vector_get(&expr->callExpr.args, i);
+			if (_Generator_expressionContains(gen, arg, exprType))
+				return true;
+		}
+		return false;
+
+	case EXPR_TYPE_ASSIGN:
+		return _Generator_expressionContains(gen, expr->assignExpr.rightExpr, exprType);
+
+	case EXPR_TYPE_ADD:
+		if (_Generator_expressionContains(gen, expr->binaryExpr.leftExpr, exprType))
+			return true;
+		return _Generator_expressionContains(gen, expr->binaryExpr.rightExpr, exprType);
+
+	case EXPR_TYPE_PLUS:
+		return _Generator_expressionContains(gen, expr->unaryExpr, exprType);
+	}
+
+	return false;
 }
 
 void _Generator_indent(Generator* gen, StringBuffer* buf)
