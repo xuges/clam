@@ -37,6 +37,8 @@ static ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* de
 static void _Executor_expression(Executor* exec, Expression* expr);
 static void _Executor_callExpression(Executor* exec, Expression* expr);
 static void _Executor_assignExpression(Executor* exec, Expression* expr);
+static void _Executor_unaryExpression(Executor* exec, Expression* expr);
+static void _Executor_binaryExpression(Executor* exec, Expression* expr);
 static Value* _Executor_findVariant(Executor* exec, String name);
 static Declaration* _Executor_fincFunction(Executor* exec, String name);
 static void _Executor_enterBlock(Executor* exec);
@@ -214,6 +216,14 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_ASSIGN:
 		_Executor_assignExpression(exec, expr);
 		break;
+
+	case EXPR_TYPE_PLUS:
+		_Executor_unaryExpression(exec, expr);
+		break;
+
+	case EXPR_TYPE_ADD:
+		_Executor_binaryExpression(exec, expr);
+		break;
 	}
 }
 
@@ -240,6 +250,46 @@ void _Executor_assignExpression(Executor* exec, Expression* expr)
 
 	//push
 	Stack_push(&exec->stack, lvalue);
+}
+
+void _Executor_unaryExpression(Executor* exec, Expression* expr)
+{
+	Value* v;
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_PLUS:
+		_Executor_expression(exec, expr->unaryExpr);
+		v = Stack_top(&exec->stack);
+		switch (v->type.id)
+		{
+		case TYPE_INT:
+			v->intValue = +v->intValue;
+			break;
+		}
+		break;
+	}
+}
+
+void _Executor_binaryExpression(Executor* exec, Expression* expr)
+{
+	_Executor_expression(exec, expr->binaryExpr.leftExpr);
+	Value* lvalue = Stack_top(&exec->stack);
+
+	_Executor_expression(exec, expr->binaryExpr.rightExpr);
+	Value* rvalue = Stack_pop(&exec->stack);
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_ADD:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			lvalue->intValue += rvalue->intValue;
+			break;
+		}
+		
+	}
 }
 
 Value* _Executor_findVariant(Executor* exec, String name)

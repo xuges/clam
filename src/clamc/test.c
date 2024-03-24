@@ -327,6 +327,10 @@ static TestCase tests[] =
 	TEST(test_executor, "variant_assign3",      "export int main() { int a = 2; return a = 3; }")
 	TEST(test_executor, "variant_assign4",      "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
 	TEST(test_executor, "variant_assign5",      "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
+	TEST(test_executor, "add_expression1",      "int a = 1 + 1; export int main() { return a; }")
+	TEST(test_executor, "add_expression2",      "int a = 1 + 2 + 3; int b = a + 4; export int main() { return b; }")
+	TEST(test_executor, "plus_expression1",     "int a = +1; int b = +a; export int main() { return b; }")
+	TEST(test_executor, "plus_expression2",     "int a = +foo(); int foo() { return 1; } export int main() { return a; }")
 
 	TEST_WRONG(test_executor, "main_wrong1",           "int main() { return 12345; }")
 	TEST_WRONG(test_executor, "main_wrong2",           "export void main() { return 0; }")
