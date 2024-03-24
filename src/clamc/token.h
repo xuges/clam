@@ -34,6 +34,7 @@ enum TokenValue
 	TOKEN_VALUE_ADD,             // +
 	TOKEN_VALUE_SUB,             // -
 	TOKEN_VALUE_STAR,            // *
+	TOKEN_VALUE_DIV,             // /
 
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
@@ -42,7 +43,7 @@ enum TokenValue
 	TOKEN_VALUE_LITERAL_INT,     // 123
 	TOKEN_VALUE_LITERAL_STRING,  // "abc"
 
-	TOKEN_VALUE_VOID,            //void
+	TOKEN_VALUE_VOID,            // void
 	TOKEN_VALUE_INT,             // int
 
 	TOKEN_VALUE_EXPORT,          // export
