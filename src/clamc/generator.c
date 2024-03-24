@@ -338,6 +338,7 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
 		_Generator_binaryExpression(gen, expr, buf);
 		break;
 	}
@@ -371,6 +372,10 @@ void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer*
 
 	case EXPR_TYPE_SUB:
 		StringBuffer_append(buf, " - ");
+		break;
+
+	case EXPR_TYPE_MUL:
+		StringBuffer_append(buf, " * ");
 		break;
 	}
 
