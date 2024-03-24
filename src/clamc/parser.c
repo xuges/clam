@@ -322,13 +322,17 @@ Expression* _Parser_multiplicativeExpression(Parser* p)
 
 	Expression* left = _Parser_unaryExpression(p);
 
-	while (token->value == TOKEN_VALUE_STAR)
+	while (token->value == TOKEN_VALUE_STAR || token->value == TOKEN_VALUE_DIV)
 	{
 		ExprType exprType;
 		switch (token->value)
 		{
 		case TOKEN_VALUE_STAR:
 			exprType = EXPR_TYPE_MUL;
+			break;
+
+		case TOKEN_VALUE_DIV:
+			exprType = EXPR_TYPE_DIV;
 			break;
 		}
 
