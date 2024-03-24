@@ -224,6 +224,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
 		_Executor_binaryExpression(exec, expr);
 		break;
 	}
@@ -305,6 +306,15 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 		{
 		case TYPE_INT:
 			lvalue->intValue -= rvalue->intValue;
+			break;
+		}
+		break;
+
+	case EXPR_TYPE_MUL:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			lvalue->intValue *= rvalue->intValue;
 			break;
 		}
 		break;
