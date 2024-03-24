@@ -291,6 +291,11 @@ static TestCase tests[] =
 	TEST(test_analyzer, "plus_expression1",    "int a = +1; int b = +a;")
 	TEST(test_analyzer, "plus_expression2",    "int a = +foo(); int foo() { return 1; }")
 	TEST(test_analyzer, "plus_expression3",    "int a = 1 + +foo(); int foo() { return 1; } export int main() { return a; }")
+	TEST(test_analyzer, "sub_expression1",     "int a = 1 - 1;")
+	TEST(test_analyzer, "sub_expression2",     "int a = 3 - 2 - 1;")
+	TEST(test_analyzer, "minus_expression1",   "int a = -1; int b = -a;")
+	TEST(test_analyzer, "minus_expression2",   "int a = -1; int b = -a; int c = foo(); int foo() { return 0; }")
+	TEST(test_analyzer, "operation1",          "int a = -1; int b = -a; int c = -a + -b; int d = +a - -b;")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -307,7 +312,12 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "add_expression_wrong2",     "int a = 1 + b;")
 	TEST_WRONG(test_analyzer, "plus_expression_wrong1",    "int a = +foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "plus_expression_wrong2",    "int a = +b;")
-
+	TEST_WRONG(test_analyzer, "sub_expression_wrong1",     "int a = b - 1;")
+	TEST_WRONG(test_analyzer, "sub_expression_wrong2",     "int a = 1 - foo(); void foo() {}")
+	TEST_WRONG(test_analyzer, "minus_expression_wrong1",   "int a = -b;")
+	TEST_WRONG(test_analyzer, "minus_expression_wrong2",   "int a = -foo(); void foo() {}")
+	TEST_WRONG(test_analyzer, "operation_wrong1",          "int a = a - b + 1;")
+	TEST_WRONG(test_analyzer, "operation_wrong2",          "int a = 1 + foo() - bar(); int foo() { return 0; } void bar() {}")
 
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
@@ -387,6 +397,7 @@ static void usage()
 
 int main(int argc, char** argv)
 {
+
 	//options
 	bool all = true;
 	bool run = false;
