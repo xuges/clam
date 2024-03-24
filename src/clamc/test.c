@@ -239,7 +239,7 @@ static TestCase tests[] =
 	TEST(test_lexer, "eof"    , "")
 	TEST(test_lexer, "keyword", "export void int return")
 	TEST(test_lexer, "punct"  , "(){},;")
-	TEST(test_lexer, "operator", "=+")
+	TEST(test_lexer, "operator", "=+-")
 
 	TEST(test_parser, "basic",                "export int main() { return 0; }")
 	TEST(test_parser, "return_int",           "export int main() { return 666; }")
