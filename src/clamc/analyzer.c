@@ -24,6 +24,8 @@ static bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, State
 static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
 static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr);
+static Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr);
+static Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
 
@@ -222,6 +224,11 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_ASSIGN:
 		return _Analyzer_assignExpression(anly, expr);
 
+	case EXPR_TYPE_PLUS:
+		return _Analyzer_unaryExpression(anly, expr);
+
+	case EXPR_TYPE_ADD:
+		return _Analyzer_binaryExpression(anly, expr);
 	}
 	return errorType;
 }
@@ -258,15 +265,69 @@ Type _Analyzer_callExpression(Analyzer* anly, Expression* expr)
 
 Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr)
 {
-	if (expr->assignExpr.leftExpr->type != EXPR_TYPE_IDENT)  //TODO: more regular (simulate eval and lvalue rvalue xvalue)
+	if (expr->assignExpr.leftExpr->type != EXPR_TYPE_IDENT)  //TODO: more regular (check lvalue and rvalue)
 		error(&expr->location, "expected lvalue");
 
 	Type ltype = _Analyzer_expression(anly, expr->assignExpr.leftExpr);
 	Type rtype = _Analyzer_expression(anly, expr->assignExpr.rightExpr);
-	if (ltype.id != rtype.id)  //TODO: implict type cast
-		error(&expr->location, "lvalue and rvalue type not match");
+
+	if (ltype.id != rtype.id)  //TODO: implict type cast, more type regular
+		error(&expr->location, "lvalue and rvalue expression type not match");
 
 	return ltype;
+}
+
+Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr)
+{
+	Type rtype = _Analyzer_expression(anly, expr->unaryExpr);
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_PLUS:
+		switch (rtype.id)
+		{
+		case TYPE_INT:
+			break;
+		default:
+			error(&expr->unaryExpr->location, "expression type not support unary add operator");
+		}
+
+		break;
+
+	default:
+		error(&expr->location, "unsupported unary operator");
+	}
+
+	return rtype;
+}
+
+Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
+{
+	Type ltype = _Analyzer_expression(anly, expr->binaryExpr.leftExpr);
+	Type rtype = _Analyzer_expression(anly, expr->binaryExpr.rightExpr);
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_ADD:
+		//TODO: more operation type regular
+		switch (ltype.id)
+		{
+		case TYPE_INT:
+			break;
+		default:
+			error(&expr->binaryExpr.leftExpr->location, "expression type not support binary add operator");
+		}
+
+		if (ltype.id != rtype.id)  //TODO: implict type cast, more type regular
+			error(&expr->location, "left and right expression type not match");
+
+		break;
+
+	default:
+		error(&expr->location, "sunsupported binary operator");
+	}
+
+	return ltype;  //TODO: more type cast regular
 }
 
 Variant* _Analyzer_findVariant(Analyzer* anly, String name)

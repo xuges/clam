@@ -253,16 +253,17 @@ static TestCase tests[] =
 	TEST(test_parser, "function_argument1",   "void print(int a, int b) { } export int main() { print(1, 2); return 0; }")
 	TEST(test_parser, "function_argument2",   "void print(int a, int b) { } export int main() { print(1, 2, 3,); return 0; }")
 	TEST(test_parser, "functions_return_int", "int foo(){return 1;}\nint bar(){return 2;}\nexport int main() { return 666; }")
-	TEST(test_parser, "multi_block1",          "export int main() { int a = 1; { int b = 2; } return a; }")
-	TEST(test_parser, "multi_block2",          "export int main() { int a = 1; { int b = 2; { int c = 3; { int d = a; } } } return a; }")
-	TEST(test_parser, "variant_assign1",       "int a = 0; void func() { a = 1; }")
-	TEST(test_parser, "variant_assign2",       "int a = 0; void func() { int b = 2; a = 1; }")
-	TEST(test_parser, "variant_assign3",       "int a = 0; void func() { int b = 2; { a = 1; } }")
-	TEST(test_parser, "variant_assign4",       "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
-	TEST(test_parser, "variant_assign5",       "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
-	TEST(test_parser, "add_expression1",        "export int main() { int a = 1 + 1; return a; }")
-	TEST(test_parser, "add_expression2",        "export int main() { int a = 1 + 2 + 3; return a; }")
-	TEST(test_parser, "plus_expression",        "export int main() { int a = 1; a = +1; return a; }")
+	TEST(test_parser, "multi_block1",         "export int main() { int a = 1; { int b = 2; } return a; }")
+	TEST(test_parser, "multi_block2",         "export int main() { int a = 1; { int b = 2; { int c = 3; { int d = a; } } } return a; }")
+	TEST(test_parser, "variant_assign1",      "int a = 0; void func() { a = 1; }")
+	TEST(test_parser, "variant_assign2",      "int a = 0; void func() { int b = 2; a = 1; }")
+	TEST(test_parser, "variant_assign3",      "int a = 0; void func() { int b = 2; { a = 1; } }")
+	TEST(test_parser, "variant_assign4",      "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
+	TEST(test_parser, "variant_assign5",      "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
+	TEST(test_parser, "add_expression1",      "export int main() { int a = 1 + 1; return a; }")
+	TEST(test_parser, "add_expression2",      "export int main() { int a = 1 + 2 + 3; return a; }")
+	TEST(test_parser, "plus_expression1",     "export int main() { int a = 1; a = +1; return a; }")
+	TEST(test_parser, "plus_expression2",     "export int main() { int a = 1; int b = 2; a = +b; return a; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
@@ -281,6 +282,10 @@ static TestCase tests[] =
 	TEST(test_analyzer,       "function_argument1",  "int foo(int a, int b) { return a; } export int main() { return foo(1, 2); }")
 	TEST(test_analyzer,       "function_argument2",  "int foo(int a, int b) { return a; } int bar() { return 1; } export int main() { return foo(bar(), 2); }")
 	TEST(test_analyzer,       "variant_assign",      "int a = 0; void func() { a = 1; }")
+	TEST(test_analyzer,       "add_expression1",     "int a = 1 + 1;")
+	TEST(test_analyzer,       "add_expression2",     "int a = 1 + 2 + 3; int b = a + 4;")
+	TEST(test_analyzer,       "plus_expression1",    "int a = +1; int b = +a;")
+	TEST(test_analyzer,       "plus_expression2",    "int a = +foo(); int foo() { return 1; }")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -293,6 +298,12 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "function_argument_wrong2",  "int foo(int a, int b) { return a; } void print() {} export int main() { return foo(1, print()); }")
 	TEST_WRONG(test_analyzer, "variant_assign_wrong1",     "void func() { 1 = 0; }")
 	TEST_WRONG(test_analyzer, "variant_assign_wrong2",     "void foo() {} void func() { int a; a = foo(); }")
+	TEST_WRONG(test_analyzer, "add_expression_wrong1",     "int a = 1 + foo(); void foo() {}")
+	TEST_WRONG(test_analyzer, "add_expression_wrong2",     "int a = 1 + b;")
+	TEST_WRONG(test_analyzer, "plus_expression_wrong1",    "int a = +foo(); void foo() {}")
+	TEST_WRONG(test_analyzer, "plus_expression_wrong2",    "int a = +b;")
+
+
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
 	TEST(test_executor, "void_function",        "void foo() { } export int main() { foo(); return 0; }")
@@ -370,7 +381,6 @@ static void usage()
 
 int main(int argc, char** argv)
 {
-	TEST(test_parser, "plus_expression", "export int main() { int a = 1; a = +1; return a; }")
 	//options
 	bool all = true;
 	bool run = false;
