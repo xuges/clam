@@ -88,6 +88,10 @@ Token* Lexer_next(Lexer* lex)
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_SUB);
 		}
+		else if (c == '*')
+		{
+			_Lexer_parseOperator(lex, TOKEN_VALUE_STAR);
+		}
 		else if (c == '(')
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_LP);

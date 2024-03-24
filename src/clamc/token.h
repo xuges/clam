@@ -33,6 +33,7 @@ enum TokenValue
 	TOKEN_VALUE_ASSIGN,          // =
 	TOKEN_VALUE_ADD,             // +
 	TOKEN_VALUE_SUB,             // -
+	TOKEN_VALUE_STAR,            // *
 
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
