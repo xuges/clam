@@ -17,6 +17,7 @@ static void _Generator_unaryExpression(Generator* gen, Expression* expr, StringB
 static void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer* buf);
+static bool _Generator_isConstantExpression(Generator* gen, Expression* expr);
 static bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType exprType);
 
 static void _Generator_indent(Generator* gen, StringBuffer* buf);
@@ -106,7 +107,7 @@ void _Generator_variant(Generator* gen, Declaration* decl)
 
 		if (var->initExpr)
 		{
-			if (_Generator_expressionContains(gen, var->initExpr, EXPR_TYPE_CALL))
+			if (!_Generator_isConstantExpression(gen, var->initExpr))
 			{
 				StringBuffer_append(&gen->initGlobal, "\t");
 				StringBuffer_appendString(&gen->initGlobal, &var->name);
@@ -406,6 +407,11 @@ void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer*
 	_Generator_expression(gen, expr->assignExpr.rightExpr, buf);
 }
 
+bool _Generator_isConstantExpression(Generator* gen, Expression* expr)
+{
+	return !_Generator_expressionContains(gen, expr, EXPR_TYPE_IDENT);  //TODO: check const ident
+}
+
 bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType exprType)
 {
 	if (expr->type == exprType)
@@ -414,6 +420,8 @@ bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType ex
 	switch (expr->type)
 	{
 	case EXPR_TYPE_CALL:
+		if (_Generator_expressionContains(gen, expr->callExpr.func, exprType))
+			return true;
 		for (int i = 0; i < expr->callExpr.args.size; ++i)
 		{
 			Expression* arg = Vector_get(&expr->callExpr.args, i);
@@ -426,11 +434,14 @@ bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType ex
 		return _Generator_expressionContains(gen, expr->assignExpr.rightExpr, exprType);
 
 	case EXPR_TYPE_ADD:
+	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
 		if (_Generator_expressionContains(gen, expr->binaryExpr.leftExpr, exprType))
 			return true;
 		return _Generator_expressionContains(gen, expr->binaryExpr.rightExpr, exprType);
 
 	case EXPR_TYPE_PLUS:
+	case EXPR_TYPE_MINUS:
 		return _Generator_expressionContains(gen, expr->unaryExpr, exprType);
 	}
 
