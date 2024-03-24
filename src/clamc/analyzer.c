@@ -26,6 +26,7 @@ static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr);
+static bool _Analyzer_checkZero(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
 
@@ -231,6 +232,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
 	case EXPR_TYPE_MUL:
+	case EXPR_TYPE_DIV:
 		return _Analyzer_binaryExpression(anly, expr);
 	}
 	return errorType;
@@ -315,6 +317,7 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
 	case EXPR_TYPE_MUL:
+	case EXPR_TYPE_DIV:
 		//TODO: more operation type regular
 		switch (ltype.id)
 		{
@@ -333,7 +336,25 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 		error(&expr->location, "sunsupported binary operator");
 	}
 
+	if (expr->type == EXPR_TYPE_DIV && _Analyzer_checkZero(anly, expr->binaryExpr.rightExpr))
+		error(&expr->binaryExpr.rightExpr->location, "division by zero");
+
 	return ltype;  //TODO: more type cast regular
+}
+
+bool _Analyzer_checkZero(Analyzer* anly, Expression* expr)
+{
+	switch (expr->type)
+	{
+	case EXPR_TYPE_INT:
+		return expr->intExpr == 0;
+
+	case EXPR_TYPE_PLUS:
+	case EXPR_TYPE_MINUS:
+		return _Analyzer_checkZero(anly,  expr->unaryExpr);
+	}
+
+	return false;
 }
 
 Variant* _Analyzer_findVariant(Analyzer* anly, String name)
