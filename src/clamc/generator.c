@@ -10,6 +10,7 @@ static void _Generator_function(Generator* gen, Declaration* decl);
 static void _Generator_parameterList(Generator* gen, Vector params, StringBuffer* buf);
 static void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat);
 static void _Generator_assignStatement(Generator* gen, Statement* stat);
+static void _Generator_incStatement(Generator* gen, Statement* stat);
 static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vector block);
 static void _Generator_expressionStatement(Generator* gen, Expression* expr);
 static void _Generator_returnStatement(Generator* gen, Statement* stat);
@@ -253,6 +254,10 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 		_Generator_assignStatement(gen, stat);
 		break;
 
+	case STATEMENT_TYPE_INC:
+		_Generator_incStatement(gen, stat);
+		break;
+
 	case STATEMENT_TYPE_COMPOUND:
 		_Generator_compoundStatement(gen, decl, stat->compound);
 		break;
@@ -270,9 +275,20 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 void _Generator_assignStatement(Generator* gen, Statement* stat)
 {
 	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_indent(gen, buf);
+
 	_Generator_expression(gen, stat->assign.leftExpr, buf);
 	StringBuffer_append(buf, " = ");
 	_Generator_expression(gen, stat->assign.rightExpr, buf);
+}
+
+void _Generator_incStatement(Generator* gen, Statement* stat)
+{
+	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_indent(gen, buf);
+
+	_Generator_expression(gen, stat->incExpr, buf);
+	StringBuffer_append(buf, "++;\n");
 }
 
 void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vector block)
