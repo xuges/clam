@@ -36,6 +36,8 @@ enum TokenValue
 	TOKEN_VALUE_STAR,            // *
 	TOKEN_VALUE_DIV,             // /
 
+	TOKEN_VALUE_INC,             // ++
+
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
 	TOKEN_VALUE_SEM,             // ;
