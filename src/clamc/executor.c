@@ -257,6 +257,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_SUB:
 	case EXPR_TYPE_MUL:
 	case EXPR_TYPE_DIV:
+	case EXPR_TYPE_MOD:
 		_Executor_binaryExpression(exec, expr);
 		break;
 	}
@@ -336,12 +337,17 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 		break;
 
 	case EXPR_TYPE_DIV:
+	case EXPR_TYPE_MOD:
 		switch (lvalue->type.id)
 		{
 		case TYPE_INT:
 			if (rvalue->intValue == 0)
 				error(&expr->binaryExpr.rightExpr->location, "right value is zero, division by zero");
-			lvalue->intValue /= rvalue->intValue;
+
+			if (expr->type == EXPR_TYPE_DIV)
+				lvalue->intValue /= rvalue->intValue;
+			else
+				lvalue->intValue %= rvalue->intValue;
 			break;
 		}
 		break;
