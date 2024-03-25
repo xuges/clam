@@ -38,17 +38,17 @@
 <function_def>::=[<export>]<type_desc><ident><lp>[<parameter_list>]<rp><compound_statement>
 <parameter_list>::=<type_desc><ident>{<comma><type_desc><ident>}
 
-<statement>::=<declaration_statement><empty_statement>|<return_statement>|<expression_statement>|<compound_statement>
+<statement>::=<empty_statement>|<declaration_statement>|<assign_statement>|<inc_statement>|<dec_statement>|<expression_statement>|<return_statement>|<compound_statement>
+<empty_statement>::=<sem>
 <declaration_statement>::=<variant_decl>
+<assign_statement>::=<expression><assign><expression><sem>
+<inc_statement>::=<expression><inc><sem>
+<dec_statement>::=<expression><dec><sem>
+<expression_statement>::=<expression><sem>
+<return_statement>::=<return>[<expression>]<sem>
 <compound_statement>::=<lc>{<statement>}<rc>
 
-<empty_statement>::=<sem>
-<return_statement>::=<return>[<expression>]<sem>
-<expression_statement>::=<expression><sem>
-
-<expression>::=<assign_expression>|<unary_expression>|<binary_expression>|<primary_expression>|<postfix_expression>
-<assign_expression>::=<expression><assign><expression>
-
+<expression>::=<unary_expression>|<binary_expression>|<postfix_expression>|<primary_expression>
 <unary_expression>::=<plus_expression>|<minus_expression>
 <plus_expression>::=<add><expression>
 <minus_expression>::=<sub><expression>
@@ -63,8 +63,6 @@
 <primary_expression>::=<int_literal>|<ident>
 <int_literal>::=<dec_num>
 
-<postfix_expression>::=<inc_expression>|<dec_expression>|<call_expression>
-<inc_expression>::=<expression><inc>
-<dec_expression>::=<expression><dec>
+<postfix_expression>::=<call_expression>
 <call_expression>::=<ident><lp>[<argument_list>]<rp>
 <argument_list>::=<expression>{<comma><expression>}
