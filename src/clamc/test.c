@@ -317,7 +317,7 @@ static TestCase tests[] =
 	TEST(test_analyzer, "operation2",          "int a = 1 * 2 + 3 * 4 - 5 * 6;")
 	TEST(test_analyzer, "operation3",          "int a = 1 * 2 + 3 * 4 - 6 / 2;")
 	TEST(test_analyzer, "inc_statement",       "int a = 0; void foo() { a++; }")
-	TEST(test_analyzer, "decc_statement",      "int a = 2; void foo() { a--; }")
+	TEST(test_analyzer, "dec_statement",       "int a = 2; void foo() { a--; }")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -393,6 +393,8 @@ static TestCase tests[] =
 	TEST(test_executor, "operation3",           "int a = 1 * 2 + 3 * 4 - 6 / 2; export int main() { return a; }")
 	TEST(test_executor, "inc_statement1",       "int a = 1; export int main() { a++; return a; }")
 	TEST(test_executor, "inc_statement2",       "int a = 1; export int main() { a++; a++; return a; }")
+	TEST(test_executor, "dec_statement1",       "int a = 2; export int main() { a--; return a; }")
+	TEST(test_executor, "dec_statement2",       "int a = 2; export int main() { a--; a--; return a; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 
