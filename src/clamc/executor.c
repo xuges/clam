@@ -34,6 +34,7 @@ static void _Executor_variant(Executor* exec, Declaration* decl);
 static void _Executor_function(Executor* exec, Declaration* decl, Vector args);
 static ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* stat);
 static void _Executor_assignStatement(Executor* exec, Statement* stat);
+static void _Executor_incStatement(Executor* exec, Statement* stat);
 static ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* decl,  Statement* stat);
 static void _Executor_expression(Executor* exec, Expression* expr);
 static void _Executor_callExpression(Executor* exec, Expression* expr);
@@ -161,6 +162,10 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 		_Executor_assignStatement(exec, stat);
 		break;
 
+	case STATEMENT_TYPE_INC:
+		_Executor_incStatement(exec, stat);
+		break;
+
 	case STATEMENT_TYPE_EXPRESSION:
 		_Executor_expression(exec, stat->expr);
 		break;
@@ -185,6 +190,15 @@ void _Executor_assignStatement(Executor* exec, Statement* stat)
 
 	//assign
 	lvalue->intValue = rvalue->intValue;  //TODO: more type
+}
+
+void _Executor_incStatement(Executor* exec, Statement* stat)
+{
+	//find lvalue variant
+	Value* lvalue = _Executor_findVariant(exec, stat->assign.leftExpr->identExpr);  //TODO: process expression first
+
+	//eval
+	lvalue->intValue++;  //TODO: more type
 }
 
 ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* decl, Statement* stat)

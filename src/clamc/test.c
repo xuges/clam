@@ -384,6 +384,8 @@ static TestCase tests[] =
 	TEST(test_executor, "operation1",           "int a = -1; int b = -a; int c = -a + -b; int d = +a - -b; export int main() { return a; }")
 	TEST(test_executor, "operation2",           "int a = 1 * 2 + 3 * 4 - 5 * 6; export int main() { return a; }")
 	TEST(test_executor, "operation3",           "int a = 1 * 2 + 3 * 4 - 6 / 2; export int main() { return a; }")
+	TEST(test_executor, "inc_statement1",       "int a = 1; export int main() { a++; return a; }")
+	TEST(test_executor, "inc_statement2",       "int a = 1; export int main() { a++; a++; return a; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 
