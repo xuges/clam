@@ -371,8 +371,14 @@ static TestCase tests[] =
 	TEST(test_executor, "minus_expression2",    "int a = -1; int b = -a; int c = foo(); int foo() { return 0; } export int main() { return b; }")
 	TEST(test_executor, "mul_expression1",      "int a = 2 * 2; int b = a * 2; export int main() { return b; }")
 	TEST(test_executor, "mul_expression2",      "int a = 2 * foo(); int foo() { return 2; } export int main() { return a; }")
+	TEST(test_executor, "div_expression1",      "int a =  10 / 2; export int main() { return a; }")
+	TEST(test_executor, "div_expression2",      "int a =  18 / 2 / 3; export int main() { return a; }")
+	TEST(test_executor, "div_expression3",      "int a =  18 / 2; int b = a / 3; export int main() { return b; }")
 	TEST(test_executor, "operation1",           "int a = -1; int b = -a; int c = -a + -b; int d = +a - -b; export int main() { return a; }")
 	TEST(test_executor, "operation2",           "int a = 1 * 2 + 3 * 4 - 5 * 6; export int main() { return a; }")
+	TEST(test_executor, "operation3",           "int a = 1 * 2 + 3 * 4 - 6 / 2; export int main() { return a; }")
+
+	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 
 	TEST(test_generator, "basic",               "export int main() { return 0; }")
 	TEST(test_generator, "function_call1",      "int foo() { return 1; } export int main() { return foo(); }")
