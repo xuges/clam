@@ -437,7 +437,8 @@ static TestCase tests[] =
 	TEST(test_generator, "operation3",          "int a = 1 * 2 + 3 * 4 - 6 / 2; export int main() { return a; }")
 	TEST(test_generator, "inc_statement1",      "int a = 1; export int main() { a++; return a; }")
 	TEST(test_generator, "inc_statement2",      "int a = 1; export int main() { a++; a++; return a; }")
-
+	TEST(test_generator, "dec_statement1",      "int a = 2; export int main() { a--; return a; }")
+	TEST(test_generator, "dec_statement2",      "int a = 2; export int main() { a--; a--; return a; }")
 
 };
 #undef TEST
