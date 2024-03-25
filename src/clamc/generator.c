@@ -340,6 +340,7 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
 	case EXPR_TYPE_MUL:
+	case EXPR_TYPE_DIV:
 		_Generator_binaryExpression(gen, expr, buf);
 		break;
 	}
@@ -377,6 +378,10 @@ void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer*
 
 	case EXPR_TYPE_MUL:
 		StringBuffer_append(buf, " * ");
+		break;
+
+	case EXPR_TYPE_DIV:
+		StringBuffer_append(buf, " / ");
 		break;
 	}
 
@@ -436,6 +441,7 @@ bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType ex
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:
 	case EXPR_TYPE_MUL:
+	case EXPR_TYPE_DIV:
 		if (_Generator_expressionContains(gen, expr->binaryExpr.leftExpr, exprType))
 			return true;
 		return _Generator_expressionContains(gen, expr->binaryExpr.rightExpr, exprType);
