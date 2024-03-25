@@ -270,6 +270,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_SUB:
 	case EXPR_TYPE_MUL:
 	case EXPR_TYPE_DIV:
+	case EXPR_TYPE_MOD:
 		return _Analyzer_binaryExpression(anly, expr);
 	}
 	return errorType;
@@ -341,6 +342,7 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_SUB:
 	case EXPR_TYPE_MUL:
 	case EXPR_TYPE_DIV:
+	case EXPR_TYPE_MOD:
 		//TODO: more operation type regular
 		switch (ltype.id)
 		{
@@ -359,8 +361,11 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 		error(&expr->location, "sunsupported binary operator");
 	}
 
-	if (expr->type == EXPR_TYPE_DIV && _Analyzer_checkZero(anly, expr->binaryExpr.rightExpr))
-		error(&expr->binaryExpr.rightExpr->location, "division by zero");
+	if (expr->type == EXPR_TYPE_DIV || expr->type == EXPR_TYPE_MOD)
+	{
+		if (_Analyzer_checkZero(anly, expr->binaryExpr.rightExpr))
+			error(&expr->binaryExpr.rightExpr->location, "division by zero");
+	}
 
 	return ltype;  //TODO: more type cast regular
 }
