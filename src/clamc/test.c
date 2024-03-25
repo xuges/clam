@@ -270,9 +270,13 @@ static TestCase tests[] =
 	TEST(test_parser, "div_expression1",      "int a =  10 / 2;")
 	TEST(test_parser, "div_expression2",      "int a =  18 / 2 / 3;")
 	TEST(test_parser, "div_expression3",      "int a =  18 / 2; int b = a / 3;")
+	TEST(test_parser, "mod_expression1",      "int a =  18 % 4;")
+	TEST(test_parser, "mod_expression2",      "int a =  2 * 9 % 4;")
+	TEST(test_parser, "mod_expression3",      "int a =  2 * 9; int b = 4; int c = a % b;")
 	TEST(test_parser, "operation1",           "int a = 1 + 2 - 4; int b = a + 3 + 4 - 1; int c = b - a; int d = a + b - c;")
 	TEST(test_parser, "operation2",           "int a = 1 * 2 + 3 * 4 - 5 * 6;")
 	TEST(test_parser, "operation3",           "int a = 1 * 2 + 3 * 4 - 6 / 2;")
+	TEST(test_parser, "operation4",           "int a = 1 * 2 + 3 * 4 - 6 / 2 + 19 % 2;")
 	TEST(test_parser, "inc_statement1",       "int a = 0; void foo() { a++; }")
 	TEST(test_parser, "dec_statement1",       "int a = 3; void foo() { a--; }")
 
