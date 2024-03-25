@@ -53,7 +53,6 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_INT",
 	"EXPR_TYPE_CALL",
 	"EXPR_TYPE_IDENT",
-	"EXPR_TYPE_ASSIGN",
 	"EXPR_TYPE_PLUS",
 	"EXPR_TYPE_MINUS",
 	"EXPR_TYPE_ADD",
@@ -65,10 +64,11 @@ static const char* exprTypeToString[] =
 static const char* statTypeToString[] =
 {
 	"STATEMENT_TYPE_EMPTY",
+	"STATEMENT_TYPE_DECLARATION",
+	"STATEMENT_TYPE_ASSIGN",
 	"STATEMENT_TYPE_RETURN",
 	"STATEMENT_TYPE_EXPRESSION",
 	"STATEMENT_TYPE_COMPOUND",
-	"STATEMENT_TYPE_DECLARATION"
 };
 
 static const char* typeIdToString[] =
@@ -95,6 +95,7 @@ static const char* boolToString[] =
 static void _Printer_declaration(Printer* p, Declaration* decl);
 static void _Printer_function(Printer* p, Declaration* decl);
 static void _Printer_statement(Printer* p, Statement* stat);
+static void _Printer_assignStatement(Printer* p, Statement* stat);
 static void _Printer_expression(Printer* p, Expression* expr);
 static void _Printer_binaryExpression(Printer* p, Expression* expr);
 static void _Printer_callExpression(Printer* p, Expression* expr);
@@ -237,6 +238,29 @@ void _Printer_statement(Printer* p, Statement* stat)
 		_Printer_declaration(p, &stat->declaration);
 		p->level--;
 		break;
+
+	case STATEMENT_TYPE_ASSIGN:
+		_Printer_indent(p); printf("assign=\n");
+		p->level++;
+		_Printer_assignStatement(p, stat);
+		p->level--;
+		break;
+	}
+}
+
+void _Printer_assignStatement(Printer* p, Statement* stat)
+{
+	_Printer_indent(p); printf("leftExpr=\n");
+	{
+		p->level++;
+		_Printer_expression(p, stat->assign.leftExpr);
+		p->level--;
+	}
+	_Printer_indent(p); printf("rightExpr=\n");
+	{
+		p->level++;
+		_Printer_expression(p, stat->assign.rightExpr);
+		p->level--;
 	}
 }
 
@@ -261,13 +285,6 @@ void _Printer_expression(Printer* p, Expression* expr)
 
 	case EXPR_TYPE_IDENT:
 		_Printer_indent(p); printf("identExpr=" String_FMT "\n", String_arg(expr->identExpr));
-		break;
-
-	case EXPR_TYPE_ASSIGN:
-		_Printer_indent(p); printf("assignExpr=\n");
-		p->level++;
-		_Printer_binaryExpression(p, expr);
-		p->level--;
 		break;
 
 	case EXPR_TYPE_PLUS:

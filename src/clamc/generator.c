@@ -9,6 +9,7 @@ static void _Generator_variant(Generator* gen, Declaration* decl);
 static void _Generator_function(Generator* gen, Declaration* decl);
 static void _Generator_parameterList(Generator* gen, Vector params, StringBuffer* buf);
 static void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat);
+static void _Generator_assignStatement(Generator* gen, Statement* stat);
 static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vector block);
 static void _Generator_expressionStatement(Generator* gen, Expression* expr);
 static void _Generator_returnStatement(Generator* gen, Statement* stat);
@@ -16,7 +17,6 @@ static void _Generator_expression(Generator* gen, Expression* expr, StringBuffer
 static void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf);
-static void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static bool _Generator_isConstantExpression(Generator* gen, Expression* expr);
 static bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType exprType);
 
@@ -249,6 +249,10 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 		_Generator_variant(gen, &stat->declaration);
 		break;
 
+	case STATEMENT_TYPE_ASSIGN:
+		_Generator_assignStatement(gen, stat);
+		break;
+
 	case STATEMENT_TYPE_COMPOUND:
 		_Generator_compoundStatement(gen, decl, stat->compound);
 		break;
@@ -261,6 +265,14 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 		_Generator_returnStatement(gen, stat);
 		break;
 	}
+}
+
+void _Generator_assignStatement(Generator* gen, Statement* stat)
+{
+	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+	_Generator_expression(gen, stat->assign.leftExpr, buf);
+	StringBuffer_append(buf, " = ");
+	_Generator_expression(gen, stat->assign.rightExpr, buf);
 }
 
 void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vector block)
@@ -326,10 +338,6 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 
 	case EXPR_TYPE_CALL:
 		_Generator_callExpression(gen, expr, buf);
-		break;
-
-	case EXPR_TYPE_ASSIGN:
-		_Generator_assignExpression(gen, expr, buf);
 		break;
 
 	case EXPR_TYPE_PLUS:
@@ -405,13 +413,6 @@ void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* b
 	StringBuffer_append(buf, ")");
 }
 
-void _Generator_assignExpression(Generator* gen, Expression* expr, StringBuffer* buf)
-{
-	_Generator_expression(gen, expr->assignExpr.leftExpr, buf);
-	StringBuffer_append(buf, " = ");
-	_Generator_expression(gen, expr->assignExpr.rightExpr, buf);
-}
-
 bool _Generator_isConstantExpression(Generator* gen, Expression* expr)
 {
 	return !_Generator_expressionContains(gen, expr, EXPR_TYPE_IDENT);  //TODO: check const ident
@@ -434,9 +435,6 @@ bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType ex
 				return true;
 		}
 		return false;
-
-	case EXPR_TYPE_ASSIGN:
-		return _Generator_expressionContains(gen, expr->assignExpr.rightExpr, exprType);
 
 	case EXPR_TYPE_ADD:
 	case EXPR_TYPE_SUB:

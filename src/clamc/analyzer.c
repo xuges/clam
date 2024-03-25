@@ -20,12 +20,13 @@ static void Variant_init(Variant* v)
 static void _Analyzer_variant(Analyzer* anly, Declaration* decl);
 static void _Analyzer_function(Analyzer* anly, Declaration* decl);
 static bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat);
+static void _Analyzer_assignStatement(Analyzer* anly, Statement* stat);
 static bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
 static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
 static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
-static Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr);
+static bool _Analyzer_checkLvalue(Analyzer* anly, Expression* expr);
 static bool _Analyzer_checkZero(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
@@ -151,6 +152,10 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		_Analyzer_variant(anly, &stat->declaration);
 		break;
 
+	case STATEMENT_TYPE_ASSIGN:
+		_Analyzer_assignStatement(anly, stat);
+		break;
+
 	case STATEMENT_TYPE_COMPOUND:
 		hasReturn = _Analyzer_compoundStatement(anly, decl, stat);
 		break;
@@ -179,6 +184,18 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 	}
 
 	return hasReturn;
+}
+
+void _Analyzer_assignStatement(Analyzer* anly, Statement* stat)
+{
+	if (!_Analyzer_checkLvalue(anly, stat->assign.leftExpr))
+		error(&stat->assign.leftExpr->location, "expected lvalue");
+
+	Type ltype = _Analyzer_expression(anly, stat->assign.leftExpr);
+	Type rtype = _Analyzer_expression(anly, stat->assign.rightExpr);
+
+	if (ltype.id != rtype.id)  //TODO: implict type cast, more type regular
+		error(&stat->location, "lvalue and rvalue expression type not match");
 }
 
 bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat)
@@ -222,9 +239,6 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_CALL:
 		return _Analyzer_callExpression(anly, expr);
 
-	case EXPR_TYPE_ASSIGN:
-		return _Analyzer_assignExpression(anly, expr);
-
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
 		return _Analyzer_unaryExpression(anly, expr);
@@ -266,20 +280,6 @@ Type _Analyzer_callExpression(Analyzer* anly, Expression* expr)
 	}
 
 	return decl->function.resType;
-}
-
-Type _Analyzer_assignExpression(Analyzer* anly, Expression* expr)
-{
-	if (expr->assignExpr.leftExpr->type != EXPR_TYPE_IDENT)  //TODO: more regular (check lvalue and rvalue)
-		error(&expr->location, "expected lvalue");
-
-	Type ltype = _Analyzer_expression(anly, expr->assignExpr.leftExpr);
-	Type rtype = _Analyzer_expression(anly, expr->assignExpr.rightExpr);
-
-	if (ltype.id != rtype.id)  //TODO: implict type cast, more type regular
-		error(&expr->location, "lvalue and rvalue expression type not match");
-
-	return ltype;
 }
 
 Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr)
@@ -340,6 +340,13 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 		error(&expr->binaryExpr.rightExpr->location, "division by zero");
 
 	return ltype;  //TODO: more type cast regular
+}
+
+bool _Analyzer_checkLvalue(Analyzer* anly, Expression* expr)
+{
+	if (expr->type == EXPR_TYPE_IDENT)  //TODO: more type regular
+		return true;
+	return false;
 }
 
 bool _Analyzer_checkZero(Analyzer* anly, Expression* expr)

@@ -94,14 +94,6 @@ Expression* Expression_createIdent(SourceLocation* loc, Token* token)
 	return expr;
 }
 
-Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* left, Expression* right)
-{
-	Expression* expr = _Expression_create(type, loc);
-	expr->assignExpr.leftExpr = left;
-	expr->assignExpr.rightExpr = right;
-	return expr;
-}
-
 Expression* Expression_createUnary(SourceLocation* loc, ExprType type, Expression* right)
 {
 	Expression* expr = _Expression_create(type, loc);
@@ -129,12 +121,11 @@ void Expression_destroy(Expression* expr)
 		Vector_destroy(&expr->callExpr.args);
 		break;
 
-	case EXPR_TYPE_ASSIGN:
 	case EXPR_TYPE_ADD:
-		Expression_destroy(expr->assignExpr.leftExpr);
-		Expression_destroy(expr->assignExpr.rightExpr);
-		free(expr->assignExpr.leftExpr);
-		free(expr->assignExpr.rightExpr);
+		Expression_destroy(expr->binaryExpr.leftExpr);
+		Expression_destroy(expr->binaryExpr.rightExpr);
+		free(expr->binaryExpr.leftExpr);
+		free(expr->binaryExpr.rightExpr);
 		break;
 
 	case EXPR_TYPE_PLUS:

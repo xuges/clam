@@ -10,7 +10,6 @@ static Vector _Parser_parameterList(Parser* p);
 static Statement _Parser_statement(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
 static Expression* _Parser_expression(Parser* p);
-static Expression* _Parser_assignExpression(Parser* p);
 static Expression* _Parser_unaryExpression(Parser* p);
 static Expression* _Parser_additiveExpression(Parser* p);
 static Expression* _Parser_multiplicativeExpression(Parser* p);
@@ -247,6 +246,17 @@ Statement _Parser_statement(Parser* p)
 
 		stat.type = STATEMENT_TYPE_EXPRESSION;
 		stat.expr = _Parser_expression(p);
+
+		token = Lexer_peek(p->lex);
+		switch (token->value)
+		{
+		case TOKEN_VALUE_ASSIGN:
+			stat.type = STATEMENT_TYPE_ASSIGN;
+			Lexer_next(p->lex);
+			stat.assign.rightExpr = _Parser_expression(p);
+			break;
+		}
+
 		_Parser_expect(p, TOKEN_VALUE_SEM, "expected ';'");
 		Lexer_next(p->lex);
 	}
@@ -256,31 +266,7 @@ Statement _Parser_statement(Parser* p)
 
 Expression* _Parser_expression(Parser* p)
 {
-	return _Parser_assignExpression(p);
-}
-
-Expression* _Parser_assignExpression(Parser* p)
-{
-	Token* token = Lexer_peek(p->lex);
-	SourceLocation loc = token->location;
-
-	Expression* left = _Parser_additiveExpression(p);
-
-	ExprType exprType;
-	switch (token->value)
-	{
-	case TOKEN_VALUE_ASSIGN:
-		exprType = EXPR_TYPE_ASSIGN;
-		break;
-
-	default:
-		return left;
-	}
-
-	Lexer_next(p->lex);
-
-	Expression* right = _Parser_expression(p);
-	return Expression_createAssign(&loc, exprType, left, right);
+	return _Parser_additiveExpression(p);
 }
 
 Expression* _Parser_additiveExpression(Parser* p)

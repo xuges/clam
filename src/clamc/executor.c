@@ -33,10 +33,10 @@ typedef enum ExecuteResult ExecuteResult;
 static void _Executor_variant(Executor* exec, Declaration* decl);
 static void _Executor_function(Executor* exec, Declaration* decl, Vector args);
 static ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* stat);
+static void _Executor_assignStatement(Executor* exec, Statement* stat);
 static ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* decl,  Statement* stat);
 static void _Executor_expression(Executor* exec, Expression* expr);
 static void _Executor_callExpression(Executor* exec, Expression* expr);
-static void _Executor_assignExpression(Executor* exec, Expression* expr);
 static void _Executor_unaryExpression(Executor* exec, Expression* expr);
 static void _Executor_binaryExpression(Executor* exec, Expression* expr);
 static Value* _Executor_findVariant(Executor* exec, String name);
@@ -157,6 +157,10 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 		_Executor_variant(exec, &stat->declaration);
 		break;
 
+	case STATEMENT_TYPE_ASSIGN:
+		_Executor_assignStatement(exec, stat);
+		break;
+
 	case STATEMENT_TYPE_EXPRESSION:
 		_Executor_expression(exec, stat->expr);
 		break;
@@ -168,6 +172,19 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 	}
 
 	return result;
+}
+
+void _Executor_assignStatement(Executor* exec, Statement* stat)
+{
+	//find lvalue variant
+	Value* lvalue = _Executor_findVariant(exec, stat->assign.leftExpr->identExpr);  //TODO: process expression first
+
+	//eval rvalue
+	_Executor_expression(exec, stat->assign.rightExpr);
+	Value* rvalue = Stack_pop(&exec->stack);
+
+	//assign
+	lvalue->intValue = rvalue->intValue;  //TODO: more type
 }
 
 ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* decl, Statement* stat)
@@ -213,10 +230,6 @@ void _Executor_expression(Executor* exec, Expression* expr)
 		_Executor_callExpression(exec, expr);
 		break;
 
-	case EXPR_TYPE_ASSIGN:
-		_Executor_assignExpression(exec, expr);
-		break;
-
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
 		_Executor_unaryExpression(exec, expr);
@@ -238,22 +251,6 @@ void _Executor_callExpression(Executor* exec, Expression* expr)
 
 	//call function
 	_Executor_function(exec, decl, expr->callExpr.args);
-}
-
-void _Executor_assignExpression(Executor* exec, Expression* expr)
-{
-	//find lvalue variant
-	Value* lvalue = _Executor_findVariant(exec, expr->assignExpr.leftExpr->identExpr);  //TODO: process expression first
-
-	//eval rvalue
-	_Executor_expression(exec, expr->assignExpr.rightExpr);
-	Value* rvalue = Stack_pop(&exec->stack);
-
-	//assign
-	lvalue->intValue = rvalue->intValue;
-
-	//push
-	Stack_push(&exec->stack, lvalue);
 }
 
 void _Executor_unaryExpression(Executor* exec, Expression* expr)

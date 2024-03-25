@@ -32,7 +32,7 @@ struct FuncDecl
 	Type resType;
 	String name;
 	Vector parameters;  //Vector<Parameter>
-	Vector block;  //Vector<Statement>
+	Vector block;       //Vector<Statement>
 };
 typedef struct FuncDecl FuncDecl;
 
@@ -79,7 +79,6 @@ enum ExprType
 	EXPR_TYPE_INT,
 	EXPR_TYPE_CALL,
 	EXPR_TYPE_IDENT,
-	EXPR_TYPE_ASSIGN,
 	EXPR_TYPE_PLUS,   //unary
 	EXPR_TYPE_MINUS,
 	EXPR_TYPE_ADD,    //binary
@@ -96,7 +95,6 @@ struct BinaryExpression
 };
 typedef struct BinaryExpression BinaryExpression;
 
-typedef struct BinaryExpression AssignExpression;
 
 struct CallExpression
 {
@@ -115,7 +113,6 @@ struct Expression
 		int intExpr;
 		CallExpression callExpr;
 		String identExpr;
-		AssignExpression assignExpr;
 		struct Expression* unaryExpr;
 		BinaryExpression binaryExpr;
 	};
@@ -125,7 +122,6 @@ typedef struct Expression Expression;
 Expression* Expression_createLiteral(ExprType type, Token* token);
 Expression* Expression_createCall(SourceLocation* loc, Expression* func);
 Expression* Expression_createIdent(SourceLocation* loc, Token* token);
-Expression* Expression_createAssign(SourceLocation* loc, ExprType type, Expression* left, Expression* right);
 Expression* Expression_createUnary(SourceLocation* loc, ExprType type, Expression* right);
 Expression* Expression_createBinary(SourceLocation* loc, ExprType type, Expression* left, Expression* right);
 
@@ -136,12 +132,20 @@ void Expression_destroy(Expression* expr);
 enum StatementType
 {
 	STATEMENT_TYPE_EMPTY,
+	STATEMENT_TYPE_DECLARATION,
+	STATEMENT_TYPE_ASSIGN,
 	STATEMENT_TYPE_RETURN,
 	STATEMENT_TYPE_EXPRESSION,
 	STATEMENT_TYPE_COMPOUND,
-	STATEMENT_TYPE_DECLARATION,
 };
 typedef enum StatementType StatementType;
+
+struct AssignStatement
+{
+	Expression* leftExpr;
+	Expression* rightExpr;
+};
+typedef struct AssignStatement AssignStatement;
 
 struct Statement
 {
@@ -153,6 +157,7 @@ struct Statement
 		Expression* expr;
 		Vector compound;
 		Declaration declaration;
+		AssignStatement assign;
 	};
 };
 typedef struct Statement Statement;

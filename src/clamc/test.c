@@ -258,8 +258,7 @@ static TestCase tests[] =
 	TEST(test_parser, "variant_assign1",      "int a = 0; void func() { a = 1; }")
 	TEST(test_parser, "variant_assign2",      "int a = 0; void func() { int b = 2; a = 1; }")
 	TEST(test_parser, "variant_assign3",      "int a = 0; void func() { int b = 2; { a = 1; } }")
-	TEST(test_parser, "variant_assign4",      "export int main() { int a = 1; int b = 2; { a = b = 3; } return a; }")
-	TEST(test_parser, "variant_assign5",      "export int main() { int a = 1; int b = 2; int c = 3; a = b = c = 4; return a; }")
+	TEST(test_parser, "variant_assign4",      "int a = 0; void func() { int b = 2; a = b; }")
 	TEST(test_parser, "add_expression1",      "export int main() { int a = 1 + 1; return a; }")
 	TEST(test_parser, "add_expression2",      "export int main() { int a = 1 + 2 + 3; return a; }")
 	TEST(test_parser, "plus_expression1",     "export int main() { int a = 1; a = +1; return a; }")
@@ -279,6 +278,7 @@ static TestCase tests[] =
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
 	TEST_WRONG(test_parser, "basic_wrong3",              "export main() {}")
 	TEST_WRONG(test_parser, "global_variant_wrong1",     "int 1a = 0;")
+	TEST_WRONG(test_parser, "variant_assign_wrong",      "int foo() { int a = 1; int b = 2; a = b = 0; }")
 	TEST_WRONG(test_parser, "function_parameter_wrong1", "void print(int a; int b) { }")
 	TEST_WRONG(test_parser, "function_argument_wrong1",  "int foo(int a, int b) { return a; } export int main() { return foo(1 2); }")
 	TEST_WRONG(test_parser, "function_argument_wrong2",  "int foo(int a, int b) { return a; } export int main() { return foo(1;2); }")
@@ -443,7 +443,6 @@ static void usage()
 
 int main(int argc, char** argv)
 {
-
 	//options
 	bool all = true;
 	bool run = false;
