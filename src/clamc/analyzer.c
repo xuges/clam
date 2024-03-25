@@ -21,7 +21,7 @@ static void _Analyzer_variant(Analyzer* anly, Declaration* decl);
 static void _Analyzer_function(Analyzer* anly, Declaration* decl);
 static bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat);
 static void _Analyzer_assignStatement(Analyzer* anly, Statement* stat);
-static void _Analyzer_incStatement(Analyzer* anly, Statement* stat);
+static void _Analyzer_incDecStatement(Analyzer* anly, Statement* stat);
 static bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
 static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
 static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
@@ -158,7 +158,8 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		break;
 
 	case STATEMENT_TYPE_INC:
-		_Analyzer_incStatement(anly, stat);
+	case STATEMENT_TYPE_DEC:
+		_Analyzer_incDecStatement(anly, stat);
 		break;
 
 	case STATEMENT_TYPE_COMPOUND:
@@ -203,10 +204,10 @@ void _Analyzer_assignStatement(Analyzer* anly, Statement* stat)
 		error(&stat->location, "lvalue and rvalue expression type not match");
 }
 
-void _Analyzer_incStatement(Analyzer* anly, Statement* stat)
+void _Analyzer_incDecStatement(Analyzer* anly, Statement* stat)
 {
-	if (!_Analyzer_checkLvalue(anly, stat->assign.leftExpr))
-		error(&stat->assign.leftExpr->location, "expected lvalue");
+	if (!_Analyzer_checkLvalue(anly, stat->incExpr))
+		error(&stat->incExpr->location, "expected lvalue");
 
 	Type ltype = _Analyzer_expression(anly, stat->incExpr);
 

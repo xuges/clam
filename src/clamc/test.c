@@ -317,6 +317,7 @@ static TestCase tests[] =
 	TEST(test_analyzer, "operation2",          "int a = 1 * 2 + 3 * 4 - 5 * 6;")
 	TEST(test_analyzer, "operation3",          "int a = 1 * 2 + 3 * 4 - 6 / 2;")
 	TEST(test_analyzer, "inc_statement",       "int a = 0; void foo() { a++; }")
+	TEST(test_analyzer, "decc_statement",      "int a = 2; void foo() { a--; }")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -347,6 +348,9 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "inc_statement_wrong1",      "void foo() { a++; }")
 	TEST_WRONG(test_analyzer, "inc_statement_wrong2",      "void foo() { 1++; }")
 	TEST_WRONG(test_analyzer, "inc_statement_wrong3",      "int bar() { return 1; } void foo() { bar()++; }")
+	TEST_WRONG(test_analyzer, "dec_statement_wrong1",      "void foo() { a--; }")
+	TEST_WRONG(test_analyzer, "dec_statement_wrong2",      "void foo() { 1--; }")
+	TEST_WRONG(test_analyzer, "dec_statement_wrong3",      "int bar() { return 1; } void foo() { bar()--; }")
 
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
