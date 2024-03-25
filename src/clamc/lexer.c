@@ -110,6 +110,10 @@ Token* Lexer_next(Lexer* lex)
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_DIV);
 		}
+		else if (c == '%')
+		{
+			_Lexer_parseOperator(lex, TOKEN_VALUE_MOD);
+		}
 		else if (c == '(')
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_LP);

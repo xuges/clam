@@ -29,6 +29,7 @@ static const char* tokenValueToString[] =
 	"TOKEN_VALUE_SUB",
 	"TOKEN_VALUE_STAR",
 	"TOKEN_VALUE_DIV",
+	"TOKEN_VALUE_MOD",
 	"TOKEN_VALUE_INC",
 	"TOKEN_VALUE_DEC",
 	"TOKEN_VALUE_COMMA",

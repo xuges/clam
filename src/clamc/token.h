@@ -35,6 +35,7 @@ enum TokenValue
 	TOKEN_VALUE_SUB,             // -
 	TOKEN_VALUE_STAR,            // *
 	TOKEN_VALUE_DIV,             // /
+	TOKEN_VALUE_MOD,             // %
 
 	TOKEN_VALUE_INC,             // ++
 	TOKEN_VALUE_DEC,             // --
