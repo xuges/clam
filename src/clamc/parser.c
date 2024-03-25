@@ -253,11 +253,19 @@ Statement _Parser_statement(Parser* p)
 		case TOKEN_VALUE_ASSIGN:
 			stat.type = STATEMENT_TYPE_ASSIGN;
 			Lexer_next(p->lex);
+			stat.assign.leftExpr = stat.expr;
 			stat.assign.rightExpr = _Parser_expression(p);
 			break;
 
 		case TOKEN_VALUE_INC:
 			stat.type = STATEMENT_TYPE_INC;
+			stat.incExpr = stat.expr;
+			Lexer_next(p->lex);
+			break;
+
+		case TOKEN_VALUE_DEC:
+			stat.type = STATEMENT_TYPE_DEC;
+			stat.decExpr = stat.expr;
 			Lexer_next(p->lex);
 			break;
 		}

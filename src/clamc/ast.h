@@ -135,6 +135,7 @@ enum StatementType
 	STATEMENT_TYPE_DECLARATION,
 	STATEMENT_TYPE_ASSIGN,
 	STATEMENT_TYPE_INC,
+	STATEMENT_TYPE_DEC,
 	STATEMENT_TYPE_RETURN,
 	STATEMENT_TYPE_EXPRESSION,
 	STATEMENT_TYPE_COMPOUND,
@@ -157,6 +158,7 @@ struct Statement
 		Expression* returnExpr;
 		Expression* expr;
 		Expression* incExpr;
+		Expression* decExpr;
 		Vector compound;
 		Declaration declaration;
 		AssignStatement assign;

@@ -69,6 +69,7 @@ static const char* statTypeToString[] =
 	"STATEMENT_TYPE_DECLARATION",
 	"STATEMENT_TYPE_ASSIGN",
 	"STATEMENT_TYPE_INC",
+	"STATEMENT_TYPE_DEC",
 	"STATEMENT_TYPE_RETURN",
 	"STATEMENT_TYPE_EXPRESSION",
 	"STATEMENT_TYPE_COMPOUND",
@@ -252,6 +253,13 @@ void _Printer_statement(Printer* p, Statement* stat)
 		_Printer_indent(p); printf("incExpr=\n");
 		p->level++;
 		_Printer_expression(p, stat->incExpr);
+		p->level--;
+		break;
+
+	case STATEMENT_TYPE_DEC:
+		_Printer_indent(p); printf("decExpr=\n");
+		p->level++;
+		_Printer_expression(p, stat->decExpr);
 		p->level--;
 		break;
 	}
