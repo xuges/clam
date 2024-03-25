@@ -255,6 +255,11 @@ Statement _Parser_statement(Parser* p)
 			Lexer_next(p->lex);
 			stat.assign.rightExpr = _Parser_expression(p);
 			break;
+
+		case TOKEN_VALUE_INC:
+			stat.type = STATEMENT_TYPE_INC;
+			Lexer_next(p->lex);
+			break;
 		}
 
 		_Parser_expect(p, TOKEN_VALUE_SEM, "expected ';'");

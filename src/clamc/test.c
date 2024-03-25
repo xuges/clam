@@ -273,6 +273,7 @@ static TestCase tests[] =
 	TEST(test_parser, "operation1",           "int a = 1 + 2 - 4; int b = a + 3 + 4 - 1; int c = b - a; int d = a + b - c;")
 	TEST(test_parser, "operation2",           "int a = 1 * 2 + 3 * 4 - 5 * 6;")
 	TEST(test_parser, "operation3",           "int a = 1 * 2 + 3 * 4 - 6 / 2;")
+	TEST(test_parser, "inc_statement1",       "int a = 0; void foo() { a++; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
@@ -282,6 +283,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_parser, "function_parameter_wrong1", "void print(int a; int b) { }")
 	TEST_WRONG(test_parser, "function_argument_wrong1",  "int foo(int a, int b) { return a; } export int main() { return foo(1 2); }")
 	TEST_WRONG(test_parser, "function_argument_wrong2",  "int foo(int a, int b) { return a; } export int main() { return foo(1;2); }")
+	TEST_WRONG(test_parser, "inc_statement_wrong1",      "int a = 1++;")
+	TEST_WRONG(test_parser, "inc_statement_wrong2",      "int a = 0; int b = a++;")
 
 	TEST(test_analyzer, "basic",               "export int main() { return 12345; }")
 	TEST(test_analyzer, "global_variant1",     "export int a;")
