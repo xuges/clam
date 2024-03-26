@@ -9,6 +9,7 @@ struct Variant
 	Type type;
 	String name;
 	int level;
+	//TODO; check variant init or not
 };
 typedef struct Variant Variant;
 
@@ -154,6 +155,7 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		break;
 
 	case STATEMENT_TYPE_ASSIGN:
+	case STATEMENT_TYPE_ADD_ASSIGN:
 		_Analyzer_assignStatement(anly, stat);
 		break;
 
@@ -202,6 +204,16 @@ void _Analyzer_assignStatement(Analyzer* anly, Statement* stat)
 
 	if (ltype.id != rtype.id)  //TODO: implict type cast, more type regular
 		error(&stat->location, "lvalue and rvalue expression type not match");
+
+	//TODO: more type
+	switch (ltype.id)
+	{
+	case TYPE_INT:
+		break;
+
+	default:
+		error(&stat->location, "lvalue expression type not support this operator");
+	}
 }
 
 void _Analyzer_incDecStatement(Analyzer* anly, Statement* stat)
@@ -336,6 +348,8 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	Type ltype = _Analyzer_expression(anly, expr->binaryExpr.leftExpr);
 	Type rtype = _Analyzer_expression(anly, expr->binaryExpr.rightExpr);
 
+	//TODO: check type operate regular
+
 	switch (expr->type)
 	{
 	case EXPR_TYPE_ADD:
@@ -343,6 +357,7 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_MUL:
 	case EXPR_TYPE_DIV:
 	case EXPR_TYPE_MOD:
+		//TODO: check variant used is inited
 		//TODO: more operation type regular
 		switch (ltype.id)
 		{
@@ -358,7 +373,7 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 		break;
 
 	default:
-		error(&expr->location, "sunsupported binary operator");
+		error(&expr->location, "unsupported binary operator");
 	}
 
 	if (expr->type == EXPR_TYPE_DIV || expr->type == EXPR_TYPE_MOD)
