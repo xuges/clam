@@ -264,6 +264,13 @@ Statement _Parser_statement(Parser* p)
 			stat.assign.rightExpr = _Parser_expression(p);
 			break;
 
+		case TOKEN_VALUE_SUB_ASSIGN:
+			stat.type = STATEMENT_TYPE_SUB_ASSIGN;
+			Lexer_next(p->lex);
+			stat.assign.leftExpr = stat.expr;
+			stat.assign.rightExpr = _Parser_expression(p);
+			break;
+
 		case TOKEN_VALUE_INC:
 			stat.type = STATEMENT_TYPE_INC;
 			stat.incExpr = stat.expr;

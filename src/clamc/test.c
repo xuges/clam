@@ -280,7 +280,9 @@ static TestCase tests[] =
 	TEST(test_parser, "inc_statement1",       "int a = 0; void foo() { a++; }")
 	TEST(test_parser, "dec_statement1",       "int a = 3; void foo() { a--; }")
 	TEST(test_parser, "add_assign_statement1","int a = 0; void foo() { a += 1; }")
-	TEST(test_parser, "add_assign_statement1","int a = 0; int b = 1; void foo() { a += b; }")
+	TEST(test_parser, "add_assign_statement2","int a = 0; int b = 1; void foo() { a += b; }")
+	TEST(test_parser, "sub_assign_statement1","int a = 2; void foo() { a -= 1; }")
+	TEST(test_parser, "sub_assign_statement2","int a = 10; int b = 5; void foo() { a -= b; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
