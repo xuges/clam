@@ -16,6 +16,12 @@
 <star>::="*"
 <div>::="/"
 <mod>::="%"
+<add_assign>::="+="
+<sub_assign>::="-="
+<mul_assign>::="*="
+<div_assign>::="/="
+<mod_assign>::="%="
+
 <inc>::="++"
 <dec>::="--"
 <lp>::="("
@@ -38,12 +44,32 @@
 <function_def>::=[<export>]<type_desc><ident><lp>[<parameter_list>]<rp><compound_statement>
 <parameter_list>::=<type_desc><ident>{<comma><type_desc><ident>}
 
-<statement>::=<empty_statement>|<declaration_statement>|<assign_statement>|<inc_statement>|<dec_statement>|<expression_statement>|<return_statement>|<compound_statement>
+<statement>::=<empty_statement>
+             |<declaration_statement>
+			 |<assign_statement>
+			 |<add_assign_statement>
+			 |<sub_assign_statement>
+			 |<mul_assign_statement>
+			 |<div_assign_statement>
+			 |<mod_assign_statement>
+			 |<inc_statement>|<dec_statement>
+			 |<expression_statement>
+			 |<return_statement>
+			 |<compound_statement>
+
 <empty_statement>::=<sem>
 <declaration_statement>::=<variant_decl>
+
 <assign_statement>::=<expression><assign><expression><sem>
+<add_assign_statement>::=<expression><add_assign><expression><sem>
+<sub_assign_statement>::=<expression><sub_assign><expression><sem>
+<mul_assign_statement>::=<expression><mul_assign><expression><sem>
+<div_assign_statement>::=<expression><div_assign><expression><sem>
+<mod_assign_statement>::=<expression><mod_assign><expression><sem>
+
 <inc_statement>::=<expression><inc><sem>
 <dec_statement>::=<expression><dec><sem>
+
 <expression_statement>::=<expression><sem>
 <return_statement>::=<return>[<expression>]<sem>
 <compound_statement>::=<lc>{<statement>}<rc>
