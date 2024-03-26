@@ -285,6 +285,8 @@ static TestCase tests[] =
 	TEST(test_parser, "sub_assign_statement2","int a = 10; int b = 5; void foo() { a -= b; }")
 	TEST(test_parser, "mul_assign_statement1","int a = 2; void foo() { a *= 2; }")
 	TEST(test_parser, "mul_assign_statement2","int a = 5; int b = 2; void foo() { a *= 5; }")
+	TEST(test_parser, "div_assign_statement1","int a = 4; void foo() { a /= 2; }")
+	TEST(test_parser, "div_assign_statement2","int a = 8; int b = 3; void foo() { a /= b; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")

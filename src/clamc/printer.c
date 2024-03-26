@@ -77,6 +77,7 @@ static const char* statTypeToString[] =
 	"STATEMENT_TYPE_ADD_ASSIGN",
 	"STATEMENT_TYPE_SUB_ASSIGN",
 	"STATEMENT_TYPE_MUL_ASSIGN",
+	"STATEMENT_TYPE_DIV_ASSIGN",
 	"STATEMENT_TYPE_INC",
 	"STATEMENT_TYPE_DEC",
 	"STATEMENT_TYPE_RETURN",
@@ -255,6 +256,7 @@ void _Printer_statement(Printer* p, Statement* stat)
 	case STATEMENT_TYPE_ADD_ASSIGN:
 	case STATEMENT_TYPE_SUB_ASSIGN:
 	case STATEMENT_TYPE_MUL_ASSIGN:
+	case STATEMENT_TYPE_DIV_ASSIGN:
 		_Printer_indent(p); printf("assign=\n");
 		p->level++;
 		_Printer_assignStatement(p, stat);
