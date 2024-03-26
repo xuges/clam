@@ -348,6 +348,8 @@ static TestCase tests[] =
 	TEST(test_analyzer, "mul_assign_statement2","int a = 3; int b = 3; void foo() { a *= b; }")
 	TEST(test_analyzer, "div_assign_statement1","int a = 4; void foo() { a /= 2; }")
 	TEST(test_analyzer, "div_assign_statement2","int a = 8; int b = 3; void foo() { a /= b; }")
+	TEST(test_analyzer, "mod_assign_statement1","int a = 9; void foo() { a %= 2; }")
+	TEST(test_analyzer, "mod_assign_statement2","int a = 18; int b = 4; void foo() { a %= b; }")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -391,6 +393,9 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "div_assign_statement_wrong1", "void foo() { 2 /= 1; }")
 	TEST_WRONG(test_analyzer, "div_assign_statement_wrong2", "void foo() { int a = 1;  a /= bar(); } void bar() {}" )
 	TEST_WRONG(test_analyzer, "div_assign_statement_wrong3", "void foo() { int a = 1;  a /= 0; }")
+	TEST_WRONG(test_analyzer, "mod_assign_statement_wrong1", "void foo() { 2 %= 1; }")
+	TEST_WRONG(test_analyzer, "mod_assign_statement_wrong2", "void foo() { int a = 1;  a %= bar(); } void bar() {}" )
+	TEST_WRONG(test_analyzer, "mod_assign_statement_wrong3", "void foo() { int a = 1;  a %= 0; }")
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
 	TEST(test_executor, "void_function",        "void foo() { } export int main() { foo(); return 0; }")

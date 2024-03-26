@@ -159,6 +159,7 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 	case STATEMENT_TYPE_SUB_ASSIGN:
 	case STATEMENT_TYPE_MUL_ASSIGN:
 	case STATEMENT_TYPE_DIV_ASSIGN:
+	case STATEMENT_TYPE_MOD_ASSIGN:
 		_Analyzer_assignStatement(anly, stat);
 		break;
 
@@ -218,7 +219,7 @@ void _Analyzer_assignStatement(Analyzer* anly, Statement* stat)
 		error(&stat->location, "lvalue expression type not support this operator");
 	}
 
-	if (stat->type == STATEMENT_TYPE_DIV_ASSIGN)
+	if (stat->type == STATEMENT_TYPE_DIV_ASSIGN || stat->type == STATEMENT_TYPE_MOD_ASSIGN)
 	{
 		if (_Analyzer_checkZero(anly, stat->assign.rightExpr))
 			error(&stat->assign.rightExpr->location, "division by zero");
