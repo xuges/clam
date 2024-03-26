@@ -1,3 +1,9 @@
+--- 2024-03-26 clam-0.0.2 ---
+1. 增加+、-、*、/、%数值运算符。
+   Add + - * / % operator.
+2. 增加+=、-=、*=、/=、%=复合赋值语句。
+   Add += -= *= /= %= assignment statements.
+
 --- 2024-03-23 clam-0.0.2 ---
 1. 增加void类型。
    Add void type.
