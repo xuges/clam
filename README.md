@@ -6,8 +6,8 @@
 ## Example
 
 ```
-int a = 1;
-int b = 2;
+int a = 2 * 2 + 4 / 2 + 9 % 2;
+int b = a;
 int c = foo();
 int d = first(4, 5, 6);
 
@@ -25,13 +25,20 @@ export int main()
 {
 	{
 		int d = 8;
+		d *= 2;
 		{
 			a = d;
+			b++;
 		}
 	}
 	
+	c--;
+	
 	a = first(d, c, b);
-	a = b = c = d = 8;
+	a += 3;
+	b -= 1;
+	c /= 2;
+	d %= 3;
 	
 	return a;
 }
