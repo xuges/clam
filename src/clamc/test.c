@@ -514,6 +514,8 @@ static TestCase tests[] =
 	TEST(test_generator, "mul_assign_statement2", "int a = 3; int b = 3; export int main() { a *= b; return a; }")
 	TEST(test_generator, "div_assign_statement1", "int a = 4; export int main() { a /= 2; return a; }")
 	TEST(test_generator, "div_assign_statement2", "int a = 8; int b = 2; export int main() { a /= b; return a; }")
+	TEST(test_generator, "mod_assign_statement1", "int a = 9; export int main() { a %= 2; return a; }")
+	TEST(test_generator, "mod_assign_statement2", "int a = 18; int b = 4; export int main() { a %= b; return a; }")
 };
 #undef TEST
 #undef TEST_WRONG
