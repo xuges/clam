@@ -160,6 +160,7 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 
 	case STATEMENT_TYPE_ASSIGN:
 	case STATEMENT_TYPE_ADD_ASSIGN:
+	case STATEMENT_TYPE_SUB_ASSIGN:
 		_Executor_assignStatement(exec, stat);
 		break;
 
@@ -207,6 +208,15 @@ void _Executor_assignStatement(Executor* exec, Statement* stat)
 		{
 		case TYPE_INT:
 			lvalue->intValue += rvalue->intValue;
+			break;
+		}
+		break;
+
+	case STATEMENT_TYPE_SUB_ASSIGN:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			lvalue->intValue -= rvalue->intValue;
 			break;
 		}
 		break;
