@@ -283,6 +283,8 @@ static TestCase tests[] =
 	TEST(test_parser, "add_assign_statement2","int a = 0; int b = 1; void foo() { a += b; }")
 	TEST(test_parser, "sub_assign_statement1","int a = 2; void foo() { a -= 1; }")
 	TEST(test_parser, "sub_assign_statement2","int a = 10; int b = 5; void foo() { a -= b; }")
+	TEST(test_parser, "mul_assign_statement1","int a = 2; void foo() { a *= 2; }")
+	TEST(test_parser, "mul_assign_statement2","int a = 5; int b = 2; void foo() { a *= 5; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
@@ -297,6 +299,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_parser, "dec_statement_wrong1",      "int a = 1--;")
 	TEST_WRONG(test_parser, "dec_statement_wrong2",      "int a = 1; int b = a--;")
 	TEST_WRONG(test_parser, "add_assign_statement_wrong1", "int a = 1; int b = a += 1;")
+	TEST_WRONG(test_parser, "sub_assign_statement_wrong1", "int a = 1; int b = a -= 1;")
+	TEST_WRONG(test_parser, "mul_assign_statement_wrong1", "int a = 2; int b = a *= 2;")
 
 	TEST(test_analyzer, "basic",               "export int main() { return 12345; }")
 	TEST(test_analyzer, "global_variant1",     "export int a;")
