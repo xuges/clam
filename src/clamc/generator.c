@@ -251,6 +251,7 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 		break;
 
 	case STATEMENT_TYPE_ASSIGN:
+	case STATEMENT_TYPE_ADD_ASSIGN:
 		_Generator_assignStatement(gen, stat);
 		break;
 
@@ -279,7 +280,18 @@ void _Generator_assignStatement(Generator* gen, Statement* stat)
 	_Generator_indent(gen, buf);
 
 	_Generator_expression(gen, stat->assign.leftExpr, buf);
-	StringBuffer_append(buf, " = ");
+
+	switch (stat->type)
+	{
+	case STATEMENT_TYPE_ASSIGN:
+		StringBuffer_append(buf, " = ");
+		break;
+
+	case STATEMENT_TYPE_ADD_ASSIGN:
+		StringBuffer_append(buf, " += ");
+		break;
+	}
+
 	_Generator_expression(gen, stat->assign.rightExpr, buf);
 }
 
