@@ -253,6 +253,7 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 	case STATEMENT_TYPE_ASSIGN:
 	case STATEMENT_TYPE_ADD_ASSIGN:
 	case STATEMENT_TYPE_SUB_ASSIGN:
+	case STATEMENT_TYPE_MUL_ASSIGN:
 		_Generator_assignStatement(gen, stat);
 		break;
 
@@ -294,6 +295,10 @@ void _Generator_assignStatement(Generator* gen, Statement* stat)
 
 	case STATEMENT_TYPE_SUB_ASSIGN:
 		StringBuffer_append(buf, " -= ");
+		break;
+
+	case STATEMENT_TYPE_MUL_ASSIGN:
+		StringBuffer_append(buf, " *= ");
 		break;
 	}
 
