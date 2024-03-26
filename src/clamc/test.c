@@ -339,6 +339,8 @@ static TestCase tests[] =
 	TEST(test_analyzer, "add_assign_statement2","int a = 0; int b = 1; void foo() { a += b; }")
 	TEST(test_analyzer, "sub_assign_statement1","int a = 1; void foo() { a -= 1; }")
 	TEST(test_analyzer, "sub_assign_statement2","int a = 3; int b = 1; void foo() { a -= b; }")
+	TEST(test_analyzer, "mul_assign_statement1","int a = 2; void foo() { a *= 2; }")
+	TEST(test_analyzer, "mul_assign_statement2","int a = 3; int b = 3; void foo() { a *= b; }")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
