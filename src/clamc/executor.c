@@ -162,6 +162,7 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 	case STATEMENT_TYPE_ADD_ASSIGN:
 	case STATEMENT_TYPE_SUB_ASSIGN:
 	case STATEMENT_TYPE_MUL_ASSIGN:
+	case STATEMENT_TYPE_DIV_ASSIGN:
 		_Executor_assignStatement(exec, stat);
 		break;
 
@@ -230,6 +231,19 @@ void _Executor_assignStatement(Executor* exec, Statement* stat)
 			break;
 		}
 		break;
+
+	case STATEMENT_TYPE_DIV_ASSIGN:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			if (rvalue->intValue == 0)
+				error(&stat->assign.rightExpr->location, "right value is zero, division by zero");
+
+			lvalue->intValue /= rvalue->intValue;
+			break;
+		}
+		break;
+
 	}
 }
 
