@@ -293,6 +293,8 @@ void _Generator_assignStatement(Generator* gen, Statement* stat)
 	}
 
 	_Generator_expression(gen, stat->assign.rightExpr, buf);
+
+	StringBuffer_append(buf, ";\n");
 }
 
 void _Generator_incDecStatement(Generator* gen, Statement* stat)
