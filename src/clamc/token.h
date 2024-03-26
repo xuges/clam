@@ -41,6 +41,7 @@ enum TokenValue
 	TOKEN_VALUE_SUB_ASSIGN,      // -=
 	TOKEN_VALUE_MUL_ASSIGN,      // *=
 	TOKEN_VALUE_DIV_ASSIGN,      // /=
+	TOKEN_VALUE_MOD_ASSIGN,      // %=
 
 	TOKEN_VALUE_INC,             // ++
 	TOKEN_VALUE_DEC,             // --
