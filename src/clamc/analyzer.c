@@ -156,6 +156,7 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 
 	case STATEMENT_TYPE_ASSIGN:
 	case STATEMENT_TYPE_ADD_ASSIGN:
+	case STATEMENT_TYPE_SUB_ASSIGN:
 		_Analyzer_assignStatement(anly, stat);
 		break;
 
