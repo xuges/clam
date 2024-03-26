@@ -159,6 +159,7 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 		break;
 
 	case STATEMENT_TYPE_ASSIGN:
+	case STATEMENT_TYPE_ADD_ASSIGN:
 		_Executor_assignStatement(exec, stat);
 		break;
 
@@ -190,7 +191,26 @@ void _Executor_assignStatement(Executor* exec, Statement* stat)
 	Value* rvalue = Stack_pop(&exec->stack);
 
 	//assign
-	lvalue->intValue = rvalue->intValue;  //TODO: more type
+	switch (stat->type)
+	{
+	case STATEMENT_TYPE_ASSIGN:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			lvalue->intValue = rvalue->intValue;
+			break;
+		}
+		break;
+
+	case STATEMENT_TYPE_ADD_ASSIGN:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			lvalue->intValue += rvalue->intValue;
+			break;
+		}
+		break;
+	}
 }
 
 void _Executor_incDecStatement(Executor* exec, Statement* stat)

@@ -417,8 +417,12 @@ static TestCase tests[] =
 	TEST(test_executor, "inc_statement2",       "int a = 1; export int main() { a++; a++; return a; }")
 	TEST(test_executor, "dec_statement1",       "int a = 2; export int main() { a--; return a; }")
 	TEST(test_executor, "dec_statement2",       "int a = 2; export int main() { a--; a--; return a; }")
+	TEST(test_executor, "add_assign_statement1","int a = 0; export int main() { a += 1; return a; }")
+	TEST(test_executor, "add_assign_statement2","int a = 0; int b = 1; export int main() { a += b; return a; }")
+	TEST(test_executor, "add_assign_statement3","int a = 0; int b = 1; export int main() { a += 3; a += b; return a; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
+	TEST_WRONG(test_executor, "mod_expression_wrong", "int a = 10; int b = 0; export int main() { return a % b; }")
 
 	TEST(test_generator, "basic",               "export int main() { return 0; }")
 	TEST(test_generator, "function_call1",      "int foo() { return 1; } export int main() { return foo(); }")
