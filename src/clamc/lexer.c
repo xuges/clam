@@ -17,6 +17,9 @@ static Keyword keywords[] =
 {
 	{ "void"  , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_VOID   },
 	{ "int"   , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_INT    },
+	{ "bool"  , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_BOOL   },
+	{ "true"  , TOKEN_TYPE_BOOL,         TOKEN_VALUE_TRUE   },
+	{ "false" , TOKEN_TYPE_BOOL,         TOKEN_VALUE_FALSE  },
 	{ "export", TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_EXPORT },
 	{ "return", TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_RETURN },
 };

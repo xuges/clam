@@ -55,6 +55,9 @@ enum TokenValue
 
 	TOKEN_VALUE_VOID,            // void
 	TOKEN_VALUE_INT,             // int
+	TOKEN_VALUE_BOOL,            // bool
+	TOKEN_VALUE_TRUE,            // true
+	TOKEN_VALUE_FALSE,           // false
 
 	TOKEN_VALUE_EXPORT,          // export
 	TOKEN_VALUE_RETURN,          // return
