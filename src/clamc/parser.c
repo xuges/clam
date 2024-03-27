@@ -407,6 +407,10 @@ Expression* _Parser_unaryExpression(Parser* p)
 		exprType = EXPR_TYPE_MINUS;
 		break;
 
+	case TOKEN_VALUE_NOT:
+		exprType = EXPR_TYPE_NOT;
+		break;
+
 	default:
 		return _Parser_postfixExpression(p);
 	}

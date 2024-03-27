@@ -68,6 +68,7 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_IDENT",
 	"EXPR_TYPE_PLUS",
 	"EXPR_TYPE_MINUS",
+	"EXPR_TYPE_NOT",
 	"EXPR_TYPE_ADD",
 	"EXPR_TYPE_SUB",
 	"EXPR_TYPE_MUL",
@@ -333,6 +334,7 @@ void _Printer_expression(Printer* p, Expression* expr)
 
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NOT:
 		_Printer_indent(p); printf("unaryExpr=\n");
 		p->level++;
 		_Printer_expression(p, expr->unaryExpr);
