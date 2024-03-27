@@ -239,7 +239,7 @@ static TestCase tests[] =
 	TEST(test_lexer, "eof"    , "")
 	TEST(test_lexer, "keyword", "export void int bool true false return")
 	TEST(test_lexer, "punct"  , "(){},;")
-	TEST(test_lexer, "operator", "=+-*/% ++ -- += -= *= /= %=")
+	TEST(test_lexer, "operator", "=+-*/% ++ -- += -= *= /= %= !")
 
 	TEST(test_parser, "basic",                "export int main() { return 0; }")
 	TEST(test_parser, "return_int",           "export int main() { return 666; }")
@@ -546,7 +546,6 @@ static void usage()
 
 int main(int argc, char** argv)
 {
-	TEST(test_parser, "variant_assign2", "int a = 0; void func() { int b = 2; a = 1; }")
 	//options
 	bool all = true;
 	bool run = false;
