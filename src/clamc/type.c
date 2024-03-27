@@ -12,14 +12,21 @@ Type errorType =
 	TYPE_INIT
 };
 
+Type voidType =
+{
+	String_literal("void"),
+	TYPE_VOID
+};
+
 Type intType =
 {
 	String_literal("int"),
 	TYPE_INT
 };
 
-Type voidType =
+
+Type boolType =
 {
-	String_literal("void"),
-	TYPE_VOID
+	String_literal("bool"),
+	TYPE_BOOL
 };
