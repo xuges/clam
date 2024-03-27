@@ -149,8 +149,9 @@ void _Generator_variant(Generator* gen, Declaration* decl)
 void _Generator_function(Generator* gen, Declaration* decl)
 {
 	FuncDecl* func = &decl->function;
+	String main = String_literal("main");
 
-	if (String_compare(&func->name, "main") != 0)  //not 'main'
+	if (String_equalsString(func->name, main))  //not 'main'
 	{
 		if (decl->exported)
 		{

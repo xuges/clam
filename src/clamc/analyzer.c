@@ -71,7 +71,7 @@ void _Analyzer_variant(Analyzer* anly, Declaration* decl)
 	for (int i = anly->stack.size - 1; i >= 0; --i)  //check duplicate
 	{
 		Variant* v = Vector_get(&anly->stack, i);
-		if (v->level == anly->level && String_compare(&v->name, decl->variant.name.data) == 0)
+		if (v->level == anly->level && String_equalsString(v->name, decl->variant.name))
 			error(&decl->location, "variant '" String_FMT "' duplicate", String_arg(decl->name));  //TODO: show existed variant line
 	}
 
@@ -104,7 +104,8 @@ void _Analyzer_function(Analyzer* anly, Declaration* decl)
 	int lastSize = anly->stack.size;
 
 	FuncDecl* func = &decl->function;
-	if (String_compare(&func->name, "main") == 0)  //check special function 'main' signature
+	String main = String_literal("main");
+	if (String_equalsString(func->name, main))  //check special function 'main' signature
 	{
 		if (!decl->exported)
 			error(&decl->location, "function 'main' must exported");
@@ -422,7 +423,7 @@ Variant* _Analyzer_findVariant(Analyzer* anly, String name)
 	for (int i = anly->stack.size - 1; i >= 0; --i)
 	{
 		Variant* v = Vector_get(&anly->stack, i);
-		if (v->level <= anly->level && String_compare(&v->name, name.data) == 0)
+		if (v->level <= anly->level && String_equalsString(v->name, name))
 			return v;
 	}
 	return NULL;
@@ -433,7 +434,7 @@ Declaration* _Analyzer_findFunction(Analyzer* anly, String name)
 	for (int i = 0; i < anly->module->functions.size; ++i)
 	{
 		Declaration* decl = Vector_get(&anly->module->functions, i);
-		if (String_compare(&name, decl->function.name.data) == 0)
+		if (String_equalsString(name, decl->function.name))
 			return decl;
 	}
 	return NULL;

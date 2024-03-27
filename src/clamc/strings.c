@@ -12,9 +12,19 @@ void String_init(String* s)
 	s->length = 0;
 }
 
-int String_compare(String* s1, const char* s2)
+bool String_equals(String s1, const char* s2)
 {
-	return strncmp(s1->data, s2, s1->length);
+	return String_equalsN(s1, s2, strlen(s2));
+}
+
+bool String_equalsN(String s1, const char* s2, int length)
+{
+	return s1.length == length && strncmp(s1.data, s2, length);
+}
+
+bool String_equalsString(String s1, String s2)
+{
+	return s1.length == s2.length && strncmp(s1.data, s2.data, s1.length) == 0;
 }
 
 int String_toInt(String* s, int base)

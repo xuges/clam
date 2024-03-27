@@ -7,7 +7,7 @@
 
 struct Keyword
 {
-	const char* literal;
+	String literal;
 	TokenType   type;
 	TokenValue  value;
 };
@@ -15,13 +15,13 @@ typedef struct Keyword Keyword;
 
 static Keyword keywords[] =
 {
-	{ "void"  , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_VOID   },
-	{ "int"   , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_INT    },
-	{ "bool"  , TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_BOOL   },
-	{ "true"  , TOKEN_TYPE_BOOL,         TOKEN_VALUE_TRUE   },
-	{ "false" , TOKEN_TYPE_BOOL,         TOKEN_VALUE_FALSE  },
-	{ "export", TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_EXPORT },
-	{ "return", TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_RETURN },
+	{ String_literal("void"  ), TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_VOID   },
+	{ String_literal("int"   ), TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_INT    },
+	{ String_literal("bool"  ), TOKEN_TYPE_KEYWORD_TYPE, TOKEN_VALUE_BOOL   },
+	{ String_literal("true"  ), TOKEN_TYPE_BOOL,         TOKEN_VALUE_TRUE   },
+	{ String_literal("false" ), TOKEN_TYPE_BOOL,         TOKEN_VALUE_FALSE  },
+	{ String_literal("export"), TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_EXPORT },
+	{ String_literal("return"), TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_RETURN },
 };
 
 static bool _Lexer_isEof(Lexer* lex);
@@ -264,7 +264,8 @@ void _Lexer_parseKeyword(Lexer* lex)
 	for (int i = 0; i < sizeof(keywords) / sizeof(Keyword); i++)
 	{
 		Keyword* kw = &keywords[i];
-		if (String_compare(&lex->token.literal, kw->literal) == 0) {
+		if (String_equalsString(lex->token.literal, kw->literal))
+		{
 			lex->token.type  = kw->type;
 			lex->token.value = kw->value;
 			break;

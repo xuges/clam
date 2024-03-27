@@ -419,14 +419,14 @@ Value* _Executor_findVariant(Executor* exec, String name)
 	for (int i = exec->stack.size - 1; i >= 0; --i)  //reverse (local first)
 	{
 		Value* value = Vector_get(&exec->stack, i);
-		if (value->level <= exec->level && String_compare(&value->name, name.data) == 0)
+		if (value->level <= exec->level && String_equalsString(value->name, name))
 			return value;
 	}
 
 	for (int i = 0; i < exec->global.size; ++i)  //global second
 	{
 		Value* value = Vector_get(&exec->global, i);
-		if (String_compare(&value->name, name.data) == 0)
+		if (String_equalsString(value->name, name))
 			return value;
 	}
 
@@ -438,7 +438,7 @@ Declaration* _Executor_findFunction(Executor* exec, String name)
 	for (int i = 0; i < exec->module->functions.size; i++)
 	{
 		Declaration* decl = (Declaration*)Vector_get(&exec->module->functions, i);
-		if (String_compare(&name, decl->function.name.data) == 0)
+		if (String_equalsString(name, decl->function.name))
 		{
 			//found function
 			return decl;

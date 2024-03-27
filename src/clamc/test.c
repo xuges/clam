@@ -546,8 +546,6 @@ static void usage()
 
 int main(int argc, char** argv)
 {
-	printf("%d\n", strcmp("a111", "b2"));
-	return 0;
 	TEST(test_parser, "variant_assign2", "int a = 0; void func() { int b = 2; a = 1; }")
 	//options
 	bool all = true;
