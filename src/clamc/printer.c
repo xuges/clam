@@ -62,6 +62,7 @@ static const char* declTypeToString[] =
 static const char* exprTypeToString[] =
 {
 	"EXPR_TYPE_INT",
+	"EXPR_TYPE_BOOL",
 	"EXPR_TYPE_CALL",
 	"EXPR_TYPE_IDENT",
 	"EXPR_TYPE_PLUS",
@@ -95,6 +96,7 @@ static const char* typeIdToString[] =
 	"TYPE_INIT",
 	"TYPE_VOID",
 	"TYPE_INT",
+	"TYPE_BOOL",
 };
 
 static const char* boolToString[] =
@@ -311,6 +313,10 @@ void _Printer_expression(Printer* p, Expression* expr)
 	{
 	case EXPR_TYPE_INT:
 		_Printer_indent(p); printf("intExpr=%d\n", expr->intExpr);
+		break;
+
+	case EXPR_TYPE_BOOL:
+		_Printer_indent(p); printf("boolExpr=%s\n", expr->boolExpr ? "true" : "false");
 		break;
 
 	case EXPR_TYPE_CALL:

@@ -70,7 +70,7 @@ Declaration _Parser_declaration(Parser* p)
 		decl.location = token->location;
 
 	//type
-	decl.baseType = _Parser_typeDesc(p);
+	decl.baseType = _Parser_typeDesc(p);  //TODO: maybe remove type when parse?
 
 	_Parser_expect(p, TOKEN_VALUE_IDENT, "expected declaration name");
 	decl.name = token->literal;
@@ -126,6 +126,10 @@ Type _Parser_typeDesc(Parser* p)
 
 		case TOKEN_VALUE_INT:
 			type = intType;
+			break;
+
+		case TOKEN_VALUE_BOOL:
+			type = boolType;
 			break;
 		}
 		break;
@@ -447,6 +451,13 @@ Expression* _Parser_primaryExpression(Parser* p)
 		expr = Expression_createLiteral(EXPR_TYPE_INT, token);
 		Lexer_next(p->lex);
 		break;
+
+	case TOKEN_VALUE_TRUE:
+	case TOKEN_VALUE_FALSE:
+		expr = Expression_createLiteral(EXPR_TYPE_BOOL, token);
+		Lexer_next(p->lex);
+		break;
+
 	case TOKEN_VALUE_IDENT:
 		expr = Expression_createIdent(&token->location, token);
 		Lexer_next(p->lex);

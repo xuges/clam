@@ -77,6 +77,7 @@ void Declaration_destroy(Declaration* decl);
 enum ExprType
 {
 	EXPR_TYPE_INT,
+	EXPR_TYPE_BOOL,
 	EXPR_TYPE_CALL,
 	EXPR_TYPE_IDENT,
 	EXPR_TYPE_PLUS,   //unary
@@ -112,6 +113,7 @@ struct Expression
 	union
 	{
 		int intExpr;
+		bool boolExpr;
 		CallExpression callExpr;
 		String identExpr;
 		struct Expression* unaryExpr;

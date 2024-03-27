@@ -74,6 +74,10 @@ Expression* Expression_createLiteral(ExprType type, Token* token)
 			break;
 		}
 		break;
+
+	case EXPR_TYPE_BOOL:
+		expr->boolExpr = token->value == TOKEN_VALUE_TRUE;
+		break;
 	}
 
 	return expr;

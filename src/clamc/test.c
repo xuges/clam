@@ -245,13 +245,17 @@ static TestCase tests[] =
 	TEST(test_parser, "return_int",           "export int main() { return 666; }")
 	TEST(test_parser, "global_variant1",      "int a; int b = 10; export int c = 666; export int d;")
 	TEST(test_parser, "global_variant2",      "int _a = 1; int a2 = 2; export int a_3 = 3; export int __c = 4; export int _d1_ = 5;")
+	TEST(test_parser, "global_variant3",      "bool check = true; bool areYouOk = false;")
 	TEST(test_parser, "void_function",        "void print() {}")
+	TEST(test_parser, "bool_function",        "bool check() { return true; }")
 	TEST(test_parser, "functions",            "int foo() {} int bar(){} void print(){} export int main() { return 0; }")
 	TEST(test_parser, "return_int",           "export int main() { return 666; }")
 	TEST(test_parser, "function_parameter1",  "void print(int a, int b) { }")
 	TEST(test_parser, "function_parameter2",  "void print(int a,  int b,) { }")
+	TEST(test_parser, "function_parameter3",  "void switch(bool enb) { }")
 	TEST(test_parser, "function_argument1",   "void print(int a, int b) { } export int main() { print(1, 2); return 0; }")
 	TEST(test_parser, "function_argument2",   "void print(int a, int b) { } export int main() { print(1, 2, 3,); return 0; }")
+	TEST(test_parser, "function_argument3",   "void enable(bool enb) { } export int main() { enable(true); return 0; }")
 	TEST(test_parser, "functions_return_int", "int foo(){return 1;}\nint bar(){return 2;}\nexport int main() { return 666; }")
 	TEST(test_parser, "multi_block1",         "export int main() { int a = 1; { int b = 2; } return a; }")
 	TEST(test_parser, "multi_block2",         "export int main() { int a = 1; { int b = 2; { int c = 3; { int d = a; } } } return a; }")
@@ -259,6 +263,7 @@ static TestCase tests[] =
 	TEST(test_parser, "variant_assign2",      "int a = 0; void func() { int b = 2; a = 1; }")
 	TEST(test_parser, "variant_assign3",      "int a = 0; void func() { int b = 2; { a = 1; } }")
 	TEST(test_parser, "variant_assign4",      "int a = 0; void func() { int b = 2; a = b; }")
+	TEST(test_parser, "variant_assign5",      "bool ok = false; void func() { ok = true; }")
 	TEST(test_parser, "add_expression1",      "export int main() { int a = 1 + 1; return a; }")
 	TEST(test_parser, "add_expression2",      "export int main() { int a = 1 + 2 + 3; return a; }")
 	TEST(test_parser, "plus_expression1",     "export int main() { int a = 1; a = +1; return a; }")
@@ -541,6 +546,9 @@ static void usage()
 
 int main(int argc, char** argv)
 {
+	printf("%d\n", strcmp("a111", "b2"));
+	return 0;
+	TEST(test_parser, "variant_assign2", "int a = 0; void func() { int b = 2; a = 1; }")
 	//options
 	bool all = true;
 	bool run = false;
