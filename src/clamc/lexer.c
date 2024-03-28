@@ -21,6 +21,7 @@ static Keyword keywords[] =
 	{ String_literal("true"  ), TOKEN_TYPE_BOOL,         TOKEN_VALUE_TRUE   },
 	{ String_literal("false" ), TOKEN_TYPE_BOOL,         TOKEN_VALUE_FALSE  },
 	{ String_literal("if"    ), TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_IF     },
+	{ String_literal("else"  ), TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_ELSE   },
 	{ String_literal("export"), TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_EXPORT },
 	{ String_literal("return"), TOKEN_TYPE_KEYWORD,      TOKEN_VALUE_RETURN },
 };
