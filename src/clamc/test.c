@@ -267,6 +267,7 @@ static TestCase tests[] =
 	TEST(test_parser, "div_assign_statement", "int a = 4; void foo() { a /= 2; int b = 10; b /= a; }")
 	TEST(test_parser, "mod_assign_statement", "int a = 9; void foo() { a %= 2; int b = 6; b %= a; }")
 	TEST(test_parser, "not_expression",       "bool a = !false; bool b = !a;")
+	TEST(test_parser, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2;")
 
 	TEST(test_parser, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
 	TEST(test_parser, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")

@@ -88,6 +88,7 @@ enum ExprType
 	EXPR_TYPE_MUL,
 	EXPR_TYPE_DIV,
 	EXPR_TYPE_MOD,
+	EXPR_TYPE_NE,
 };
 typedef enum ExprType ExprType;
 
