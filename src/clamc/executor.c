@@ -189,8 +189,8 @@ ExecuteResult _Executor_ifStatement(Executor* exec, Declaration* decl, Statement
 	Value* cond = Stack_pop(&exec->stack);
 	if (cond->boolValue)
 		return _Executor_statement(exec, decl, stat->ifStat.statement);
-
-	//TODO: exec else statement
+	else if (stat->ifStat.elseStat)
+		return _Executor_statement(exec, decl, stat->ifStat.elseStat);
 
 	return EXEC_RESULT_NORMAL;
 }

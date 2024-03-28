@@ -452,7 +452,9 @@ static TestCase tests[] =
 	TEST(test_executor, "if_statement4",        "export int main() { bool a = true; if (a) { return 1; } return 0; }")
 	TEST(test_executor, "if_statement5",        "export int main() { bool a = false; if (!a) { return 1; } return 0; }")
 	TEST(test_executor, "if_statement6",        "export int main() { bool a = false; if (a) { return 1; } return 0; }")
-
+	TEST(test_executor, "if_statement6",        "export int main() { bool a = false; if (a) { return 1; } else return 2; return 0; }")
+	TEST(test_executor, "if_statement7",        "export int main() { if (true) if (!false) return 1; else return 2; else return 3;  return 0; }")
+	TEST(test_executor, "if_statement8",        "export int main() { if (!true) if (true) return 1; else return 2; else return 3;  return 0; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 	TEST_WRONG(test_executor, "mod_expression_wrong", "int a = 10; int b = 0; export int main() { return a % b; }")
