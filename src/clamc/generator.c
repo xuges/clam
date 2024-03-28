@@ -34,6 +34,8 @@ void Generator_init(Generator* gen, GenerateTarget target)
 	gen->target = target;
 	gen->level = 0;
 	gen->inMain = false;
+
+	StringBuffer_append(&gen->srcDecl, "#include <stdbool.h>\n");
 }
 
 void Generator_destroy(Generator* gen)
@@ -151,7 +153,7 @@ void _Generator_function(Generator* gen, Declaration* decl)
 	FuncDecl* func = &decl->function;
 	String main = String_literal("main");
 
-	if (String_equalsString(func->name, main))  //not 'main'
+	if (!String_equalsString(func->name, main))  //not 'main'
 	{
 		if (decl->exported)
 		{
@@ -388,12 +390,17 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 		StringBuffer_appendN(buf, tmp, len);
 		break;
 
+	case EXPR_TYPE_BOOL:
+		StringBuffer_append(buf, expr->boolExpr ? "true" : "false");
+		break;
+
 	case EXPR_TYPE_CALL:
 		_Generator_callExpression(gen, expr, buf);
 		break;
 
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NOT:
 		_Generator_unaryExpression(gen, expr, buf);
 		break;
 
@@ -417,6 +424,10 @@ void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* 
 
 	case EXPR_TYPE_MINUS:
 		StringBuffer_append(buf, "-");
+		break;
+
+	case EXPR_TYPE_NOT:
+		StringBuffer_append(buf, "!");
 		break;
 	}
 
@@ -503,6 +514,7 @@ bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType ex
 
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NOT:
 		return _Generator_expressionContains(gen, expr->unaryExpr, exprType);
 	}
 

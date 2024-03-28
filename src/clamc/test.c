@@ -529,6 +529,9 @@ static TestCase tests[] =
 	TEST(test_generator, "div_assign_statement2", "int a = 8; int b = 2; export int main() { a /= b; return a; }")
 	TEST(test_generator, "mod_assign_statement1", "int a = 9; export int main() { a %= 2; return a; }")
 	TEST(test_generator, "mod_assign_statement2", "int a = 18; int b = 4; export int main() { a %= b; return a; }")
+	TEST(test_generator, "not_expression1",       "bool a = !false; export int main() { a; return 0; }")
+	TEST(test_generator, "not_expression2",       "bool a = false; bool b = !a; export int main() { a; return 0; }")
+
 };
 #undef TEST
 #undef TEST_WRONG
