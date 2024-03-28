@@ -302,7 +302,17 @@ void _Generator_ifStatement(Generator* gen, Declaration* decl, Statement* stat)
 	if (stat->ifStat.statement->type != STATEMENT_TYPE_COMPOUND)
 		gen->level--;
 	
-	//TODO: support else statement
+	if (stat->ifStat.elseStat)
+	{
+		_Generator_indent(gen, buf); StringBuffer_append(buf, "else\n");
+		if (stat->ifStat.elseStat->type != STATEMENT_TYPE_COMPOUND)
+			gen->level++;
+
+		_Generator_statement(gen, decl, stat->ifStat.elseStat);
+
+		if (stat->ifStat.elseStat->type != STATEMENT_TYPE_COMPOUND)
+			gen->level--;
+	}
 }
 
 void _Generator_assignStatement(Generator* gen, Statement* stat)

@@ -523,6 +523,9 @@ static TestCase tests[] =
 	TEST(test_generator, "if_statement4",         "export int main() { bool a = true; if (a) { return 1; } return 0; }")
 	TEST(test_generator, "if_statement5",         "export int main() { bool a = false; if (!a) { return 1; } return 0; }")
 	TEST(test_generator, "if_statement6",         "export int main() { bool a = false; if (a) { return 1; } return 0; }")
+	TEST(test_generator, "if_statement7",         "export int main() { if (true) if (!false) return 1; else { return 2; } else return 3;  return 0; }")
+	TEST(test_generator, "if_statement8",         "export int main() { if (true) { return 1; } else if (!false) { return 2; } else { return 3; }  return 0; }")
+
 };
 #undef TEST
 #undef TEST_WRONG
