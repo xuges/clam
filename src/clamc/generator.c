@@ -9,6 +9,7 @@ static void _Generator_variant(Generator* gen, Declaration* decl);
 static void _Generator_function(Generator* gen, Declaration* decl);
 static void _Generator_parameterList(Generator* gen, Vector params, StringBuffer* buf);
 static void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat);
+static void _Generator_ifStatement(Generator* gen, Declaration* decl, Statement* stat);
 static void _Generator_assignStatement(Generator* gen, Statement* stat);
 static void _Generator_incDecStatement(Generator* gen, Statement* stat);
 static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vector block);
@@ -253,6 +254,10 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 		_Generator_variant(gen, &stat->declaration);
 		break;
 
+	case STATEMENT_TYPE_IF:
+		_Generator_ifStatement(gen, decl, stat);
+		break;
+
 	case STATEMENT_TYPE_ASSIGN:
 	case STATEMENT_TYPE_ADD_ASSIGN:
 	case STATEMENT_TYPE_SUB_ASSIGN:
@@ -279,6 +284,25 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 		_Generator_returnStatement(gen, stat);
 		break;
 	}
+}
+
+void _Generator_ifStatement(Generator* gen, Declaration* decl, Statement* stat)
+{
+	StringBuffer* buf = gen->inMain ? &gen->main : &gen->srcDef;
+
+	_Generator_indent(gen, buf); StringBuffer_append(buf, "if (");
+	_Generator_expression(gen, stat->ifStat.condition, buf);
+	StringBuffer_append(buf, ")\n");
+
+	if (stat->ifStat.statement->type != STATEMENT_TYPE_COMPOUND)
+		gen->level++;
+
+	_Generator_statement(gen, decl, stat->ifStat.statement);
+
+	if (stat->ifStat.statement->type != STATEMENT_TYPE_COMPOUND)
+		gen->level--;
+	
+	//TODO: support else statement
 }
 
 void _Generator_assignStatement(Generator* gen, Statement* stat)

@@ -503,7 +503,12 @@ static TestCase tests[] =
 	TEST(test_generator, "mod_assign_statement2", "int a = 18; int b = 4; export int main() { a %= b; return a; }")
 	TEST(test_generator, "not_expression1",       "bool a = !false; export int main() { a; return 0; }")
 	TEST(test_generator, "not_expression2",       "bool a = false; bool b = !a; export int main() { a; return 0; }")
-
+	TEST(test_generator, "if_statement1",         "export int main() { if (true) return 1; return 0; }")
+	TEST(test_generator, "if_statement2",         "export int main() { if (true) { return 1; } return 0; }")
+	TEST(test_generator, "if_statement3",         "export int main() { if (!false) { return 1; } return 0; }")
+	TEST(test_generator, "if_statement4",         "export int main() { bool a = true; if (a) { return 1; } return 0; }")
+	TEST(test_generator, "if_statement5",         "export int main() { bool a = false; if (!a) { return 1; } return 0; }")
+	TEST(test_generator, "if_statement6",         "export int main() { bool a = false; if (a) { return 1; } return 0; }")
 };
 #undef TEST
 #undef TEST_WRONG
