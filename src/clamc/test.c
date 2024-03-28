@@ -317,6 +317,10 @@ static TestCase tests[] =
 	TEST(test_analyzer, "mod_assign_statement", "int a = 9; void foo() { a %= 2; int b = 6; b %= a; }")
 	TEST(test_analyzer, "not_expression",       "bool a = !false; bool b = !a;")
 
+	TEST(test_analyzer, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
+	TEST(test_analyzer, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
+	TEST(test_analyzer, "if_statement3",        "export int main() { if (!false) { return 1; } return 0; }")
+
 	TEST_WRONG(test_analyzer, "basic_wrong1",                "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",                "export void main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong3",                "export int main() { return foo(); }")
@@ -364,6 +368,11 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "mod_assign_statement_wrong3", "void foo() { int a = 1;  a %= 0; }")
 	TEST_WRONG(test_analyzer, "not_expression_wrong1",       "bool a = 0;")
 	TEST_WRONG(test_analyzer, "not_expression_wrong2",       "int a = 0; bool b = !a;")
+
+	TEST_WRONG(test_analyzer, "if_statement_wrong1",        "export int main() { if (0) return 1; return 0; }")
+	TEST_WRONG(test_analyzer, "if_statement_wrong2",        "export int main() { if (1 + 1) { return 1; } return 0; }")
+	TEST_WRONG(test_analyzer, "if_statement_wrong3",        "export int main() { if (false) { return 1; } }")
+
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
 	TEST(test_executor, "void_function",        "void foo() { } export int main() { foo(); return 0; }")

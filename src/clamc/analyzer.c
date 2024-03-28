@@ -21,9 +21,11 @@ static void Variant_init(Variant* v)
 static void _Analyzer_variant(Analyzer* anly, Declaration* decl);
 static void _Analyzer_function(Analyzer* anly, Declaration* decl);
 static bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat);
+static bool _Analyzer_ifStatement(Analyzer* anly, Declaration* decl, Statement* stat);
+static bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
+static void _Analyzer_returnStatement(Analyzer* anly, Declaration* decl, Statement* stat);
 static void _Analyzer_assignStatement(Analyzer* anly, Statement* stat);
 static void _Analyzer_incDecStatement(Analyzer* anly, Statement* stat);
-static bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* stat);
 static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
 static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr);
@@ -158,6 +160,14 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		_Analyzer_variant(anly, &stat->declaration);
 		break;
 
+	case STATEMENT_TYPE_IF:
+		hasReturn = _Analyzer_ifStatement(anly,decl, stat);
+		break;
+
+	case STATEMENT_TYPE_COMPOUND:
+		hasReturn = _Analyzer_compoundStatement(anly, decl, stat);
+		break;
+
 	case STATEMENT_TYPE_ASSIGN:
 	case STATEMENT_TYPE_ADD_ASSIGN:
 	case STATEMENT_TYPE_SUB_ASSIGN:
@@ -172,34 +182,32 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 		_Analyzer_incDecStatement(anly, stat);
 		break;
 
-	case STATEMENT_TYPE_COMPOUND:
-		hasReturn = _Analyzer_compoundStatement(anly, decl, stat);
-		break;
-
 	case STATEMENT_TYPE_EXPRESSION:
 		_Analyzer_expression(anly, stat->expr);
 		break;
 
 	case STATEMENT_TYPE_RETURN:
-		//return semantic check
-		if (stat->returnExpr && func->resType.id == TYPE_VOID)
-			error(&stat->location, "function return type is 'void', cannot return value");
-		if (!stat->returnExpr && func->resType.id != TYPE_VOID)
-			error(&stat->location, "function return type not 'void', return statement must with expression");
-
-		//return type check
-		if (stat->returnExpr)
-		{
-			Type type = _Analyzer_expression(anly, stat->returnExpr);
-			if (type.id != func->resType.id)  //TODO: support implict type cast
-				error(&stat->location, "function return type missmatch");
-		}
-
+		_Analyzer_returnStatement(anly, decl, stat);
 		hasReturn = true;
 		break;
 	}
 
 	return hasReturn;
+}
+
+bool _Analyzer_ifStatement(Analyzer* anly, Declaration* decl, Statement* stat)
+{
+	Type cond = _Analyzer_expression(anly, stat->ifStat.condition);
+	if (!_Analyzer_checkTypeConvert(anly, boolType, cond))
+		error(&stat->ifStat.condition->location, "if condition expression cannot convert to bool type");
+
+	//TODO: support else statement
+
+	_Analyzer_statement(anly, decl, stat->ifStat.statement);
+
+	//TODO: if and else both has return statement, return true
+
+	return false;
 }
 
 void _Analyzer_assignStatement(Analyzer* anly, Statement* stat)
@@ -280,6 +288,22 @@ bool _Analyzer_compoundStatement(Analyzer* anly, Declaration* decl, Statement* s
 	anly->level--;
 
 	return hasReturn != 0;
+}
+
+void _Analyzer_returnStatement(Analyzer* anly, Declaration* decl, Statement* stat)
+{
+	if (stat->returnExpr && decl->function.resType.id == TYPE_VOID)
+		error(&stat->location, "function return type is 'void', cannot return value");
+
+	if (!stat->returnExpr && decl->function.resType.id != TYPE_VOID)
+		error(&stat->location, "function return type not 'void', return statement must with expression");
+
+	if (stat->returnExpr)
+	{
+		Type type = _Analyzer_expression(anly, stat->returnExpr);
+		if (!_Analyzer_checkTypeConvert(anly, decl->function.resType, type))
+			error(&stat->returnExpr->location, "return expression type cannot convert to function result");
+	}
 }
 
 Type _Analyzer_expression(Analyzer* anly, Expression* expr)
