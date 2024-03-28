@@ -270,8 +270,6 @@ static TestCase tests[] =
 	TEST(test_parser, "plus_expression2",     "export int main() { int a = 1; int b = 2; a = +b; return a; }")
 	TEST(test_parser, "sub_expression1",      "int a = 1 - 1; int b = 1 - a; int c = 3 - 2 - 1 - a;")
 	TEST(test_parser, "minus_expression1",    "int a = -1; int b = -a;")
-	TEST(test_parser, "not_expression1",      "bool a = !false;")
-	TEST(test_parser, "not_expression2",      "bool a = false; bool b = !a;")
 	TEST(test_parser, "mul_expression1",      "int a =  2 * 2; int b = a * 2;")
 	TEST(test_parser, "mul_expression2",      "int a =  2 * 2; int b = a * 2; int c = foo() * a * bar();")
 	TEST(test_parser, "div_expression1",      "int a =  10 / 2;")
@@ -296,6 +294,8 @@ static TestCase tests[] =
 	TEST(test_parser, "div_assign_statement2","int a = 8; int b = 3; void foo() { a /= b; }")
 	TEST(test_parser, "mod_assign_statement1","int a = 9; void foo() { a %= 2; }")
 	TEST(test_parser, "mod_assign_statement2","int a = 18; int b = 4; void foo() { a %= b; }")
+	TEST(test_parser, "not_expression1",      "bool a = !false;")
+	TEST(test_parser, "not_expression2",      "bool a = false; bool b = !a;")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
@@ -357,6 +357,8 @@ static TestCase tests[] =
 	TEST(test_analyzer, "div_assign_statement2","int a = 8; int b = 3; void foo() { a /= b; }")
 	TEST(test_analyzer, "mod_assign_statement1","int a = 9; void foo() { a %= 2; }")
 	TEST(test_analyzer, "mod_assign_statement2","int a = 18; int b = 4; void foo() { a %= b; }")
+	TEST(test_analyzer, "not_expression1",      "bool a = !false;")
+	TEST(test_analyzer, "not_expression2",      "bool a = false; bool b = !a;")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",              "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",              "export void main() { return 0; }")
@@ -403,6 +405,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "mod_assign_statement_wrong1", "void foo() { 2 %= 1; }")
 	TEST_WRONG(test_analyzer, "mod_assign_statement_wrong2", "void foo() { int a = 1;  a %= bar(); } void bar() {}" )
 	TEST_WRONG(test_analyzer, "mod_assign_statement_wrong3", "void foo() { int a = 1;  a %= 0; }")
+	TEST_WRONG(test_analyzer, "not_expression_wrong1",       "bool a = 0;")
+	TEST_WRONG(test_analyzer, "not_expression_wrong2",       "int a = 0; bool b = !a;")
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
 	TEST(test_executor, "void_function",        "void foo() { } export int main() { foo(); return 0; }")

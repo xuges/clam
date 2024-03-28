@@ -28,6 +28,8 @@ static Type _Analyzer_expression(Analyzer* anly, Expression* exr);
 static Type _Analyzer_callExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr);
 static Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr);
+static bool _Analyzer_checkTypeConvert(Analyzer* anly, Type left, Type right);
+static Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType op, Type* t1, Type* t2, Type* t3);
 static bool _Analyzer_checkLvalue(Analyzer* anly, Expression* expr);
 static bool _Analyzer_checkZero(Analyzer* anly, Expression* expr);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
@@ -80,14 +82,15 @@ void _Analyzer_variant(Analyzer* anly, Declaration* decl)
 	switch (decl->variant.type.id)
 	{
 	case TYPE_INT:
+	case TYPE_BOOL:
 		variant.type = decl->variant.type;
 		variant.name = decl->variant.name;
 		variant.level = anly->level;
 		if (decl->variant.initExpr)
 		{
-			Type type = _Analyzer_expression(anly, decl->variant.initExpr);
-			if (type.id != variant.type.id)
-				error(&decl->variant.initExpr->location, "variant init expression type not match");
+			Type rtype = _Analyzer_expression(anly, decl->variant.initExpr);
+			if (!_Analyzer_checkTypeConvert(anly, variant.type, rtype))
+				error(&decl->variant.initExpr->location, "rvalue expression type cannot convert to lvalue type");
 		}
 		break;
 
@@ -207,22 +210,38 @@ void _Analyzer_assignStatement(Analyzer* anly, Statement* stat)
 	Type ltype = _Analyzer_expression(anly, stat->assign.leftExpr);
 	Type rtype = _Analyzer_expression(anly, stat->assign.rightExpr);
 
-	if (ltype.id != rtype.id)  //TODO: implict type cast, more type regular
-		error(&stat->location, "lvalue and rvalue expression type not match");
-
-	//TODO: more type
-	switch (ltype.id)
+	switch (stat->type)
 	{
-	case TYPE_INT:
+	case STATEMENT_TYPE_ADD_ASSIGN:
+		rtype = _Analyzer_checkTypeOperate(anly, EXPR_TYPE_ADD, &ltype, &rtype, NULL);
 		break;
 
-	default:
-		error(&stat->location, "lvalue expression type not support this operator");
+	case STATEMENT_TYPE_SUB_ASSIGN:
+		rtype = _Analyzer_checkTypeOperate(anly, EXPR_TYPE_SUB, &ltype, &rtype, NULL);
+		break;
+
+	case STATEMENT_TYPE_MUL_ASSIGN:
+		rtype = _Analyzer_checkTypeOperate(anly, EXPR_TYPE_MUL, &ltype, &rtype, NULL);
+		break;
+
+	case STATEMENT_TYPE_DIV_ASSIGN:
+		rtype = _Analyzer_checkTypeOperate(anly, EXPR_TYPE_DIV, &ltype, &rtype, NULL);
+		break;
+
+	case STATEMENT_TYPE_MOD_ASSIGN:
+		rtype = _Analyzer_checkTypeOperate(anly, EXPR_TYPE_MOD, &ltype, &rtype, NULL);
+		break;
 	}
+
+	if (rtype.id == TYPE_INIT)
+		error(&stat->assign.leftExpr->location, "lvalue and rvalue expression type not support this operator");
+
+	if (!_Analyzer_checkTypeConvert(anly, ltype, rtype))
+		error(&stat->location, "rvalue expression type cannot convert to lvalue type");
 
 	if (stat->type == STATEMENT_TYPE_DIV_ASSIGN || stat->type == STATEMENT_TYPE_MOD_ASSIGN)
 	{
-		if (_Analyzer_checkZero(anly, stat->assign.rightExpr))
+		if (_Analyzer_checkZero(anly, stat->assign.rightExpr))  //TODO: compile time eval expression value
 			error(&stat->assign.rightExpr->location, "division by zero");
 	}
 }
@@ -282,11 +301,15 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_INT:
 		return intType;
 
+	case EXPR_TYPE_BOOL:
+		return boolType;
+
 	case EXPR_TYPE_CALL:
 		return _Analyzer_callExpression(anly, expr);
 
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NOT:
 		return _Analyzer_unaryExpression(anly, expr);
 
 	case EXPR_TYPE_ADD:
@@ -295,6 +318,9 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_DIV:
 	case EXPR_TYPE_MOD:
 		return _Analyzer_binaryExpression(anly, expr);
+
+	default:
+		error(&expr->location, "incorrect expression");
 	}
 	return errorType;
 }
@@ -337,13 +363,11 @@ Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr)
 	{
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
-		switch (rtype.id)
-		{
-		case TYPE_INT:
-			break;
-		default:
-			error(&expr->unaryExpr->location, "expression type not support unary add operator");
-		}
+	case EXPR_TYPE_NOT:
+		//TODO: check variant used is inited
+		rtype = _Analyzer_checkTypeOperate(anly, expr->type, &rtype, NULL, NULL);
+		if (rtype.id == TYPE_INIT)
+			error(&expr->unaryExpr->location, "expression type not support this operator");
 
 		break;
 
@@ -359,8 +383,6 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	Type ltype = _Analyzer_expression(anly, expr->binaryExpr.leftExpr);
 	Type rtype = _Analyzer_expression(anly, expr->binaryExpr.rightExpr);
 
-	//TODO: check type operate regular
-
 	switch (expr->type)
 	{
 	case EXPR_TYPE_ADD:
@@ -369,17 +391,9 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_DIV:
 	case EXPR_TYPE_MOD:
 		//TODO: check variant used is inited
-		//TODO: more operation type regular
-		switch (ltype.id)
-		{
-		case TYPE_INT:
-			break;
-		default:
-			error(&expr->binaryExpr.leftExpr->location, "expression type not support binary add operator");
-		}
-
-		if (ltype.id != rtype.id)  //TODO: implict type cast, more type regular
-			error(&expr->location, "left and right expression type not match");
+		ltype = _Analyzer_checkTypeOperate(anly, expr->type, &ltype, &rtype, NULL);
+		if (ltype.id == TYPE_INIT)
+			error(&expr->binaryExpr.leftExpr->location, "expression type not support this operator");
 
 		break;
 
@@ -389,11 +403,61 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 
 	if (expr->type == EXPR_TYPE_DIV || expr->type == EXPR_TYPE_MOD)
 	{
-		if (_Analyzer_checkZero(anly, expr->binaryExpr.rightExpr))
+		if (_Analyzer_checkZero(anly, expr->binaryExpr.rightExpr))  //TODO: compile time eval expression value
 			error(&expr->binaryExpr.rightExpr->location, "division by zero");
 	}
 
-	return ltype;  //TODO: more type cast regular
+	return ltype;
+}
+
+bool _Analyzer_checkTypeConvert(Analyzer* anly, Type left, Type right)
+{
+	if (left.id == right.id)  //TODO: more type convert regular
+		return true;
+	return false;
+}
+
+Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Type* t2, Type* t3)
+{
+	switch (exprType)
+	{
+	case EXPR_TYPE_PLUS:  //unary
+	case EXPR_TYPE_MINUS:
+		switch (t1->id)
+		{
+		case TYPE_INT:
+			return *t1;
+
+		default:
+			return errorType;
+		}
+		//break
+	case EXPR_TYPE_NOT:
+		if (t1->id == TYPE_BOOL)
+			return *t1;
+		return errorType;
+		
+	case EXPR_TYPE_ADD:  //binary
+	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
+	case EXPR_TYPE_DIV:
+	case EXPR_TYPE_MOD:
+		switch (t1->id)
+		{
+		case TYPE_INT:
+			switch (t2->id)
+			{
+			case TYPE_INT:
+				return *t1;
+
+			default:
+				return errorType;
+			}
+			break;
+		}
+	}
+
+	return errorType;
 }
 
 bool _Analyzer_checkLvalue(Analyzer* anly, Expression* expr)
@@ -405,7 +469,7 @@ bool _Analyzer_checkLvalue(Analyzer* anly, Expression* expr)
 
 bool _Analyzer_checkZero(Analyzer* anly, Expression* expr)
 {
-	switch (expr->type)
+	switch (expr->type)  //TODO: compile time eval expression value
 	{
 	case EXPR_TYPE_INT:
 		return expr->intExpr == 0;
