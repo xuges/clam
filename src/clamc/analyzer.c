@@ -343,6 +343,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_MUL:
 	case EXPR_TYPE_DIV:
 	case EXPR_TYPE_MOD:
+	case EXPR_TYPE_NE:
 		return _Analyzer_binaryExpression(anly, expr);
 
 	default:
@@ -409,23 +410,9 @@ Type _Analyzer_binaryExpression(Analyzer* anly, Expression* expr)
 	Type ltype = _Analyzer_expression(anly, expr->binaryExpr.leftExpr);
 	Type rtype = _Analyzer_expression(anly, expr->binaryExpr.rightExpr);
 
-	switch (expr->type)
-	{
-	case EXPR_TYPE_ADD:
-	case EXPR_TYPE_SUB:
-	case EXPR_TYPE_MUL:
-	case EXPR_TYPE_DIV:
-	case EXPR_TYPE_MOD:
-		//TODO: check variant used is inited
-		ltype = _Analyzer_checkTypeOperate(anly, expr->type, &ltype, &rtype, NULL);
-		if (ltype.id == TYPE_INIT)
-			error(&expr->binaryExpr.leftExpr->location, "expression type not support this operator");
-
-		break;
-
-	default:
-		error(&expr->location, "unsupported binary operator");
-	}
+	ltype = _Analyzer_checkTypeOperate(anly, expr->type, &ltype, &rtype, NULL);  //TODO: show detail
+	if (ltype.id == TYPE_INIT)
+		error(&expr->binaryExpr.leftExpr->location, "expression type not support this operator");
 
 	if (expr->type == EXPR_TYPE_DIV || expr->type == EXPR_TYPE_MOD)
 	{
@@ -480,6 +467,31 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 				return errorType;
 			}
 			break;
+		}
+
+	case EXPR_TYPE_NE:
+		switch (t1->id)
+		{
+		case TYPE_INT:
+			switch (t2->id)
+			{
+			case TYPE_INT:
+				return boolType;
+
+			default:
+				return errorType;
+			}
+			break;
+
+		case TYPE_BOOL:
+			switch (t2->id)
+			{
+			case TYPE_BOOL:
+				return boolType;
+
+			default:
+				return errorType;
+			}
 		}
 	}
 
