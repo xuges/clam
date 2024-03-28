@@ -466,6 +466,8 @@ static TestCase tests[] =
 	TEST(test_executor, "div_assign_statement2","int a = 8; int b = 2; export int main() { a /= b; return a; }")
 	TEST(test_executor, "mod_assign_statement1","int a = 9; export int main() { a %= 2; return a; }")
 	TEST(test_executor, "mod_assign_statement2","int a = 18; int b = 4; export int main() { a %= b; return a; }")
+	TEST(test_executor, "not_expression1",      "bool a = !false; export int main() { a; return 0; }")
+	TEST(test_executor, "not_expression2",      "bool a = false; bool b = !a; export int main() { a; return 0; }")
 
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")

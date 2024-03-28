@@ -12,6 +12,7 @@ struct Value
 	union
 	{
 		int intValue;
+		bool boolValue;
 	};
 };
 typedef struct Value Value;
@@ -92,19 +93,11 @@ void Executor_run(Executor* exec, Module* module)
 
 void _Executor_variant(Executor* exec, Declaration* decl)
 {
-	switch (decl->variant.type.id)
-	{
-	case TYPE_INT:
-		if (decl->variant.initExpr)
-		{
-			_Executor_expression(exec, decl->variant.initExpr);
-			Value* exprValue = Stack_top(&exec->stack);
-			exprValue->name = decl->variant.name;
-			exprValue->level = exec->level;
-		}
-		break;
-	}
-	
+	_Executor_expression(exec, decl->variant.initExpr);
+	Value* exprValue = Stack_top(&exec->stack);
+	exprValue->name = decl->variant.name;
+	exprValue->level = exec->level;
+
 	if (exec->level == 0)
 		Vector_add(&exec->global, Stack_pop(&exec->stack));
 }
@@ -203,6 +196,10 @@ void _Executor_assignStatement(Executor* exec, Statement* stat)
 		case TYPE_INT:
 			lvalue->intValue = rvalue->intValue;
 			break;
+
+		case TYPE_BOOL:
+			lvalue->boolValue = rvalue->boolValue;
+			break;
 		}
 		break;
 
@@ -291,7 +288,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	switch (expr->type)
 	{
 	case EXPR_TYPE_IDENT:
-		value = *_Executor_findVariant(exec, expr->identExpr);
+		value = *_Executor_findVariant(exec, expr->identExpr);  //copy
 		value.level = exec->level;
 		Stack_push(&exec->stack, &value);
 		break;
@@ -304,12 +301,21 @@ void _Executor_expression(Executor* exec, Expression* expr)
 		Stack_push(&exec->stack, &value);
 		break;
 
+	case EXPR_TYPE_BOOL:
+		Value_init(&value);
+		value.type = boolType;
+		value.boolValue = expr->boolExpr;
+		value.level = exec->level;
+		Stack_push(&exec->stack, &value);
+		break;
+
 	case EXPR_TYPE_CALL:
 		_Executor_callExpression(exec, expr);
 		break;
 
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NOT:
 		_Executor_unaryExpression(exec, expr);
 		break;
 
@@ -355,6 +361,10 @@ void _Executor_unaryExpression(Executor* exec, Expression* expr)
 			value->intValue = -value->intValue;
 			break;
 		}
+		break;
+
+	case EXPR_TYPE_NOT:
+		value->boolValue = !value->boolValue;
 		break;
 	}
 }
