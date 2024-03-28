@@ -125,16 +125,22 @@ void Expression_destroy(Expression* expr)
 		Vector_destroy(&expr->callExpr.args);
 		break;
 
+	case EXPR_TYPE_PLUS:
+	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NOT:
+		Expression_destroy(expr->unaryExpr);
+		free(expr->unaryExpr);
+		break;
+
 	case EXPR_TYPE_ADD:
+	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
+	case EXPR_TYPE_DIV:
+	case EXPR_TYPE_MOD:
 		Expression_destroy(expr->binaryExpr.leftExpr);
 		Expression_destroy(expr->binaryExpr.rightExpr);
 		free(expr->binaryExpr.leftExpr);
 		free(expr->binaryExpr.rightExpr);
-		break;
-
-	case EXPR_TYPE_PLUS:
-		Expression_destroy(expr->unaryExpr);
-		free(expr->unaryExpr);
 		break;
 	}
 
@@ -150,6 +156,31 @@ void Statement_destroy(Statement* stat)
 {
 	switch (stat->type)
 	{
+	case STATEMENT_TYPE_DECLARATION:
+		Declaration_destroy(&stat->declaration);
+		break;
+
+	case STATEMENT_TYPE_ASSIGN:
+	case STATEMENT_TYPE_ADD_ASSIGN:
+	case STATEMENT_TYPE_SUB_ASSIGN:
+	case STATEMENT_TYPE_MUL_ASSIGN:
+	case STATEMENT_TYPE_DIV_ASSIGN:
+	case STATEMENT_TYPE_MOD_ASSIGN:
+		Expression_destroy(stat->assign.leftExpr);
+		Expression_destroy(stat->assign.rightExpr);
+		break;
+
+	case STATEMENT_TYPE_INC:
+	case STATEMENT_TYPE_DEC:
+		Expression_destroy(stat->expr);
+		break;
+
+	case STATEMENT_TYPE_IF:
+		Expression_destroy(stat->ifStat.condition);
+		Statement_destroy(stat->ifStat.statement);
+		free(stat->ifStat.statement);
+		break;
+	
 	case STATEMENT_TYPE_EXPRESSION:
 		if (stat->returnExpr)
 			Expression_destroy(stat->returnExpr);
@@ -157,7 +188,12 @@ void Statement_destroy(Statement* stat)
 
 	case STATEMENT_TYPE_COMPOUND:
 		Vector_destroy(&stat->compound);
+		break;
 	}
+}
 
-
+Statement* Statement_alloc()
+{
+	Statement* stat = malloc(sizeof(Statement));
+	return stat;
 }

@@ -215,6 +215,21 @@ Statement _Parser_statement(Parser* p)
 		stat.compound = _Parser_compoundStatement(p);
 		break;
 
+	case TOKEN_VALUE_IF:
+		stat.type = STATEMENT_TYPE_IF;
+		stat.location = token->location;
+
+		Lexer_next(p->lex);
+		_Parser_expect(p, TOKEN_VALUE_LP, "expected '('");
+		Lexer_next(p->lex);
+		stat.ifStat.condition = _Parser_expression(p);
+		_Parser_expect(p, TOKEN_VALUE_RP, "expected ')'");
+		Lexer_next(p->lex);
+
+		stat.ifStat.statement = Statement_alloc(sizeof(Statement));
+		*stat.ifStat.statement = _Parser_statement(p);
+		break;
+
 	case TOKEN_VALUE_RETURN:
 		stat.type = STATEMENT_TYPE_RETURN;
 		stat.location = token->location;

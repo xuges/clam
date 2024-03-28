@@ -268,6 +268,10 @@ static TestCase tests[] =
 	TEST(test_parser, "mod_assign_statement", "int a = 9; void foo() { a %= 2; int b = 6; b %= a; }")
 	TEST(test_parser, "not_expression",       "bool a = !false; bool b = !a;")
 
+	TEST(test_parser, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
+	TEST(test_parser, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
+	TEST(test_parser, "if_statement3",        "export int main() { if (!false) { return 1; } return 0; }")
+
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
 	TEST_WRONG(test_parser, "basic_wrong3",              "export main() {}")

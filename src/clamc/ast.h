@@ -145,6 +145,7 @@ enum StatementType
 	STATEMENT_TYPE_MOD_ASSIGN,
 	STATEMENT_TYPE_INC,
 	STATEMENT_TYPE_DEC,
+	STATEMENT_TYPE_IF,
 	STATEMENT_TYPE_RETURN,
 	STATEMENT_TYPE_EXPRESSION,
 	STATEMENT_TYPE_COMPOUND,
@@ -157,6 +158,13 @@ struct AssignStatement
 	Expression* rightExpr;
 };
 typedef struct AssignStatement AssignStatement;
+
+struct IfStatement
+{
+	Expression* condition;
+	struct Statement* statement;
+};
+typedef struct IfStatement IfStatement;
 
 struct Statement
 {
@@ -171,6 +179,7 @@ struct Statement
 		Vector compound;
 		Declaration declaration;
 		AssignStatement assign;
+		IfStatement ifStat;
 	};
 };
 typedef struct Statement Statement;
@@ -178,6 +187,7 @@ typedef struct Statement Statement;
 void Statement_init(Statement* stat);
 void Statement_destroy(Statement* stat);
 
+Statement* Statement_alloc();
 
 
 #endif

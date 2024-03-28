@@ -89,6 +89,7 @@ static const char* statTypeToString[] =
 	"STATEMENT_TYPE_MOD_ASSIGN",
 	"STATEMENT_TYPE_INC",
 	"STATEMENT_TYPE_DEC",
+	"STATEMENT_TYPE_IF",
 	"STATEMENT_TYPE_RETURN",
 	"STATEMENT_TYPE_EXPRESSION",
 	"STATEMENT_TYPE_COMPOUND",
@@ -120,6 +121,7 @@ static void _Printer_declaration(Printer* p, Declaration* decl);
 static void _Printer_function(Printer* p, Declaration* decl);
 static void _Printer_statement(Printer* p, Statement* stat);
 static void _Printer_assignStatement(Printer* p, Statement* stat);
+static void _Printer_ifStatement(Printer* p, Statement* stat);
 static void _Printer_expression(Printer* p, Expression* expr);
 static void _Printer_binaryExpression(Printer* p, Expression* expr);
 static void _Printer_callExpression(Printer* p, Expression* expr);
@@ -287,6 +289,14 @@ void _Printer_statement(Printer* p, Statement* stat)
 		_Printer_expression(p, stat->decExpr);
 		p->level--;
 		break;
+
+	case STATEMENT_TYPE_IF:
+		_Printer_indent(p); printf("ifStat=\n");
+		p->level++;
+		_Printer_ifStatement(p, stat);
+		p->level--;
+		break;
+		
 	}
 }
 
@@ -304,6 +314,19 @@ void _Printer_assignStatement(Printer* p, Statement* stat)
 		_Printer_expression(p, stat->assign.rightExpr);
 		p->level--;
 	}
+}
+
+void _Printer_ifStatement(Printer* p, Statement* stat)
+{
+	_Printer_indent(p); printf("condition=\n");
+	p->level++;
+	_Printer_expression(p, stat->ifStat.condition);
+	p->level--;
+
+	_Printer_indent(p); printf("statement=\n");
+	p->level++;
+	_Printer_statement(p, stat->ifStat.statement);
+	p->level--;
 }
 
 void _Printer_expression(Printer* p, Expression* expr)
