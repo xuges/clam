@@ -34,6 +34,7 @@ typedef enum ExecuteResult ExecuteResult;
 static void _Executor_variant(Executor* exec, Declaration* decl);
 static void _Executor_function(Executor* exec, Declaration* decl, Vector args);
 static ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* stat);
+static ExecuteResult _Executor_ifStatement(Executor* exec, Declaration* decl, Statement* stat);
 static void _Executor_assignStatement(Executor* exec, Statement* stat);
 static void _Executor_incDecStatement(Executor* exec, Statement* stat);
 static ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* decl,  Statement* stat);
@@ -151,6 +152,10 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 		_Executor_variant(exec, &stat->declaration);
 		break;
 
+	case STATEMENT_TYPE_IF:
+		result = _Executor_ifStatement(exec, decl, stat);
+		break;
+
 	case STATEMENT_TYPE_ASSIGN:
 	case STATEMENT_TYPE_ADD_ASSIGN:
 	case STATEMENT_TYPE_SUB_ASSIGN:
@@ -176,6 +181,18 @@ ExecuteResult _Executor_statement(Executor* exec, Declaration* decl, Statement* 
 	}
 
 	return result;
+}
+
+ExecuteResult _Executor_ifStatement(Executor* exec, Declaration* decl, Statement* stat)
+{
+	_Executor_expression(exec, stat->ifStat.condition);
+	Value* cond = Stack_pop(&exec->stack);
+	if (cond->boolValue)
+		return _Executor_statement(exec, decl, stat->ifStat.statement);
+
+	//TODO: exec else statement
+
+	return EXEC_RESULT_NORMAL;
 }
 
 void _Executor_assignStatement(Executor* exec, Statement* stat)
