@@ -163,6 +163,7 @@ struct IfStatement
 {
 	Expression* condition;
 	struct Statement* statement;
+	struct Statement* elseStat;
 };
 typedef struct IfStatement IfStatement;
 

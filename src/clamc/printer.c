@@ -328,6 +328,14 @@ void _Printer_ifStatement(Printer* p, Statement* stat)
 	p->level++;
 	_Printer_statement(p, stat->ifStat.statement);
 	p->level--;
+
+	_Printer_indent(p); printf("elseStat=%s\n", stat->ifStat.elseStat ? "" : "NULL");
+	if (stat->ifStat.elseStat)
+	{
+		p->level++;
+		_Printer_statement(p, stat->ifStat.elseStat);
+		p->level--;
+	}
 }
 
 void _Printer_expression(Printer* p, Expression* expr)

@@ -228,6 +228,15 @@ Statement _Parser_statement(Parser* p)
 
 		stat.ifStat.statement = Statement_alloc(sizeof(Statement));
 		*stat.ifStat.statement = _Parser_statement(p);
+
+		token = Lexer_peek(p->lex);
+		if (token->value == TOKEN_VALUE_ELSE)
+		{
+			Lexer_next(p->lex);
+			stat.ifStat.elseStat = Statement_alloc(sizeof(Statement));
+			*stat.ifStat.elseStat = _Parser_statement(p);
+		}
+
 		break;
 
 	case TOKEN_VALUE_RETURN:

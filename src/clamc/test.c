@@ -271,6 +271,11 @@ static TestCase tests[] =
 	TEST(test_parser, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
 	TEST(test_parser, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
 	TEST(test_parser, "if_statement3",        "export int main() { if (!false) { return 1; } return 0; }")
+	TEST(test_parser, "if_statement4",        "export int main() { if (true) return 1; else return 2; return 0; }")
+	TEST(test_parser, "if_statement5",        "export int main() { if (!false) return 1; else { return 2; } return 0; }")
+	TEST(test_parser, "if_statement6",        "export int main() { if (true) if (!false) if (true) return 1;  return 0; }")
+	TEST(test_parser, "if_statement7",        "export int main() { if (true) if (!false) return 1; else return 2; else return 3;  return 0; }")
+	TEST(test_parser, "if_statement8",        "export int main() { if (true) return 1; else if (!false) return 2; else return 3;  return 0; }")
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
