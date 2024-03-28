@@ -312,8 +312,8 @@ static TestCase tests[] =
 	TEST(test_analyzer, "plus_expression",      "export int main() { int a = 1; a = +1; int b = +a; return a; }")
 	TEST(test_analyzer, "minus_expression",     "export int main() { int a = -1; int b = -a; return a; }")
 	TEST(test_analyzer, "operation",            "int a = 1 * -2 + 3 * 4 - 6 / 2 + 19 % +2; int b = a + 3 * -4;")
-	TEST(test_analyzer, "inc_statement1",       "int a = 0; void foo() { a++; }")
-	TEST(test_analyzer, "dec_statement1",       "int a = 3; void foo() { a--; }")
+	TEST(test_analyzer, "inc_statement",        "int a = 0; void foo() { a++; }")
+	TEST(test_analyzer, "dec_statement",        "int a = 3; void foo() { a--; }")
 
 	TEST(test_analyzer, "add_assign_statement", "int a = 0; void foo() { a += 1; int b = 0; b += a; }")
 	TEST(test_analyzer, "sub_assign_statement", "int a = 2; void foo() { a -= 1; int b = 5; b -= a; }")
@@ -325,6 +325,13 @@ static TestCase tests[] =
 	TEST(test_analyzer, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
 	TEST(test_analyzer, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
 	TEST(test_analyzer, "if_statement3",        "export int main() { if (!false) { return 1; } return 0; }")
+	TEST(test_analyzer, "if_statement4",        "export int main() { if (true) return 1; else return 2; return 0; }")
+	TEST(test_analyzer, "if_statement5",        "export int main() { if (!false) return 1; else { return 2; } return 0; }")
+	TEST(test_analyzer, "if_statement6",        "export int main() { if (true) if (!false) if (true) return 1;  return 0; }")
+	TEST(test_analyzer, "if_statement7",        "export int main() { if (true) if (!false) return 1; else return 2; else return 3;  return 0; }")
+	TEST(test_analyzer, "if_statement8",        "export int main() { if (true) return 1; else if (!false) return 2; else return 3;  return 0; }")
+	TEST(test_analyzer, "if_statement9",        "export int main() { if (false) { return 1; } else return 2; }")
+	TEST(test_analyzer, "if_statement10",       "export int main() { if (false) if (true) return 1; else return 2; }")  //TODO: flow analysis make it pass
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",                "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",                "export void main() { return 0; }")

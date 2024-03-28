@@ -188,7 +188,7 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 
 	case STATEMENT_TYPE_RETURN:
 		_Analyzer_returnStatement(anly, decl, stat);
-		hasReturn = true;
+		hasReturn = true;  //TODO: flow analysis to check has return or not
 		break;
 	}
 
@@ -201,11 +201,13 @@ bool _Analyzer_ifStatement(Analyzer* anly, Declaration* decl, Statement* stat)
 	if (!_Analyzer_checkTypeConvert(anly, boolType, cond))
 		error(&stat->ifStat.condition->location, "if condition expression cannot convert to bool type");
 
-	//TODO: support else statement
+	bool hasReturn = _Analyzer_statement(anly, decl, stat->ifStat.statement);
 
-	_Analyzer_statement(anly, decl, stat->ifStat.statement);
-
-	//TODO: if and else both has return statement, return true
+	if (stat->ifStat.elseStat)
+	{
+		bool elseHasReturn = _Analyzer_statement(anly, decl, stat->ifStat.elseStat);
+		return hasReturn && elseHasReturn;
+	}
 
 	return false;
 }
