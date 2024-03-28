@@ -61,6 +61,8 @@ enum TokenValue
 	TOKEN_VALUE_TRUE,            // true
 	TOKEN_VALUE_FALSE,           // false
 
+	TOKEN_VALUE_IF,              // if
+
 	TOKEN_VALUE_EXPORT,          // export
 	TOKEN_VALUE_RETURN,          // return
 

@@ -237,7 +237,7 @@ static TestCase tests[] =
 	TEST(test_string_buffer, "basic", "")
 
 	TEST(test_lexer, "eof"    , "")
-	TEST(test_lexer, "keyword", "export void int bool true false return")
+	TEST(test_lexer, "keyword", "export void int bool true false if return")
 	TEST(test_lexer, "punct"  , "(){},;")
 	TEST(test_lexer, "operator", "=+-*/% ++ -- += -= *= /= %= !")
 
