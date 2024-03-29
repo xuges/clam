@@ -83,6 +83,7 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_NE",
 	"EXPR_TYPE_EQ",
 	"EXPR_TYPE_LT",
+	"EXPR_TYPE_LE",
 };
 
 static const char* statTypeToString[] =
@@ -389,6 +390,7 @@ void _Printer_expression(Printer* p, Expression* expr)
 	case EXPR_TYPE_NE:
 	case EXPR_TYPE_EQ:
 	case EXPR_TYPE_LT:
+	case EXPR_TYPE_LE:
 		_Printer_indent(p); printf("binaryExpr=\n");
 		p->level++;
 		_Printer_binaryExpression(p, expr);

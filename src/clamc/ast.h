@@ -91,6 +91,7 @@ enum ExprType
 	EXPR_TYPE_NE,
 	EXPR_TYPE_EQ,
 	EXPR_TYPE_LT,
+	EXPR_TYPE_LE,
 };
 typedef enum ExprType ExprType;
 
