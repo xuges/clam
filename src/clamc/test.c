@@ -329,6 +329,7 @@ static TestCase tests[] =
 	TEST(test_analyzer, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2;")
 	TEST(test_analyzer, "equals_expression",    "bool a = 1 == 2; bool b = 1 + 1 == 2; bool c = 1 + 1 == 3 - 1; bool d = b == false;")
 	TEST(test_analyzer, "less_expression",      "bool a = 1 < 2; bool b = 1 + 1 < 2; bool c = 1 + 1 < 3 - 1;")
+	TEST(test_analyzer, "great_expression",     "bool a = 2 > 1; bool b = 1 + 1 > 2; bool c = 3 - 1 > 2 - 1;")
 	TEST(test_analyzer, "le_expression",        "bool a = 2 <= 2; bool b = 1 + 1 <= 2; bool c = 1 + 1 <= 3 - 1;")
 
 	TEST(test_analyzer, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
@@ -394,6 +395,7 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "equals_expression_wrong1",    "int a = 0; bool b = a == true;")
 	TEST_WRONG(test_analyzer, "equals_expression_wrong2",    "int a = 0; bool b = a == foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "less_expression_wrong1",      "int a = 0; bool b = a < foo(); void foo() {}")
+	TEST_WRONG(test_analyzer, "great_expression_wrong1",     "int a = 0; bool b = a > foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "le_expression_wrong1",        "int a = 0; bool b = a <= foo(); void foo() {}")
 
 	TEST_WRONG(test_analyzer, "if_statement_wrong1",        "export int main() { if (0) return 1; return 0; }")
