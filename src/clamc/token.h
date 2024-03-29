@@ -52,6 +52,7 @@ enum TokenValue
 	TOKEN_VALUE_LT,              // <
 	TOKEN_VALUE_LE,              // <=
 	TOKEN_VALUE_GT,              // >
+	TOKEN_VALUE_GE,              // >=
 
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
