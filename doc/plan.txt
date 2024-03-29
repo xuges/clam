@@ -1,13 +1,13 @@
 0.0.1: int, export, return, function, call-expression, int-literal
 0.0.2: void, =, variant, function parameter, call argument, compound-statement
 0.0.3: +, -, *, /, %, +=, -=, *=, /=, %=, ++, --
-0.0.4: bool, true, false, if, else, ? : <, >, <=, >=, ==, !=, &&, ||, !
-0.0.5: byte, uint,  float, float64
-0.0.6: &, |, ~, ^, <<, >>, &=, |=, ~=, ^=, <<=, >>=
+0.0.4: bool, true, false, if, else, <, >, <=, >=, ==, !=, !
+0.0.5: &, |, ~, ^, <<, >>, &=, |=, ~=, ^=, <<=, >>=, &&, ||, ? : 
+0.0.6: byte, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, usize, ssize, float, float64
 0.0.7: for, while, switch, defer
-0.0.8: array, slice, []
-0.0.9: struct, union, enum, string, .
-0.1.0: pointer, unsafe, intptr, uintptr, &
+0.0.8: array, slice, string, . [], ...
+0.0.9: struct, union, enum, any
+0.1.0: pointer, unsafe, intptr, uintptr, &, *
 0.1.1: package, import, using
 0.1.2: class, method
 0.1.3: interface
