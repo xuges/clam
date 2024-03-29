@@ -540,6 +540,7 @@ static TestCase tests[] =
 	TEST(test_generator, "if_statement7",         "export int main() { if (true) if (!false) return 1; else { return 2; } else return 3;  return 0; }")
 	TEST(test_generator, "if_statement8",         "export int main() { if (true) { return 1; } else if (!false) { return 2; } else { return 3; }  return 0; }")
 	TEST(test_generator, "not_equal_expression",  "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2; export int main() { if (!b) return 1; return 0; }")
+	TEST(test_generator, "less_expression",       "bool a = 1 < 2; bool b = 1 + 1 < 2; bool c = 1 + 1 < 3 - 1; export int main() { if (!c) return 1; return 0; }")
 
 };
 #undef TEST
