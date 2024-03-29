@@ -54,6 +54,8 @@ enum TokenValue
 	TOKEN_VALUE_GT,              // >
 	TOKEN_VALUE_GE,              // >=
 
+	TOKEN_VALUE_BITAND,          // &
+
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
 	TOKEN_VALUE_SEM,             // ;
