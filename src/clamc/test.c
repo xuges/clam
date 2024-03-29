@@ -491,6 +491,7 @@ static TestCase tests[] =
 	TEST(test_executor, "ge_expression",        "bool a = 2 >= 2; bool b = 1 + 1 >= 2; bool c = 1 + 1 >= 3 - 1; export int main() { if (a) return 1; return 0; }")
 
 	TEST(test_executor, "bitand_expression", "int a = 3 & 1; export int main() { return a; }")
+	TEST(test_executor, "bitor_expression",  "int a = 2 | 1; export int main() { return a; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 	TEST_WRONG(test_executor, "mod_expression_wrong", "int a = 10; int b = 0; export int main() { return a % b; }")
