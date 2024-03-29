@@ -354,7 +354,7 @@ Expression* _Parser_equalityExpression(Parser* p)
 	Expression* left = _Parser_additiveExpression(p);
 
 	token = Lexer_peek(p->lex);
-	while (token->value == TOKEN_VALUE_NE)
+	while (token->value == TOKEN_VALUE_NE || token->value == TOKEN_VALUE_EQ)
 	{
 		ExprType exprType;
 		switch (token->value)
@@ -363,6 +363,9 @@ Expression* _Parser_equalityExpression(Parser* p)
 			exprType = EXPR_TYPE_NE;
 			break;
 
+		case TOKEN_VALUE_EQ:
+			exprType = EXPR_TYPE_EQ;
+			break;
 		}
 
 		Lexer_next(p->lex);
