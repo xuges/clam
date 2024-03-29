@@ -273,6 +273,7 @@ static TestCase tests[] =
 	TEST(test_parser, "great_expression",     "bool a = 2 > 1; bool b = 2 + 1 > 2; bool c = 1 + 1 > 3 - 1;")
 	TEST(test_parser, "le_expression",        "bool a = 2 <= 2; bool b = 1 + 1 <= 2; bool c = 1 + 1 <= 3 - 1;")
 	TEST(test_parser, "ge_expression",        "bool a = 2 >= 2; bool b = 1 + 1 >= 2; bool c = 1 + 1 >= 3 - 1;")
+	TEST(test_parser, "and_expression",       "bool a = 1 + 1 == 2 && 2 + 2 == 4 && 3 * 3 == 9 && 2 * 3 != 5;")
 
 	TEST(test_parser, "bitand_expression",    "int a = 3 & 1;")
 	TEST(test_parser, "bitor_expression",     "int a = 2 | 1;")

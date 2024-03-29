@@ -14,6 +14,7 @@ static Statement _Parser_statement(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
 
 static Expression* _Parser_expression(Parser* p);
+static Expression* _Parser_logicAndExpression(Parser* p);
 static Expression* _Parser_equalityExpression(Parser* p);
 static Expression* _Parser_relationExpression(Parser* p);
 static Expression* _Parser_additiveExpression(Parser* p);
@@ -349,7 +350,27 @@ Statement _Parser_statement(Parser* p)
 
 Expression* _Parser_expression(Parser* p)
 {
-	return _Parser_equalityExpression(p);
+	return _Parser_logicAndExpression(p);
+}
+
+Expression* _Parser_logicAndExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	Expression* left = _Parser_equalityExpression(p);
+
+	token = Lexer_peek(p->lex);
+	while (token->value == TOKEN_VALUE_AND)
+	{
+		Lexer_next(p->lex);
+		Expression* right = _Parser_equalityExpression(p);
+		left = Expression_createBinary(&loc, EXPR_TYPE_AND, left, right);
+		token = Lexer_peek(p->lex);
+		loc = token->location;
+	}
+
+	return left;
 }
 
 Expression* _Parser_equalityExpression(Parser* p)

@@ -91,6 +91,7 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_LE",
 	"EXPR_TYPE_GT",
 	"EXPR_TYPE_GE",
+	"EXPR_TYPE_AND",
 	"EXPR_TYPE_BITAND",
 	"EXPR_TYPE_BITOR",
 };
@@ -402,6 +403,7 @@ void _Printer_expression(Printer* p, Expression* expr)
 	case EXPR_TYPE_LE:
 	case EXPR_TYPE_GT:
 	case EXPR_TYPE_GE:
+	case EXPR_TYPE_AND:
 	case EXPR_TYPE_BITAND:
 	case EXPR_TYPE_BITOR:
 		_Printer_indent(p); printf("binaryExpr=\n");
