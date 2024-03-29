@@ -346,6 +346,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_NE:
 	case EXPR_TYPE_EQ:
 	case EXPR_TYPE_LT:
+	case EXPR_TYPE_LE:
 		return _Analyzer_binaryExpression(anly, expr);
 
 	default:
@@ -396,7 +397,7 @@ Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr)
 		//TODO: check variant used is inited
 		rtype = _Analyzer_checkTypeOperate(anly, expr->type, &rtype, NULL, NULL);
 		if (rtype.id == TYPE_INIT)
-			error(&expr->unaryExpr->location, "expression type not support this operator");
+			error(&expr->unaryExpr->location, "expression type not support this operator");  //TODO: clarity the error message
 
 		break;
 
@@ -500,6 +501,7 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 		break;
 
 	case EXPR_TYPE_LT:
+	case EXPR_TYPE_LE:
 		switch (t1->id)
 		{
 		case TYPE_INT:
