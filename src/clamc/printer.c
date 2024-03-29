@@ -44,6 +44,7 @@ static const char* tokenValueToString[] =
 	"TOKEN_VALUE_LE",
 	"TOKEN_VALUE_GT",
 	"TOKEN_VALUE_GE",
+	"TOKEN_VALUE_AND",
 	"TOKEN_VALUE_BITAND",
 	"TOKEN_VALUE_BITOR",
 	"TOKEN_VALUE_COMMA",
