@@ -341,6 +341,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_MUL:
 	case EXPR_TYPE_DIV:
 	case EXPR_TYPE_MOD:
+	case EXPR_TYPE_NE:
 		_Executor_binaryExpression(exec, expr);
 		break;
 	}
@@ -437,6 +438,26 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 				lvalue->intValue %= rvalue->intValue;
 			break;
 		}
+		break;
+
+	case EXPR_TYPE_NE:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			switch (rvalue->type.id)
+			{
+			case TYPE_INT:
+				lvalue->boolValue = lvalue->intValue != rvalue->intValue;
+				break;
+			}
+			break;
+
+		case TYPE_BOOL:
+			lvalue->boolValue = lvalue->boolValue != rvalue->boolValue;
+			break;
+		}
+
+		lvalue->type = boolType;
 		break;
 	}
 }
