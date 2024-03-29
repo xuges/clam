@@ -1,4 +1,12 @@
---- 2024-03-26 clam-0.0.2 ---
+--- 2024-03-29 clam-0.0.4 ---
+1. 增加bool类型及true、false关键字。
+   Add bool type and 'true' 'false' keyword.
+2. 增加!、<、<=、>、>=、==、!= 运算符并支持对应表达式。
+   Add ! < <= > >= == != operators and supports expression of them.
+3. 增加if关键字，支持if/else语句。
+   Add the 'if' keyword and supports if-else-statement.
+
+--- 2024-03-26 clam-0.0.3 ---
 1. 增加+、-、*、/、%数值运算符。
    Add + - * / % operator.
 2. 增加+=、-=、*=、/=、%=复合赋值语句。
