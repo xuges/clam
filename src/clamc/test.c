@@ -349,6 +349,7 @@ static TestCase tests[] =
 	TEST(test_analyzer, "if_statement10",       "export int main() { if (false) if (true) return 1; else return 2; }")  //TODO: flow analysis make it pass
 
 	TEST(test_analyzer, "bitand_expression",    "int a = 3 & 1;")
+	TEST(test_analyzer, "bitor_expression",     "int a = 2 | 1;")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",                "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",                "export void main() { return 0; }")
@@ -405,13 +406,13 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "great_expression_wrong1",     "int a = 0; bool b = a > foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "le_expression_wrong1",        "int a = 0; bool b = a <= foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "ge_expression_wrong1",        "int a = 0; bool b = a >= foo(); void foo() {}")
-
 	TEST_WRONG(test_analyzer, "if_statement_wrong1",        "export int main() { if (0) return 1; return 0; }")
 	TEST_WRONG(test_analyzer, "if_statement_wrong2",        "export int main() { if (1 + 1) { return 1; } return 0; }")
 	TEST_WRONG(test_analyzer, "if_statement_wrong3",        "export int main() { if (false) { return 1; } }")
-
 	TEST_WRONG(test_analyzer, "bitand_expression_wrong1",   "int a = true & 1;")
 	TEST_WRONG(test_analyzer, "bitand_expression_wrong2",   "int a = b & 1;")
+	TEST_WRONG(test_analyzer, "bitor_expression_wrong2",    "int a = true | 1;")
+	TEST_WRONG(test_analyzer, "bitor_expression_wrong2",    "int a = b | 1;")
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
 	TEST(test_executor, "void_function",        "void foo() { } export int main() { foo(); return 0; }")
