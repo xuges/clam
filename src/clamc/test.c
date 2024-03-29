@@ -468,6 +468,7 @@ static TestCase tests[] =
 	TEST(test_executor, "if_statement8",        "export int main() { if (!true) if (true) return 1; else return 2; else return 3;  return 0; }")
 	TEST(test_executor, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2; export int main() { if (!b) return 1; return 0; }")
 	TEST(test_executor, "equals_expression",    "bool a = 1 == 2; bool b = 1 + 1 == 2; bool c = 1 + 1 == 3 - 1; bool d = b == false; export int main() { if (d) return 1; return 0; }")
+	TEST(test_executor, "less_expression",      "bool a = 1 < 2; bool b = 1 + 1 < 2; bool c = 1 + 1 < 3 - 1; export int main() { if (!c) return 1; return 0; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 	TEST_WRONG(test_executor, "mod_expression_wrong", "int a = 10; int b = 0; export int main() { return a % b; }")
