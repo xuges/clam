@@ -324,6 +324,7 @@ static TestCase tests[] =
 	TEST(test_analyzer, "mod_assign_statement", "int a = 9; void foo() { a %= 2; int b = 6; b %= a; }")
 	TEST(test_analyzer, "not_expression",       "bool a = !false; bool b = !a;")
 	TEST(test_analyzer, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2;")
+	TEST(test_analyzer, "equals_expression",    "bool a = 1 == 2; bool b = 1 + 1 == 2; bool c = 1 + 1 == 3 - 1; bool d = b == false;")
 
 	TEST(test_analyzer, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
 	TEST(test_analyzer, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
@@ -385,6 +386,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "not_expression_wrong2",       "int a = 0; bool b = !a;")
 	TEST_WRONG(test_analyzer, "not_equal_expression_wrong1", "int a = 0; bool b = a != true;")
 	TEST_WRONG(test_analyzer, "not_equal_expression_wrong2", "int a = 0; bool b = a != foo(); void foo() {}")
+	TEST_WRONG(test_analyzer, "equals_expression_wrong1",    "int a = 0; bool b = a == true;")
+	TEST_WRONG(test_analyzer, "equals_expression_wrong2",    "int a = 0; bool b = a == foo(); void foo() {}")
 
 	TEST_WRONG(test_analyzer, "if_statement_wrong1",        "export int main() { if (0) return 1; return 0; }")
 	TEST_WRONG(test_analyzer, "if_statement_wrong2",        "export int main() { if (1 + 1) { return 1; } return 0; }")
