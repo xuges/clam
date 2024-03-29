@@ -388,9 +388,10 @@ Expression* _Parser_relationExpression(Parser* p)
 	Expression* left = _Parser_additiveExpression(p);
 
 	token = Lexer_peek(p->lex);
-	while (token->value == TOKEN_VALUE_LT 
+	while (token->value == TOKEN_VALUE_LT
 		|| token->value == TOKEN_VALUE_LE
-		|| token->value == TOKEN_VALUE_GT)
+		|| token->value == TOKEN_VALUE_GT
+		|| token->value == TOKEN_VALUE_GE)
 	{
 		ExprType exprType;
 		switch (token->value)
@@ -405,6 +406,10 @@ Expression* _Parser_relationExpression(Parser* p)
 
 		case TOKEN_VALUE_GT:
 			exprType = EXPR_TYPE_GT;
+			break;
+
+		case TOKEN_VALUE_GE:
+			exprType = EXPR_TYPE_GE;
 			break;
 		}
 
