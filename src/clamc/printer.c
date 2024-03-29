@@ -45,6 +45,7 @@ static const char* tokenValueToString[] =
 	"TOKEN_VALUE_GT",
 	"TOKEN_VALUE_GE",
 	"TOKEN_VALUE_BITAND",
+	"TOKEN_VALUE_BITOR",
 	"TOKEN_VALUE_COMMA",
 	"TOKEN_VALUE_DOT",
 	"TOKEN_VALUE_SEM",
@@ -400,6 +401,7 @@ void _Printer_expression(Printer* p, Expression* expr)
 	case EXPR_TYPE_GT:
 	case EXPR_TYPE_GE:
 	case EXPR_TYPE_BITAND:
+	case TOKEN_VALUE_BITOR:
 		_Printer_indent(p); printf("binaryExpr=\n");
 		p->level++;
 		_Printer_binaryExpression(p, expr);
