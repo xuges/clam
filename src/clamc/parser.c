@@ -6,18 +6,23 @@
 static void _Parser_toplevel(Parser* p);
 static Declaration _Parser_declaration(Parser* p);
 static Type _Parser_typeDesc(Parser* p);
+
 static Vector _Parser_parameterList(Parser* p);
+static Vector _Parser_argumentList(Parser* p);
+
 static Statement _Parser_statement(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
+
 static Expression* _Parser_expression(Parser* p);
 static Expression* _Parser_equalityExpression(Parser* p);
 static Expression* _Parser_relationExpression(Parser* p);
 static Expression* _Parser_additiveExpression(Parser* p);
 static Expression* _Parser_multiplicativeExpression(Parser* p);
+static Expression* _Parser_bitopExpression(Parser* p);
 static Expression* _Parser_unaryExpression(Parser* p);
 static Expression* _Parser_postfixExpression(Parser* p);
 static Expression* _Parser_primaryExpression(Parser* p);
-static Vector _Parser_argumentList(Parser* p);
+
 static Token* _Parser_until(Parser* p, TokenValue value, const char* msg);
 static Token* _Parser_expect(Parser* p, TokenValue value, const char* msg);
 
@@ -461,7 +466,8 @@ Expression* _Parser_multiplicativeExpression(Parser* p)
 	Token* token = Lexer_peek(p->lex);
 	SourceLocation loc = token->location;
 
-	Expression* left = _Parser_unaryExpression(p);
+	//Expression* left = _Parser_unaryExpression(p);
+	Expression* left = _Parser_bitopExpression(p);
 
 	while (token->value == TOKEN_VALUE_STAR 
 		|| token->value == TOKEN_VALUE_DIV
@@ -480,6 +486,35 @@ Expression* _Parser_multiplicativeExpression(Parser* p)
 
 		case TOKEN_VALUE_MOD:
 			exprType = EXPR_TYPE_MOD;
+			break;
+		}
+
+		Lexer_next(p->lex);
+
+		//Expression* right = _Parser_unaryExpression(p);
+		Expression* right = _Parser_bitopExpression(p);
+		left = Expression_createBinary(&loc, exprType, left, right);
+		token = Lexer_peek(p->lex);
+		loc = token->location;
+	}
+
+	return left;
+}
+
+Expression* _Parser_bitopExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	Expression* left = _Parser_unaryExpression(p);
+
+	while (token->value == TOKEN_VALUE_BITAND)
+	{
+		ExprType exprType;
+		switch (token->value)
+		{
+		case TOKEN_VALUE_BITAND:
+			exprType = EXPR_TYPE_BITAND;
 			break;
 		}
 

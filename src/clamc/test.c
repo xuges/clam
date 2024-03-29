@@ -274,6 +274,8 @@ static TestCase tests[] =
 	TEST(test_parser, "le_expression",        "bool a = 2 <= 2; bool b = 1 + 1 <= 2; bool c = 1 + 1 <= 3 - 1;")
 	TEST(test_parser, "ge_expression",        "bool a = 2 >= 2; bool b = 1 + 1 >= 2; bool c = 1 + 1 >= 3 - 1;")
 
+	TEST(test_parser, "bitand_expression",    "int a = 3 & 1;")
+
 	TEST(test_parser, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
 	TEST(test_parser, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
 	TEST(test_parser, "if_statement3",        "export int main() { if (!false) { return 1; } return 0; }")
