@@ -346,6 +346,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_LT:
 	case EXPR_TYPE_LE:
 	case EXPR_TYPE_GT:
+	case EXPR_TYPE_GE:
 		_Executor_binaryExpression(exec, expr);
 		break;
 	}
@@ -494,13 +495,18 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 		break;
 
 	case EXPR_TYPE_GT:
+	case EXPR_TYPE_GE:
 		switch (lvalue->type.id)
 		{
 		case TYPE_INT:
 			switch (rvalue->type.id)
 			{
 			case TYPE_INT:
-				lvalue->boolValue = lvalue->intValue > rvalue->intValue;
+				if (expr->type == EXPR_TYPE_GT)
+					lvalue->boolValue = lvalue->intValue > rvalue->intValue;
+				else
+					lvalue->boolValue = lvalue->intValue >= rvalue->intValue;
+
 				break;
 			}
 			break;
