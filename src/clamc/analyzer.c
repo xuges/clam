@@ -345,6 +345,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_MOD:
 	case EXPR_TYPE_NE:
 	case EXPR_TYPE_EQ:
+	case EXPR_TYPE_LT:
 		return _Analyzer_binaryExpression(anly, expr);
 
 	default:
@@ -469,6 +470,7 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 			}
 			break;
 		}
+		break;
 
 	case EXPR_TYPE_NE:
 	case EXPR_TYPE_EQ:
@@ -494,6 +496,19 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 			default:
 				return errorType;
 			}
+		}
+		break;
+
+	case EXPR_TYPE_LT:
+		switch (t1->id)
+		{
+		case TYPE_INT:
+			switch (t2->id)
+			{
+			case TYPE_INT:
+				return boolType;
+			}
+			break;
 		}
 	}
 
