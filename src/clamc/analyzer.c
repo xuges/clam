@@ -349,6 +349,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_LE:
 	case EXPR_TYPE_GT:
 	case EXPR_TYPE_GE:
+	case EXPR_TYPE_BITAND:
 		return _Analyzer_binaryExpression(anly, expr);
 
 	default:
@@ -516,6 +517,20 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 			}
 			break;
 		}
+		break;
+
+	case EXPR_TYPE_BITAND:
+		switch (t1->id)
+		{
+		case TYPE_INT:
+			switch (t2->id)
+			{
+			case TYPE_INT:
+				return *t1;
+			}
+			break;
+		}
+		break;
 	}
 
 	return errorType;
