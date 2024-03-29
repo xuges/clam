@@ -49,6 +49,7 @@ enum TokenValue
 	TOKEN_VALUE_NOT,             // !
 	TOKEN_VALUE_NE,              // !=
 	TOKEN_VALUE_EQ,              // ==
+	TOKEN_VALUE_LT,              // <
 
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
