@@ -270,6 +270,7 @@ static TestCase tests[] =
 	TEST(test_parser, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2;")
 	TEST(test_parser, "equals_expression",    "bool a = 1 == 2; bool b = 1 + 1 == 2; bool c = 1 + 1 == 3 - 1; bool d = b == false;")
 	TEST(test_parser, "less_expression",      "bool a = 1 < 2; bool b = 1 + 1 < 2; bool c = 1 + 1 < 3 - 1;")
+	TEST(test_parser, "great_expression",     "bool a = 2 > 1; bool b = 2 + 1 > 2; bool c = 1 + 1 > 3 - 1;")
 	TEST(test_parser, "le_expression",        "bool a = 2 <= 2; bool b = 1 + 1 <= 2; bool c = 1 + 1 <= 3 - 1;")
 
 	TEST(test_parser, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
