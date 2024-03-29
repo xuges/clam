@@ -6,40 +6,21 @@
 ## Example
 
 ```
-int a = 2 * 2 + 4 / 2 + 9 % 2;
-int b = a;
-int c = foo();
-int d = first(4, 5, 6);
-
-int foo()
-{
-	return 3;
-}
-
-export int first(int arg1, int arg2, int arg3)
-{
-	return arg1;
-}
-
 export int main()
 {
-	{
-		int d = 8;
-		d *= 2;
-		{
-			a = d;
-			b++;
-		}
-	}
-	
-	c--;
-	
-	a = first(d, c, b);
-	a += 3;
-	b -= 1;
-	c /= 2;
-	d %= 3;
-	
-	return a;
+    bool b1 = 1 + 2 < 4;
+    bool b2 = 2 - 2 <= 0;
+    bool b3 = 2 * 2 > 3;
+    bool b4 = 4 / 2 == 2;
+    bool b5 = 1 + 1 != 2;
+    
+    if (b5)
+        return 1;
+    else if (b3)
+        return 2;
+    else
+        return 3;
+    	
+    return 0;
 }
 ```
