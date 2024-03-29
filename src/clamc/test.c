@@ -555,6 +555,7 @@ static TestCase tests[] =
 	TEST(test_generator, "less_expression",       "bool a = 1 < 2; bool b = 1 + 1 < 2; bool c = 1 + 1 < 3 - 1; export int main() { if (!c) return 1; return 0; }")
 	TEST(test_generator, "great_expression",      "bool a = 2 > 1; bool b = 1 + 1 > 2; bool c = 1 + 1 > 3 - 1; export int main() { if (a) return 1; return 0; }")
 	TEST(test_generator, "le_expression",         "bool a = 1 + 1 <= 2; export int main() { if (a) return 1; return 0; }")
+	TEST(test_generator, "ge_expression",         "bool a = 2 >= 2; bool b = 1 + 1 >= 2; bool c = 1 + 1 >= 3 - 1; export int main() { if (a) return 1; return 0; }")
 
 };
 #undef TEST
