@@ -530,6 +530,7 @@ static TestCase tests[] =
 	TEST(test_generator, "if_statement6",         "export int main() { bool a = false; if (a) { return 1; } return 0; }")
 	TEST(test_generator, "if_statement7",         "export int main() { if (true) if (!false) return 1; else { return 2; } else return 3;  return 0; }")
 	TEST(test_generator, "if_statement8",         "export int main() { if (true) { return 1; } else if (!false) { return 2; } else { return 3; }  return 0; }")
+	TEST(test_generator, "not_equal_expression",  "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2; export int main() { if (!b) return 1; return 0; }")
 
 };
 #undef TEST
@@ -556,8 +557,6 @@ static void usage()
 
 int main(int argc, char** argv)
 {
-	TEST(test_executor, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2; export int main() { if (!b) return 1; return 0; }")
-
 	//options
 	bool all = true;
 	bool run = false;
