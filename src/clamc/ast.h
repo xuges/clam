@@ -95,6 +95,7 @@ enum ExprType
 	EXPR_TYPE_GT,
 	EXPR_TYPE_GE,
 	EXPR_TYPE_BITAND,
+	EXPR_TYPE_BITOR,
 };
 typedef enum ExprType ExprType;
 

@@ -508,13 +508,18 @@ Expression* _Parser_bitopExpression(Parser* p)
 
 	Expression* left = _Parser_unaryExpression(p);
 
-	while (token->value == TOKEN_VALUE_BITAND)
+	while (token->value == TOKEN_VALUE_BITAND
+		|| token->value == TOKEN_VALUE_BITOR)
 	{
 		ExprType exprType;
 		switch (token->value)
 		{
 		case TOKEN_VALUE_BITAND:
 			exprType = EXPR_TYPE_BITAND;
+			break;
+
+		case TOKEN_VALUE_BITOR:
+			exprType = EXPR_TYPE_BITOR;
 			break;
 		}
 
