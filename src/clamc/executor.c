@@ -347,6 +347,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_LE:
 	case EXPR_TYPE_GT:
 	case EXPR_TYPE_GE:
+	case EXPR_TYPE_BITAND:
 		_Executor_binaryExpression(exec, expr);
 		break;
 	}
@@ -514,6 +515,20 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 
 		lvalue->type = boolType;
 		break;
+
+	case EXPR_TYPE_BITAND:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			switch (rvalue->type.id)
+			{
+			case TYPE_INT:
+				lvalue->intValue = lvalue->intValue & rvalue->intValue;
+				break;
+			}
+			break;
+		}
+
 	}
 }
 
