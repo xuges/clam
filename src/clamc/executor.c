@@ -42,6 +42,7 @@ static void _Executor_expression(Executor* exec, Expression* expr);
 static void _Executor_callExpression(Executor* exec, Expression* expr);
 static void _Executor_unaryExpression(Executor* exec, Expression* expr);
 static void _Executor_binaryExpression(Executor* exec, Expression* expr);
+static void _Executor_logicExpression(Executor* exec, Expression* expr);
 static Value* _Executor_findVariant(Executor* exec, String name);
 static Declaration* _Executor_findFunction(Executor* exec, String name);
 static void _Executor_enterBlock(Executor* exec);
@@ -351,6 +352,10 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_BITOR:
 		_Executor_binaryExpression(exec, expr);
 		break;
+
+	case EXPR_TYPE_AND:
+		_Executor_logicExpression(exec, expr);
+		break;
 	}
 }
 
@@ -545,6 +550,30 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 		}
 		break;
 
+	}
+}
+
+void _Executor_logicExpression(Executor* exec, Expression* expr)
+{
+	_Executor_expression(exec, expr->binaryExpr.leftExpr);
+	Value* lvalue = Stack_top(&exec->stack);
+
+	switch (expr->type)  //short cut eval
+	{
+	case EXPR_TYPE_AND:
+		if (!lvalue->boolValue)
+			return;
+		break;
+	}
+
+	_Executor_expression(exec, expr->binaryExpr.rightExpr);
+	Value* rvalue = Stack_pop(&exec->stack);
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_AND:
+		lvalue->boolValue = lvalue->boolValue && rvalue->boolValue;
+		break;
 	}
 }
 
