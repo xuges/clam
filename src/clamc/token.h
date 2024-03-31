@@ -58,6 +58,7 @@ enum TokenValue
 
 	TOKEN_VALUE_BITAND,          // &
 	TOKEN_VALUE_BITOR,           // |
+	TOKEN_VALUE_XOR,             // ^
 
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
