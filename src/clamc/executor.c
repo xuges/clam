@@ -354,6 +354,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 		break;
 
 	case EXPR_TYPE_AND:
+	case EXPR_TYPE_OR:
 		_Executor_logicExpression(exec, expr);
 		break;
 	}
@@ -564,6 +565,11 @@ void _Executor_logicExpression(Executor* exec, Expression* expr)
 		if (!lvalue->boolValue)
 			return;
 		break;
+
+	case EXPR_TYPE_OR:
+		if (lvalue->boolValue)
+			return;
+		break;
 	}
 
 	_Executor_expression(exec, expr->binaryExpr.rightExpr);
@@ -573,6 +579,10 @@ void _Executor_logicExpression(Executor* exec, Expression* expr)
 	{
 	case EXPR_TYPE_AND:
 		lvalue->boolValue = lvalue->boolValue && rvalue->boolValue;
+		break;
+
+	case EXPR_TYPE_OR:
+		lvalue->boolValue = lvalue->boolValue || rvalue->boolValue;
 		break;
 	}
 }
