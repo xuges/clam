@@ -99,6 +99,7 @@ enum ExprType
 	EXPR_TYPE_BITAND,
 	EXPR_TYPE_BITOR,
 	EXPR_TYPE_XOR,
+	EXPR_TYPE_NEG,
 };
 typedef enum ExprType ExprType;
 

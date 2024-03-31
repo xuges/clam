@@ -99,6 +99,7 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_BITAND",
 	"EXPR_TYPE_BITOR",
 	"EXPR_TYPE_XOR",
+	"EXPR_TYPE_NEG",
 };
 
 static const char* statTypeToString[] =
@@ -391,6 +392,7 @@ void _Printer_expression(Printer* p, Expression* expr)
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
 	case EXPR_TYPE_NOT:
+	case EXPR_TYPE_NEG:
 		_Printer_indent(p); printf("unaryExpr=\n");
 		p->level++;
 		_Printer_expression(p, expr->unaryExpr);

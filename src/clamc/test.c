@@ -279,6 +279,7 @@ static TestCase tests[] =
 	TEST(test_parser, "bitand_expression",    "int a = 3 & 1;")
 	TEST(test_parser, "bitor_expression",     "int a = 2 | 1;")
 	TEST(test_parser, "xor_expression",       "int a = 3 ^ 1;")
+	TEST(test_parser, "neg_expression",       "int a = ~0;")
 
 	TEST(test_parser, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
 	TEST(test_parser, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
