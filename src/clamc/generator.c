@@ -21,7 +21,6 @@ static void _Generator_unaryExpression(Generator* gen, Expression* expr, StringB
 static void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static bool _Generator_isConstantExpression(Generator* gen, Expression* expr);
-static bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType exprType);
 
 static void _Generator_indent(Generator* gen, StringBuffer* buf);
 
@@ -601,42 +600,7 @@ void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* b
 
 bool _Generator_isConstantExpression(Generator* gen, Expression* expr)
 {
-	return !_Generator_expressionContains(gen, expr, EXPR_TYPE_IDENT);  //TODO: check const ident
-}
-
-bool _Generator_expressionContains(Generator* gen, Expression* expr, ExprType exprType)
-{
-	if (expr->type == exprType)
-		return true;
-
-	switch (expr->type)
-	{
-	case EXPR_TYPE_CALL:
-		if (_Generator_expressionContains(gen, expr->callExpr.func, exprType))
-			return true;
-		for (int i = 0; i < expr->callExpr.args.size; ++i)
-		{
-			Expression* arg = Vector_get(&expr->callExpr.args, i);
-			if (_Generator_expressionContains(gen, arg, exprType))
-				return true;
-		}
-		return false;
-
-	case EXPR_TYPE_ADD:
-	case EXPR_TYPE_SUB:
-	case EXPR_TYPE_MUL:
-	case EXPR_TYPE_DIV:
-		if (_Generator_expressionContains(gen, expr->binaryExpr.leftExpr, exprType))
-			return true;
-		return _Generator_expressionContains(gen, expr->binaryExpr.rightExpr, exprType);
-
-	case EXPR_TYPE_PLUS:
-	case EXPR_TYPE_MINUS:
-	case EXPR_TYPE_NOT:
-		return _Generator_expressionContains(gen, expr->unaryExpr, exprType);
-	}
-
-	return false;
+	return !Expression_contains(expr, EXPR_TYPE_IDENT);  //TODO: check const ident
 }
 
 void _Generator_indent(Generator* gen, StringBuffer* buf)

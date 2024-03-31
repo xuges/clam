@@ -35,7 +35,6 @@ static bool _Analyzer_checkTypeConvert(Analyzer* anly, Type left, Type right);
 static Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType op, Type* t1, Type* t2, Type* t3);
 static bool _Analyzer_checkLvalue(Analyzer* anly, Expression* expr);
 static bool _Analyzer_checkZero(Analyzer* anly, Expression* expr);
-static bool _Analyzer_containsExpression(Analyzer* anly, Expression* expr, ExprType exprType);
 static Variant* _Analyzer_findVariant(Analyzer* anly, String name);
 static Declaration* _Analyzer_findFunction(Analyzer* anly, String name);
 
@@ -377,12 +376,12 @@ Type _Analyzer_conditionExpression(Analyzer* anly, Expression* expr)
 		error(&expr->condExpr.expr1->location, "condition expression must be bool type");
 
 	//check nested
-	if (_Analyzer_containsExpression(anly, expr->condExpr.expr2, EXPR_TYPE_COND))  //TODO: maybe modify to Expression_contains() ?
+	if (Expression_contains(expr->condExpr.expr2, EXPR_TYPE_COND))  //TODO: maybe modify to Expression_contains() ?
 		error(&expr->condExpr.expr2->location, "condition expression cannot nested");
 
 	Type type2 = _Analyzer_expression(anly, expr->condExpr.expr2);
 
-	if (_Analyzer_containsExpression(anly, expr->condExpr.expr3, EXPR_TYPE_COND))
+	if (Expression_contains(expr->condExpr.expr3, EXPR_TYPE_COND))
 		error(&expr->condExpr.expr3->location, "condition expression cannot nested");
 
 	Type type3 = _Analyzer_expression(anly, expr->condExpr.expr3);
@@ -599,56 +598,6 @@ bool _Analyzer_checkZero(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
 		return _Analyzer_checkZero(anly,  expr->unaryExpr);
-	}
-
-	return false;
-}
-
-bool _Analyzer_containsExpression(Analyzer* anly, Expression* expr, ExprType exprType)
-{
-	if (expr->type == exprType)
-		return true;
-
-	switch (expr->type)
-	{
-	case EXPR_TYPE_CALL:
-		if (_Analyzer_containsExpression(anly, expr->callExpr.func, exprType))
-			return true;
-		for (int i = 0; i < expr->callExpr.args.size; ++i)
-		{
-			Expression* arg = Vector_get(&expr->callExpr.args, i);
-			if (_Analyzer_containsExpression(anly, arg, exprType))
-				return true;
-		}
-		return false;
-
-	case EXPR_TYPE_ADD:
-	case EXPR_TYPE_SUB:
-	case EXPR_TYPE_MUL:
-	case EXPR_TYPE_DIV:
-	case EXPR_TYPE_MOD:
-	case EXPR_TYPE_NE:
-	case EXPR_TYPE_EQ:
-	case EXPR_TYPE_LT:
-	case EXPR_TYPE_LE:
-	case EXPR_TYPE_GT:
-	case EXPR_TYPE_GE:
-	case EXPR_TYPE_AND:
-	case EXPR_TYPE_OR:
-	case EXPR_TYPE_BITAND:
-	case EXPR_TYPE_BITOR:
-	case EXPR_TYPE_XOR:
-	case EXPR_TYPE_LSHIFT:
-	case EXPR_TYPE_RSHIFT:
-		if (_Analyzer_containsExpression(anly, expr->binaryExpr.leftExpr, exprType))
-			return true;
-		return _Analyzer_containsExpression(anly, expr->binaryExpr.rightExpr, exprType);
-
-	case EXPR_TYPE_PLUS:
-	case EXPR_TYPE_MINUS:
-	case EXPR_TYPE_NOT:
-	case EXPR_TYPE_NEG:
-		return _Analyzer_containsExpression(anly, expr->unaryExpr, exprType);
 	}
 
 	return false;
