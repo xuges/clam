@@ -350,6 +350,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_GE:
 	case EXPR_TYPE_BITAND:
 	case EXPR_TYPE_BITOR:
+	case EXPR_TYPE_XOR:
 		_Executor_binaryExpression(exec, expr);
 		break;
 
@@ -545,6 +546,20 @@ void _Executor_binaryExpression(Executor* exec, Expression* expr)
 			{
 			case TYPE_INT:
 				lvalue->intValue = lvalue->intValue | rvalue->intValue;
+				break;
+			}
+			break;
+		}
+		break;
+
+	case EXPR_TYPE_XOR:
+		switch (lvalue->type.id)
+		{
+		case TYPE_INT:
+			switch (rvalue->type.id)
+			{
+			case TYPE_INT:
+				lvalue->intValue = lvalue->intValue ^ rvalue->intValue;
 				break;
 			}
 			break;
