@@ -14,6 +14,7 @@ static Statement _Parser_statement(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
 
 static Expression* _Parser_expression(Parser* p);
+static Expression* _Parser_logicOrExpression(Parser* p);
 static Expression* _Parser_logicAndExpression(Parser* p);
 static Expression* _Parser_equalityExpression(Parser* p);
 static Expression* _Parser_relationExpression(Parser* p);
@@ -350,7 +351,27 @@ Statement _Parser_statement(Parser* p)
 
 Expression* _Parser_expression(Parser* p)
 {
-	return _Parser_logicAndExpression(p);
+	return _Parser_logicOrExpression(p);
+}
+
+Expression* _Parser_logicOrExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	Expression* left = _Parser_logicAndExpression(p);
+
+	token = Lexer_peek(p->lex);
+	while (token->value == TOKEN_VALUE_OR)
+	{
+		Lexer_next(p->lex);
+		Expression* right = _Parser_logicAndExpression(p);
+		left = Expression_createBinary(&loc, EXPR_TYPE_OR, left, right);
+		token = Lexer_peek(p->lex);
+		loc = token->location;
+	}
+
+	return left;
 }
 
 Expression* _Parser_logicAndExpression(Parser* p)
@@ -487,7 +508,6 @@ Expression* _Parser_multiplicativeExpression(Parser* p)
 	Token* token = Lexer_peek(p->lex);
 	SourceLocation loc = token->location;
 
-	//Expression* left = _Parser_unaryExpression(p);
 	Expression* left = _Parser_bitopExpression(p);
 
 	while (token->value == TOKEN_VALUE_STAR 
@@ -512,7 +532,6 @@ Expression* _Parser_multiplicativeExpression(Parser* p)
 
 		Lexer_next(p->lex);
 
-		//Expression* right = _Parser_unaryExpression(p);
 		Expression* right = _Parser_bitopExpression(p);
 		left = Expression_createBinary(&loc, exprType, left, right);
 		token = Lexer_peek(p->lex);
