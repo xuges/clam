@@ -599,6 +599,7 @@ static TestCase tests[] =
 	TEST(test_generator, "bitor_expression",      "int a = 2 | 1; export int main() { return a; }")
 	TEST(test_generator, "xor_expression",        "int a = 3 ^ 1; export int main() { return a; }")
 	TEST(test_generator, "neg_expression",        "int a = ~0; export int main() { return a; }")
+	TEST(test_generator, "lshift_expression",     "int a = 1 << 1; export int main() { return a; }")
 
 };
 #undef TEST
