@@ -456,6 +456,7 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 	case EXPR_TYPE_BITOR:
 	case EXPR_TYPE_XOR:
 	case EXPR_TYPE_LSHIFT:
+	case EXPR_TYPE_RSHIFT:
 		_Generator_binaryExpression(gen, expr, buf);
 		break;
 	}
@@ -557,6 +558,10 @@ void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer*
 
 	case EXPR_TYPE_LSHIFT:
 		StringBuffer_append(buf, " << ");
+		break;
+
+	case EXPR_TYPE_RSHIFT:
+		StringBuffer_append(buf, " >> ");
 		break;
 	}
 
