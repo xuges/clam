@@ -61,6 +61,7 @@ enum TokenValue
 	TOKEN_VALUE_XOR,             // ^
 	TOKEN_VALUE_NEG,             // ~
 	TOKEN_VALUE_LSHIFT,          // <<
+	TOKEN_VALUE_RSHIFT,          // >>
 
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .

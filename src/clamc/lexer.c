@@ -197,6 +197,12 @@ Token* Lexer_next(Lexer* lex)
 				lex->token.literal.length++;
 				_Lexer_next(lex);
 			}
+			else if (c == '>')
+			{
+				lex->token.value = TOKEN_VALUE_RSHIFT;
+				lex->token.literal.length++;
+				_Lexer_next(lex);
+			}
 		}
 		else if (c == '&')
 		{

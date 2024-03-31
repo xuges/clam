@@ -239,7 +239,7 @@ static TestCase tests[] =
 	TEST(test_lexer, "eof"    , "")
 	TEST(test_lexer, "keyword", "export void int bool true false if else return")
 	TEST(test_lexer, "punct"  , "(){},;")
-	TEST(test_lexer, "operator", "=+-*/% ++ -- += -= *= /= %= ! != == < <= > >= & | ^ ~ << && ||")
+	TEST(test_lexer, "operator", "=+-*/% ++ -- += -= *= /= %= ! != == < > <= >= & | ^ ~ << >> && ||")
 
 	TEST(test_parser, "basic",                "export int main() { return 0; }")
 	TEST(test_parser, "functions1",           "void print() {} int foo() { return 0; } bool check() { return true; }")
