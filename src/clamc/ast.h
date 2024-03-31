@@ -98,6 +98,7 @@ enum ExprType
 	EXPR_TYPE_OR,
 	EXPR_TYPE_BITAND,
 	EXPR_TYPE_BITOR,
+	EXPR_TYPE_XOR,
 };
 typedef enum ExprType ExprType;
 
