@@ -588,6 +588,7 @@ static TestCase tests[] =
 	TEST(test_generator, "or_expression",         "bool a = 1 + 1 == 2 || 2 + 2 == 3 || 3 * 3 != 9; export int main() { if (a) return 1; return 0; }")
 	TEST(test_generator, "bitand_expression",     "int a = 3 & 1; export int main() { return a; }")
 	TEST(test_generator, "bitor_expression",      "int a = 2 | 1; export int main() { return a; }")
+	TEST(test_generator, "xor_expression",        "int a = 3 ^ 1; export int main() { return a; }")
 
 };
 #undef TEST
