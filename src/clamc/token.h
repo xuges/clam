@@ -63,6 +63,9 @@ enum TokenValue
 	TOKEN_VALUE_LSHIFT,          // <<
 	TOKEN_VALUE_RSHIFT,          // >>
 
+	TOKEN_VALUE_QUES,            // ?
+	TOKEN_VALUE_COLON,           // :
+
 	TOKEN_VALUE_COMMA,           // ,
 	TOKEN_VALUE_DOT,             // .
 	TOKEN_VALUE_SEM,             // ;

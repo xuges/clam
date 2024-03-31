@@ -234,6 +234,14 @@ Token* Lexer_next(Lexer* lex)
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_NEG);
 		}
+		else if (c == '?')
+		{
+			_Lexer_parseOperator(lex, TOKEN_VALUE_QUES);
+		}
+		else if (c == ':')
+		{
+			_Lexer_parseOperator(lex, TOKEN_VALUE_COLON);
+		}
 		else if (c == '(')
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_LP);
