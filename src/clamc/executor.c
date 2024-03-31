@@ -334,6 +334,7 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
 	case EXPR_TYPE_NOT:
+	case EXPR_TYPE_NEG:
 		_Executor_unaryExpression(exec, expr);
 		break;
 
@@ -391,6 +392,15 @@ void _Executor_unaryExpression(Executor* exec, Expression* expr)
 		{
 		case TYPE_INT:
 			value->intValue = -value->intValue;
+			break;
+		}
+		break;
+
+	case EXPR_TYPE_NEG:
+		switch (value->type.id)
+		{
+		case TYPE_INT:
+			value->intValue = ~value->intValue;
 			break;
 		}
 		break;
