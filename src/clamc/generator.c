@@ -444,6 +444,7 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 	case EXPR_TYPE_DIV:
 	case EXPR_TYPE_MOD:
 	case EXPR_TYPE_NE:
+	case EXPR_TYPE_EQ:
 	case EXPR_TYPE_LT:
 	case EXPR_TYPE_LE:
 	case EXPR_TYPE_GT:
@@ -505,6 +506,10 @@ void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer*
 
 	case EXPR_TYPE_NE:
 		StringBuffer_append(buf, " != ");
+		break;
+
+	case EXPR_TYPE_EQ:
+		StringBuffer_append(buf, " == ");
 		break;
 
 	case EXPR_TYPE_LT:
