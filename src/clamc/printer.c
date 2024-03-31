@@ -106,6 +106,7 @@ static const char* exprTypeToString[] =
 	"EXPR_TYPE_NEG",
 	"EXPR_TYPE_LSHIFT",
 	"EXPR_TYPE_RSHIFT",
+	"EXPR_TYPE_COND",
 };
 
 static const char* statTypeToString[] =
@@ -154,6 +155,7 @@ static void _Printer_statement(Printer* p, Statement* stat);
 static void _Printer_assignStatement(Printer* p, Statement* stat);
 static void _Printer_ifStatement(Printer* p, Statement* stat);
 static void _Printer_expression(Printer* p, Expression* expr);
+static void _Printer_condtionExpression(Printer* p, Expression* expr);
 static void _Printer_binaryExpression(Printer* p, Expression* expr);
 static void _Printer_callExpression(Printer* p, Expression* expr);
 static void _Printer_indent(Printer* p);
@@ -429,8 +431,39 @@ void _Printer_expression(Printer* p, Expression* expr)
 		p->level--;
 		break;
 
+	case EXPR_TYPE_COND:
+		_Printer_indent(p); printf("condExpr=\n");
+		p->level++;
+		_Printer_condtionExpression(p, expr);
+		p->level--;
+		break;
+
 	}
 
+}
+
+void _Printer_condtionExpression(Printer* p, Expression* expr)
+{
+	_Printer_indent(p); printf("expr1=\n");
+	{
+		p->level++;
+		_Printer_expression(p, expr->condExpr.expr1);
+		p->level--;
+	}
+
+	_Printer_indent(p); printf("expr2=\n");
+	{
+		p->level++;
+		_Printer_expression(p, expr->condExpr.expr2);
+		p->level--;
+	}
+
+	_Printer_indent(p); printf("expr3=\n");
+	{
+		p->level++;
+		_Printer_expression(p, expr->condExpr.expr3);
+		p->level--;
+	}
 }
 
 void _Printer_binaryExpression(Printer* p, Expression* expr)

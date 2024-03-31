@@ -292,6 +292,9 @@ static TestCase tests[] =
 	TEST(test_parser, "if_statement7",        "export int main() { if (true) if (!false) return 1; else return 2; else return 3;  return 0; }")
 	TEST(test_parser, "if_statement8",        "export int main() { if (true) return 1; else if (!false) return 2; else return 3;  return 0; }")
 
+	TEST(test_parser, "cond_expression1",      "int a = true ? 1 : 2;")
+	TEST(test_parser, "cond_expression2",      "int a = 1 + 2 == 3 ? 1 : 2;")
+
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
 	TEST_WRONG(test_parser, "basic_wrong3",              "export main() {}")
@@ -308,6 +311,9 @@ static TestCase tests[] =
 	TEST_WRONG(test_parser, "sub_assign_statement_wrong1", "int a = 1; int b = a -= 1;")
 	TEST_WRONG(test_parser, "mul_assign_statement_wrong1", "int a = 2; int b = a *= 2;")
 	TEST_WRONG(test_parser, "div_assign_statement_wrong1", "int a = 2; int b = a /= 2;")
+
+	TEST_WRONG(test_parser, "cond_expression_wrong1",      "int a = true ? 1;")
+	//TEST_WRONG(test_parser, "cond_expression_wrong2",      "int a = true ? 1 : false ? 2 : 3;")
 
 	TEST(test_analyzer, "basic",                "export int main() { return 12345; }")
 	TEST(test_analyzer, "global_variant",       "export int a; int foo() { return b; } int b = 0;")

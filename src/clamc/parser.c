@@ -14,6 +14,7 @@ static Statement _Parser_statement(Parser* p);
 static Vector _Parser_compoundStatement(Parser* p);
 
 static Expression* _Parser_expression(Parser* p);
+static Expression* _Parser_conditionExpression(Parser* p);
 static Expression* _Parser_logicOrExpression(Parser* p);
 static Expression* _Parser_logicAndExpression(Parser* p);
 static Expression* _Parser_equalityExpression(Parser* p);
@@ -352,7 +353,32 @@ Statement _Parser_statement(Parser* p)
 
 Expression* _Parser_expression(Parser* p)
 {
-	return _Parser_logicOrExpression(p);
+	return _Parser_conditionExpression(p);
+}
+
+Expression* _Parser_conditionExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	Expression* cond = _Parser_logicOrExpression(p);
+
+	token = Lexer_peek(p->lex);
+	if (token->value != TOKEN_VALUE_QUES)
+		return cond;
+
+	Expression* expr = Expression_create(EXPR_TYPE_COND, &loc);
+	expr->condExpr.expr1 = cond;
+
+	Lexer_next(p->lex);
+	expr->condExpr.expr2 = _Parser_expression(p);
+
+	_Parser_expect(p, TOKEN_VALUE_COLON, "expected ':'");
+
+	token = Lexer_next(p->lex);
+	expr->condExpr.expr3 = _Parser_expression(p);
+
+	return expr;
 }
 
 Expression* _Parser_logicOrExpression(Parser* p)

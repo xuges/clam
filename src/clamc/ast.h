@@ -102,6 +102,7 @@ enum ExprType
 	EXPR_TYPE_NEG,
 	EXPR_TYPE_LSHIFT,
 	EXPR_TYPE_RSHIFT,
+	EXPR_TYPE_COND,
 };
 typedef enum ExprType ExprType;
 
@@ -112,6 +113,13 @@ struct BinaryExpression
 };
 typedef struct BinaryExpression BinaryExpression;
 
+struct ConditionExpression
+{
+	struct Expression* expr1;
+	struct Expression* expr2;
+	struct Expression* expr3;
+};
+typedef struct ConditionExpression ConditionExpression;
 
 struct CallExpression
 {
@@ -133,10 +141,12 @@ struct Expression
 		String identExpr;
 		struct Expression* unaryExpr;
 		BinaryExpression binaryExpr;
+		ConditionExpression condExpr;
 	};
 };
 typedef struct Expression Expression;
 
+Expression* Expression_create(ExprType type, SourceLocation* loc);
 Expression* Expression_createLiteral(ExprType type, Token* token);
 Expression* Expression_createCall(SourceLocation* loc, Expression* func);
 Expression* Expression_createIdent(SourceLocation* loc, Token* token);

@@ -49,7 +49,7 @@ void Declaration_destroy(Declaration* decl)
 	}
 }
 
-static Expression* _Expression_create(ExprType type, SourceLocation* loc)
+Expression* Expression_create(ExprType type, SourceLocation* loc)
 {
 	Expression* expr = (Expression*)malloc(sizeof(Expression));
 	if (!expr)
@@ -62,7 +62,7 @@ static Expression* _Expression_create(ExprType type, SourceLocation* loc)
 
 Expression* Expression_createLiteral(ExprType type, Token* token)
 {
-	Expression* expr = _Expression_create(type, &token->location);
+	Expression* expr = Expression_create(type, &token->location);
 
 	switch (type)
 	{
@@ -85,7 +85,7 @@ Expression* Expression_createLiteral(ExprType type, Token* token)
 
 Expression* Expression_createCall(SourceLocation* loc, Expression* func)
 {
-	Expression* expr = _Expression_create(EXPR_TYPE_CALL, loc);
+	Expression* expr = Expression_create(EXPR_TYPE_CALL, loc);
 	expr->callExpr.func = func;
 	Vector_init(&expr->callExpr.args, sizeof(Expression));
 	return expr;
@@ -93,21 +93,21 @@ Expression* Expression_createCall(SourceLocation* loc, Expression* func)
 
 Expression* Expression_createIdent(SourceLocation* loc, Token* token)
 {
-	Expression* expr = _Expression_create(EXPR_TYPE_IDENT, loc);
+	Expression* expr = Expression_create(EXPR_TYPE_IDENT, loc);
 	expr->identExpr = token->literal;
 	return expr;
 }
 
 Expression* Expression_createUnary(SourceLocation* loc, ExprType type, Expression* right)
 {
-	Expression* expr = _Expression_create(type, loc);
+	Expression* expr = Expression_create(type, loc);
 	expr->unaryExpr = right;
 	return expr;
 }
 
 Expression* Expression_createBinary(SourceLocation* loc, ExprType type, Expression* left, Expression* right)
 {
-	Expression* expr = _Expression_create(type, loc);
+	Expression* expr = Expression_create(type, loc);
 	expr->binaryExpr.leftExpr = left;
 	expr->binaryExpr.rightExpr = right;
 	return expr;
