@@ -21,6 +21,7 @@ static Expression* _Parser_relationExpression(Parser* p);
 static Expression* _Parser_additiveExpression(Parser* p);
 static Expression* _Parser_multiplicativeExpression(Parser* p);
 static Expression* _Parser_bitopExpression(Parser* p);
+static Expression* _Parser_bitShiftExpression(Parser* p);
 static Expression* _Parser_unaryExpression(Parser* p);
 static Expression* _Parser_postfixExpression(Parser* p);
 static Expression* _Parser_primaryExpression(Parser* p);
@@ -546,7 +547,7 @@ Expression* _Parser_bitopExpression(Parser* p)
 	Token* token = Lexer_peek(p->lex);
 	SourceLocation loc = token->location;
 
-	Expression* left = _Parser_unaryExpression(p);
+	Expression* left = _Parser_bitShiftExpression(p);
 
 	while (token->value == TOKEN_VALUE_BITAND
 		|| token->value == TOKEN_VALUE_BITOR
@@ -570,10 +571,38 @@ Expression* _Parser_bitopExpression(Parser* p)
 
 		Lexer_next(p->lex);
 
-		Expression* right = _Parser_unaryExpression(p);
+		Expression* right = _Parser_bitShiftExpression(p);
 		left = Expression_createBinary(&loc, exprType, left, right);
 		token = Lexer_peek(p->lex);
 		loc = token->location;
+	}
+
+	return left;
+}
+
+Expression* _Parser_bitShiftExpression(Parser* p)
+{
+	Token* token = Lexer_peek(p->lex);
+	SourceLocation loc = token->location;
+
+	Expression* left = _Parser_unaryExpression(p);
+
+	while (token->value == TOKEN_VALUE_LSHIFT)
+	{
+		ExprType exprType;
+		switch (token->value)
+		{
+		case TOKEN_VALUE_LSHIFT:
+			exprType = EXPR_TYPE_LSHIFT;
+			break;
+		}
+
+		Lexer_next(p->lex);
+
+		Expression* right = _Parser_unaryExpression(p);
+		left = Expression_createBinary(&loc, exprType, left, right);
+		token = Lexer_peek(p->lex);
+		loc = token->location;		
 	}
 
 	return left;

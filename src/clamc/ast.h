@@ -100,6 +100,7 @@ enum ExprType
 	EXPR_TYPE_BITOR,
 	EXPR_TYPE_XOR,
 	EXPR_TYPE_NEG,
+	EXPR_TYPE_LSHIFT,
 };
 typedef enum ExprType ExprType;
 
