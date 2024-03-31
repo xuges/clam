@@ -50,6 +50,7 @@ static const char* tokenValueToString[] =
 	"TOKEN_VALUE_BITOR",
 	"TOKEN_VALUE_XOR",
 	"TOKEN_VALUE_NEG",
+	"TOKEN_VALUE_LSHIFT",
 	"TOKEN_VALUE_COMMA",
 	"TOKEN_VALUE_DOT",
 	"TOKEN_VALUE_SEM",
