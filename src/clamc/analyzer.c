@@ -336,6 +336,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
 	case EXPR_TYPE_NOT:
+	case EXPR_TYPE_NEG:
 		return _Analyzer_unaryExpression(anly, expr);
 
 	case EXPR_TYPE_ADD:
@@ -396,21 +397,10 @@ Type _Analyzer_unaryExpression(Analyzer* anly, Expression* expr)
 {
 	Type rtype = _Analyzer_expression(anly, expr->unaryExpr);
 
-	switch (expr->type)
-	{
-	case EXPR_TYPE_PLUS:
-	case EXPR_TYPE_MINUS:
-	case EXPR_TYPE_NOT:
-		//TODO: check variant used is inited
-		rtype = _Analyzer_checkTypeOperate(anly, expr->type, &rtype, NULL, NULL);
-		if (rtype.id == TYPE_INIT)
-			error(&expr->unaryExpr->location, "expression type not support this operator");  //TODO: clarity the error message
-
-		break;
-
-	default:
-		error(&expr->location, "unsupported unary operator");
-	}
+	//TODO: check variant used is inited
+	rtype = _Analyzer_checkTypeOperate(anly, expr->type, &rtype, NULL, NULL);
+	if (rtype.id == TYPE_INIT)
+		error(&expr->unaryExpr->location, "expression type not support this operator");  //TODO: clarity the error message
 
 	return rtype;
 }
@@ -446,6 +436,7 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 	{
 	case EXPR_TYPE_PLUS:  //unary
 	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NEG:
 		switch (t1->id)
 		{
 		case TYPE_INT:
@@ -455,6 +446,7 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 			return errorType;
 		}
 		//break
+
 	case EXPR_TYPE_NOT:
 		if (t1->id == TYPE_BOOL)
 			return *t1;
