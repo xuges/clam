@@ -16,6 +16,7 @@ static void _Generator_compoundStatement(Generator* gen, Declaration* decl, Vect
 static void _Generator_expressionStatement(Generator* gen, Expression* expr);
 static void _Generator_returnStatement(Generator* gen, Statement* stat);
 static void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf);
+static void _Generator_conditionExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer* buf);
 static void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf);
@@ -459,7 +460,20 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 	case EXPR_TYPE_RSHIFT:
 		_Generator_binaryExpression(gen, expr, buf);
 		break;
+
+	case EXPR_TYPE_COND:
+		_Generator_conditionExpression(gen, expr, buf);
+		break;
 	}
+}
+
+void _Generator_conditionExpression(Generator* gen, Expression* expr, StringBuffer* buf)
+{
+	_Generator_expression(gen, expr->condExpr.expr1, buf);
+	StringBuffer_append(buf, " ? ");
+	_Generator_expression(gen, expr->condExpr.expr2, buf);
+	StringBuffer_append(buf, " : ");
+	_Generator_expression(gen, expr->condExpr.expr3, buf);
 }
 
 void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* buf)
