@@ -359,6 +359,7 @@ static TestCase tests[] =
 	TEST(test_analyzer, "bitor_expression",     "int a = 2 | 1;")
 	TEST(test_analyzer, "xor_expression",       "int a = 3 ^ 1;")
 	TEST(test_analyzer, "neg_expression",       "int a = ~0;")
+	TEST(test_analyzer, "lshift_expression",    "int a = 1 << 1;")
 
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",                "int main() { return 0; }")
@@ -430,6 +431,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "xor_expression_wrong2",      "int a = b ^ 1;")
 	TEST_WRONG(test_analyzer, "neg_expression_wrong1",      "int a = ~true;")
 	TEST_WRONG(test_analyzer, "neg_expression_wrong1",      "int a = ~b;")
+	TEST_WRONG(test_analyzer, "lshift_expression_wrong1",   "int a = true << true;")
+	TEST_WRONG(test_analyzer, "lshift_expression_wrong2",   "int a = b << 1;")
 
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
