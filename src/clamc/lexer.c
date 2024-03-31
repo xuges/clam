@@ -206,6 +206,13 @@ Token* Lexer_next(Lexer* lex)
 		else if (c == '|')
 		{
 			_Lexer_parseOperator(lex, TOKEN_VALUE_BITOR);
+			c = *_Lexer_peek(lex);
+			if (c == '|')
+			{
+				lex->token.value = TOKEN_VALUE_OR;
+				lex->token.literal.length++;
+				_Lexer_next(lex);
+			}
 		}
 		else if (c == '(')
 		{
