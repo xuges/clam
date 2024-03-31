@@ -102,7 +102,7 @@ enum ExprType
 	EXPR_TYPE_NEG,
 	EXPR_TYPE_LSHIFT,
 	EXPR_TYPE_RSHIFT,
-	EXPR_TYPE_COND,
+	EXPR_TYPE_COND,  //ternary
 };
 typedef enum ExprType ExprType;
 
@@ -154,6 +154,8 @@ Expression* Expression_createUnary(SourceLocation* loc, ExprType type, Expressio
 Expression* Expression_createBinary(SourceLocation* loc, ExprType type, Expression* left, Expression* right);
 
 void Expression_destroy(Expression* expr);
+
+bool Expression_contains(Expression* expr, ExprType type);
 
 //statement
 

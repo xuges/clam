@@ -128,6 +128,7 @@ void Expression_destroy(Expression* expr)
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
 	case EXPR_TYPE_NOT:
+	case EXPR_TYPE_NEG:
 		Expression_destroy(expr->unaryExpr);
 		free(expr->unaryExpr);
 		break;
@@ -137,14 +138,93 @@ void Expression_destroy(Expression* expr)
 	case EXPR_TYPE_MUL:
 	case EXPR_TYPE_DIV:
 	case EXPR_TYPE_MOD:
+	case EXPR_TYPE_NE:
+	case EXPR_TYPE_EQ:
+	case EXPR_TYPE_LT:
+	case EXPR_TYPE_LE:
+	case EXPR_TYPE_GT:
+	case EXPR_TYPE_GE:
+	case EXPR_TYPE_AND:
+	case EXPR_TYPE_OR:
+	case EXPR_TYPE_BITAND:
+	case EXPR_TYPE_BITOR:
+	case EXPR_TYPE_XOR:
+	case EXPR_TYPE_LSHIFT:
+	case EXPR_TYPE_RSHIFT:
 		Expression_destroy(expr->binaryExpr.leftExpr);
 		Expression_destroy(expr->binaryExpr.rightExpr);
 		free(expr->binaryExpr.leftExpr);
 		free(expr->binaryExpr.rightExpr);
 		break;
+
+	case EXPR_TYPE_COND:
+		Expression_destroy(expr->condExpr.expr1);
+		Expression_destroy(expr->condExpr.expr2);
+		Expression_destroy(expr->condExpr.expr3);
+		free(expr->condExpr.expr1);
+		free(expr->condExpr.expr2);
+		free(expr->condExpr.expr3);
+		break;
 	}
 
 	free(expr);
+}
+
+bool Expression_contains(Expression* expr, ExprType exprType)
+{
+	if (expr->type == exprType)
+		return true;
+
+	switch (expr->type)
+	{
+	case EXPR_TYPE_CALL:
+		if (Expression_contains(expr->callExpr.func, exprType))
+			return true;
+		for (int i = 0; i < expr->callExpr.args.size; ++i)
+		{
+			Expression* arg = Vector_get(&expr->callExpr.args, i);
+			if (Expression_contains(arg, exprType))
+				return true;
+		}
+		return false;
+
+	case EXPR_TYPE_PLUS:
+	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NOT:
+	case EXPR_TYPE_NEG:
+		return Expression_contains(expr->unaryExpr, exprType);
+
+	case EXPR_TYPE_ADD:
+	case EXPR_TYPE_SUB:
+	case EXPR_TYPE_MUL:
+	case EXPR_TYPE_DIV:
+	case EXPR_TYPE_MOD:
+	case EXPR_TYPE_NE:
+	case EXPR_TYPE_EQ:
+	case EXPR_TYPE_LT:
+	case EXPR_TYPE_LE:
+	case EXPR_TYPE_GT:
+	case EXPR_TYPE_GE:
+	case EXPR_TYPE_AND:
+	case EXPR_TYPE_OR:
+	case EXPR_TYPE_BITAND:
+	case EXPR_TYPE_BITOR:
+	case EXPR_TYPE_XOR:
+	case EXPR_TYPE_LSHIFT:
+	case EXPR_TYPE_RSHIFT:
+		if (Expression_contains(expr->binaryExpr.leftExpr, exprType))
+			return true;
+		return Expression_contains(expr->binaryExpr.rightExpr, exprType);
+
+	case EXPR_TYPE_COND:
+		if (Expression_contains(expr->condExpr.expr1, exprType))
+			return true;
+		if (Expression_contains(expr->condExpr.expr2, exprType))
+			return true;
+		return Expression_contains(expr->condExpr.expr3, exprType);
+	}
+
+	return false;
 }
 
 void Statement_init(Statement* stat)
