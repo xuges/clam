@@ -528,6 +528,7 @@ static TestCase tests[] =
 	TEST(test_executor, "neg_expression",       "int a = ~0; export int main() { return a; }")
 	TEST(test_executor, "lshift_expression",    "int a = 1 << 1; export int main() { return a; }")
 	TEST(test_executor, "rshift_expression",    "int a = 2 >> 1; export int main() { return a; }")
+	TEST(test_executor, "cond_expression",      "export int main() { return true ? 1 : 0; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 	TEST_WRONG(test_executor, "mod_expression_wrong", "int a = 10; int b = 0; export int main() { return a % b; }")

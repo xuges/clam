@@ -39,6 +39,7 @@ static void _Executor_assignStatement(Executor* exec, Statement* stat);
 static void _Executor_incDecStatement(Executor* exec, Statement* stat);
 static ExecuteResult _Executor_compoundStatement(Executor* exec, Declaration* decl,  Statement* stat);
 static void _Executor_expression(Executor* exec, Expression* expr);
+static void _Executor_conditionExpression(Executor* exec, Expression* expr);
 static void _Executor_callExpression(Executor* exec, Expression* expr);
 static void _Executor_unaryExpression(Executor* exec, Expression* expr);
 static void _Executor_binaryExpression(Executor* exec, Expression* expr);
@@ -361,7 +362,48 @@ void _Executor_expression(Executor* exec, Expression* expr)
 	case EXPR_TYPE_OR:
 		_Executor_logicExpression(exec, expr);
 		break;
+
+	case EXPR_TYPE_COND:
+		_Executor_conditionExpression(exec, expr);
+		break;
 	}
+}
+
+void _Executor_conditionExpression(Executor* exec, Expression* expr)
+{
+	_Executor_expression(exec, expr->condExpr.expr1);
+	Value* cond = Stack_top(&exec->stack);
+
+	_Executor_expression(exec, expr->condExpr.expr2);
+	Value* v1 = Stack_top(&exec->stack);
+
+	if (cond->boolValue)  //short cut
+	{
+		switch (v1->type.id)
+		{
+		case TYPE_INT:
+			cond->intValue = v1->intValue;
+			break;
+		}
+
+		cond->type = v1->type;
+		Stack_pop(&exec->stack);
+		return;
+	}
+
+	_Executor_expression(exec, expr->condExpr.expr3);
+	Value* v2 = Stack_top(&exec->stack);
+
+	switch (v1->type.id)
+	{
+	case TYPE_INT:
+		cond->intValue = v2->intValue;
+		break;
+	}
+
+	cond->type = v1->type;
+	Stack_pop(&exec->stack);
+	Stack_pop(&exec->stack);
 }
 
 void _Executor_callExpression(Executor* exec, Expression* expr)
