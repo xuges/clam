@@ -587,13 +587,18 @@ Expression* _Parser_bitShiftExpression(Parser* p)
 
 	Expression* left = _Parser_unaryExpression(p);
 
-	while (token->value == TOKEN_VALUE_LSHIFT)
+	while (token->value == TOKEN_VALUE_LSHIFT
+		|| token->value == TOKEN_VALUE_RSHIFT)
 	{
 		ExprType exprType;
 		switch (token->value)
 		{
 		case TOKEN_VALUE_LSHIFT:
 			exprType = EXPR_TYPE_LSHIFT;
+			break;
+
+		case TOKEN_VALUE_RSHIFT:
+			exprType = EXPR_TYPE_RSHIFT;
 			break;
 		}
 
