@@ -318,7 +318,6 @@ static TestCase tests[] =
 	TEST(test_analyzer, "add_expression1",      "int a = 1 + 2 + 3; int b = a + 4;")
 	TEST(test_analyzer, "add_expression2",      "int a = foo() + bar(); int foo() { return 1; } int bar() { return 2; }")
 	TEST(test_analyzer, "plus_expression",      "export int main() { int a = 1; a = +1; int b = +a; return a; }")
-
 	TEST(test_analyzer, "add_expression",       "export int main() { int a = 1 + 2 + 3; int b = 4; a = a + b; return a + 5; }")
 	TEST(test_analyzer, "sub_expression",       "int a = 1 - 1; int b = 1 - a; int c = 3 - 2 - 1 - a;")
 	TEST(test_analyzer, "mul_expression",       "int a =  2 * 2; int b = a * 2; int c = a * 2 * b;")
@@ -329,7 +328,6 @@ static TestCase tests[] =
 	TEST(test_analyzer, "operation",            "int a = 1 * -2 + 3 * 4 - 6 / 2 + 19 % +2; int b = a + 3 * -4;")
 	TEST(test_analyzer, "inc_statement",        "int a = 0; void foo() { a++; }")
 	TEST(test_analyzer, "dec_statement",        "int a = 3; void foo() { a--; }")
-
 	TEST(test_analyzer, "add_assign_statement", "int a = 0; void foo() { a += 1; int b = 0; b += a; }")
 	TEST(test_analyzer, "sub_assign_statement", "int a = 2; void foo() { a -= 1; int b = 5; b -= a; }")
 	TEST(test_analyzer, "mul_assign_statement", "int a = 2; void foo() { a *= 2; int b = 1; b *= a; }")
@@ -344,7 +342,6 @@ static TestCase tests[] =
 	TEST(test_analyzer, "ge_expression",        "bool a = 2 >= 2; bool b = 1 + 1 >= 2; bool c = 1 + 1 >= 3 - 1;")
 	TEST(test_analyzer, "and_expression",       "bool a = 1 + 1 == 2 && 2 + 2 == 4 && 3 * 3 == 9 && 2 * 3 != 5;")
 	TEST(test_analyzer, "or_expression",        "bool a = 1 + 1 == 2 || 2 + 2 == 3 || 3 * 3 != 9;")
-
 	TEST(test_analyzer, "if_statement1",        "export int main() { if (true) return 1; return 0; }")
 	TEST(test_analyzer, "if_statement2",        "export int main() { if (true) { return 1; } return 0; }")
 	TEST(test_analyzer, "if_statement3",        "export int main() { if (!false) { return 1; } return 0; }")
@@ -355,13 +352,12 @@ static TestCase tests[] =
 	TEST(test_analyzer, "if_statement8",        "export int main() { if (true) return 1; else if (!false) return 2; else return 3;  return 0; }")
 	TEST(test_analyzer, "if_statement9",        "export int main() { if (false) { return 1; } else return 2; }")
 	TEST(test_analyzer, "if_statement10",       "export int main() { if (false) if (true) return 1; else return 2; }")  //TODO: flow analysis make it pass
-
 	TEST(test_analyzer, "bitand_expression",    "int a = 3 & 1;")
 	TEST(test_analyzer, "bitor_expression",     "int a = 2 | 1;")
 	TEST(test_analyzer, "xor_expression",       "int a = 3 ^ 1;")
 	TEST(test_analyzer, "neg_expression",       "int a = ~0;")
 	TEST(test_analyzer, "lshift_expression",    "int a = 1 << 1;")
-
+	TEST(test_analyzer, "rshift_expression",    "int a = 2 >> 1;")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",                "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",                "export void main() { return 0; }")
@@ -420,7 +416,6 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "ge_expression_wrong1",        "int a = 0; bool b = a >= foo(); void foo() {}")
 	TEST_WRONG(test_analyzer, "and_expression_wrong1",       "bool a = true && 1;")
 	TEST_WRONG(test_analyzer, "or_expression_wrong1",       "bool a = false || 1;")
-
 	TEST_WRONG(test_analyzer, "if_statement_wrong1",        "export int main() { if (0) return 1; return 0; }")
 	TEST_WRONG(test_analyzer, "if_statement_wrong2",        "export int main() { if (1 + 1) { return 1; } return 0; }")
 	TEST_WRONG(test_analyzer, "if_statement_wrong3",        "export int main() { if (false) { return 1; } }")
@@ -434,6 +429,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "neg_expression_wrong1",      "int a = ~b;")
 	TEST_WRONG(test_analyzer, "lshift_expression_wrong1",   "int a = true << true;")
 	TEST_WRONG(test_analyzer, "lshift_expression_wrong2",   "int a = b << 1;")
+	TEST_WRONG(test_analyzer, "rshift_expression_wrong1",   "int a = true << 1;")
+	TEST_WRONG(test_analyzer, "rshift_expression_wrong2",   "int a = b << 1;")
 
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
