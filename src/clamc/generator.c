@@ -434,6 +434,7 @@ void _Generator_expression(Generator* gen, Expression* expr, StringBuffer* buf)
 
 	case EXPR_TYPE_PLUS:
 	case EXPR_TYPE_MINUS:
+	case EXPR_TYPE_NEG:
 	case EXPR_TYPE_NOT:
 		_Generator_unaryExpression(gen, expr, buf);
 		break;
@@ -469,6 +470,10 @@ void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* 
 
 	case EXPR_TYPE_MINUS:
 		StringBuffer_append(buf, "-");
+		break;
+
+	case EXPR_TYPE_NEG:
+		StringBuffer_append(buf, "~");
 		break;
 
 	case EXPR_TYPE_NOT:
