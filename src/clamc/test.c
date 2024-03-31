@@ -355,6 +355,8 @@ static TestCase tests[] =
 
 	TEST(test_analyzer, "bitand_expression",    "int a = 3 & 1;")
 	TEST(test_analyzer, "bitor_expression",     "int a = 2 | 1;")
+	TEST(test_analyzer, "xor_expression",       "int a = 3 ^ 1;")
+
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",                "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",                "export void main() { return 0; }")
@@ -421,6 +423,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "bitand_expression_wrong2",   "int a = b & 1;")
 	TEST_WRONG(test_analyzer, "bitor_expression_wrong2",    "int a = true | 1;")
 	TEST_WRONG(test_analyzer, "bitor_expression_wrong2",    "int a = b | 1;")
+	TEST_WRONG(test_analyzer, "xor_expression_wrong1",      "int a = true ^ 1;")
+	TEST_WRONG(test_analyzer, "xor_expression_wrong2",      "int a = b ^ 1;")
 
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")

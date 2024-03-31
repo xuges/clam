@@ -353,6 +353,7 @@ Type _Analyzer_expression(Analyzer* anly, Expression* expr)
 	case EXPR_TYPE_OR:
 	case EXPR_TYPE_BITAND:
 	case EXPR_TYPE_BITOR:
+	case EXPR_TYPE_XOR:
 		return _Analyzer_binaryExpression(anly, expr);
 
 	default:
@@ -540,6 +541,7 @@ Type _Analyzer_checkTypeOperate(Analyzer* anly, ExprType exprType, Type* t1, Typ
 
 	case EXPR_TYPE_BITAND:
 	case EXPR_TYPE_BITOR:
+	case EXPR_TYPE_XOR:
 		switch (t1->id)
 		{
 		case TYPE_INT:
