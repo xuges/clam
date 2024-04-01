@@ -372,6 +372,7 @@ static TestCase tests[] =
 	TEST(test_analyzer, "rshift_expression",    "int a = 2 >> 1;")
 	TEST(test_analyzer, "cond_expression2",     "int a = 1 + 2 == 3 ? 1 : 2;")
 	TEST(test_analyzer, "bitand_assign_statement",  "int a = 3; export int main() { a &= 2; return a; }")
+	TEST(test_analyzer, "bitor_assign_statement",   "int a = 2; export int main() { a |= 1; return a; }")
 
 	TEST_WRONG(test_analyzer, "basic_wrong1",                "int main() { return 0; }")
 	TEST_WRONG(test_analyzer, "basic_wrong2",                "export void main() { return 0; }")
@@ -452,6 +453,8 @@ static TestCase tests[] =
 	TEST_WRONG(test_analyzer, "cond_expression_wrong5",     "int a = true ? 1 : false ? 2 : 3;")
 	TEST_WRONG(test_analyzer, "bitand_statement_wrong1",    "int a = 3; export int main() { a &= true; return a; }")
 	TEST_WRONG(test_analyzer, "bitand_statement_wrong2",    "int a = 3; export int main() { a &= b; return a; }")
+	TEST_WRONG(test_analyzer, "bitor_statement_wrong1",     "int a = 3; export int main() { a |= true; return a; }")
+	TEST_WRONG(test_analyzer, "bitor_statement_wrong2",     "int a = 3; export int main() { a |= b; return a; }")
 
 
 	TEST(test_executor, "basic",                "export int main() { return 12345; }")
