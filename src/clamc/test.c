@@ -542,6 +542,7 @@ static TestCase tests[] =
 	TEST(test_executor, "rshift_expression",    "int a = 2 >> 1; export int main() { return a; }")
 	TEST(test_executor, "cond_expression",      "export int main() { return true ? 1 : 0; }")
 	TEST(test_executor, "bitand_assign_statement", "int a = 3; export int main() { a &= 2; return a; }")
+	TEST(test_executor, "bitor_assign_statement",  "int a = 2; export int main() { a |= 1; return a; }")
 
 	TEST_WRONG(test_executor, "div_expression_wrong", "int a = 10; int b = 0; export int main() { return a / b; }")
 	TEST_WRONG(test_executor, "mod_expression_wrong", "int a = 10; int b = 0; export int main() { return a % b; }")
