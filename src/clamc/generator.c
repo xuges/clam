@@ -267,6 +267,7 @@ void _Generator_statement(Generator* gen, Declaration* decl, Statement* stat)
 	case STATEMENT_TYPE_BITAND_ASSIGN:
 	case STATEMENT_TYPE_BITOR_ASSIGN:
 	case STATEMENT_TYPE_XOR_ASSIGN:
+	case STATEMENT_TYPE_LSHIFT_ASSIGN:
 		_Generator_assignStatement(gen, stat);
 		break;
 
@@ -361,6 +362,10 @@ void _Generator_assignStatement(Generator* gen, Statement* stat)
 
 	case STATEMENT_TYPE_XOR_ASSIGN:
 		StringBuffer_append(buf, " ^= ");
+		break;
+
+	case STATEMENT_TYPE_LSHIFT_ASSIGN:
+		StringBuffer_append(buf, " <<= ");
 		break;
 	}
 
