@@ -177,6 +177,7 @@ bool _Analyzer_statement(Analyzer* anly, Declaration* decl, Statement* stat)
 	case STATEMENT_TYPE_MOD_ASSIGN:
 	case STATEMENT_TYPE_BITAND_ASSIGN:
 	case STATEMENT_TYPE_BITOR_ASSIGN:
+	case STATEMENT_TYPE_XOR_ASSIGN:
 		_Analyzer_assignStatement(anly, stat);
 		break;
 
@@ -251,6 +252,10 @@ void _Analyzer_assignStatement(Analyzer* anly, Statement* stat)
 
 	case STATEMENT_TYPE_BITOR_ASSIGN:
 		rtype = _Analyzer_checkTypeOperate(anly, EXPR_TYPE_BITOR, &ltype, &rtype, NULL);
+		break;
+
+	case STATEMENT_TYPE_XOR_ASSIGN:
+		rtype = _Analyzer_checkTypeOperate(anly, EXPR_TYPE_XOR, &ltype, &rtype, NULL);
 		break;
 	}
 
