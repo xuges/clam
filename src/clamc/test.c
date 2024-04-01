@@ -266,6 +266,8 @@ static TestCase tests[] =
 	TEST(test_parser, "mul_assign_statement", "int a = 2; void foo() { a *= 2; int b = 1; b *= a; }")
 	TEST(test_parser, "div_assign_statement", "int a = 4; void foo() { a /= 2; int b = 10; b /= a; }")
 	TEST(test_parser, "mod_assign_statement", "int a = 9; void foo() { a %= 2; int b = 6; b %= a; }")
+	TEST(test_parser, "bitand_assign_statement", "int a = 3; export int main() { a &= 2; return a; }")
+
 	TEST(test_parser, "not_expression",       "bool a = !false; bool b = !a;")
 	TEST(test_parser, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2;")
 	TEST(test_parser, "equals_expression",    "bool a = 1 == 2; bool b = 1 + 1 == 2; bool c = 1 + 1 == 3 - 1; bool d = b == false;")
@@ -311,6 +313,7 @@ static TestCase tests[] =
 	TEST_WRONG(test_parser, "sub_assign_statement_wrong1", "int a = 1; int b = a -= 1;")
 	TEST_WRONG(test_parser, "mul_assign_statement_wrong1", "int a = 2; int b = a *= 2;")
 	TEST_WRONG(test_parser, "div_assign_statement_wrong1", "int a = 2; int b = a /= 2;")
+	TEST_WRONG(test_parser, "bitand_assign_statement_wrong1", "int a = 3; int b = a &= 2;")
 
 	TEST_WRONG(test_parser, "cond_expression_wrong1",      "int a = true ? 1;")
 	//TEST_WRONG(test_parser, "cond_expression_wrong2",      "int a = true ? 1 : false ? 2 : 3;")
