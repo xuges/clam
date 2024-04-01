@@ -126,6 +126,7 @@ static const char* statTypeToString[] =
 	"STATEMENT_TYPE_BITAND_ASSIGN",
 	"STATEMENT_TYPE_BITOR_ASSIGN",
 	"STATEMENT_TYPE_XOR_ASSIGN",
+	"STATEMENT_TYPE_LSHIFT_ASSIGN",
 	"STATEMENT_TYPE_INC",
 	"STATEMENT_TYPE_DEC",
 	"STATEMENT_TYPE_IF",
@@ -313,6 +314,7 @@ void _Printer_statement(Printer* p, Statement* stat)
 	case STATEMENT_TYPE_BITAND_ASSIGN:
 	case STATEMENT_TYPE_BITOR_ASSIGN:
 	case STATEMENT_TYPE_XOR_ASSIGN:
+	case STATEMENT_TYPE_LSHIFT_ASSIGN:
 		_Printer_indent(p); printf("assign=\n");
 		p->level++;
 		_Printer_assignStatement(p, stat);
