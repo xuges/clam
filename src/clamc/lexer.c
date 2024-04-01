@@ -210,6 +210,14 @@ Token* Lexer_next(Lexer* lex)
 				lex->token.value = TOKEN_VALUE_RSHIFT;
 				lex->token.literal.length++;
 				_Lexer_next(lex);
+
+				c = *_Lexer_peek(lex);
+				if (c == '=')
+				{
+					lex->token.value = TOKEN_VALUE_RSHIFT_ASSIGN;
+					lex->token.literal.length++;
+					_Lexer_next(lex);
+				}
 			}
 		}
 		else if (c == '&')
