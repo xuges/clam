@@ -621,6 +621,7 @@ static TestCase tests[] =
 	TEST(test_generator, "lshift_expression",     "int a = 1 << 1; export int main() { return a; }")
 	TEST(test_generator, "rshift_expression",     "int a = 2 >> 1; export int main() { return a; }")
 	TEST(test_generator, "cond_expression",       "bool a = true; int b = a ? 2 : 3; export int main() { return b; }")
+	TEST(test_generator, "bitand_assign_statement", "int a = 3; export int main() { a &= 2; return a; }")
 
 };
 #undef TEST
