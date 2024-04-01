@@ -266,7 +266,6 @@ static TestCase tests[] =
 	TEST(test_parser, "mul_assign_statement", "int a = 2; void foo() { a *= 2; int b = 1; b *= a; }")
 	TEST(test_parser, "div_assign_statement", "int a = 4; void foo() { a /= 2; int b = 10; b /= a; }")
 	TEST(test_parser, "mod_assign_statement", "int a = 9; void foo() { a %= 2; int b = 6; b %= a; }")
-	TEST(test_parser, "bitand_assign_statement", "int a = 3; export int main() { a &= 2; return a; }")
 
 	TEST(test_parser, "not_expression",       "bool a = !false; bool b = !a;")
 	TEST(test_parser, "not_equal_expression", "bool a = 1 != 2; bool b = 1 + 1 != 2; bool c = 1 + 1 != 2 * 2;")
@@ -296,6 +295,10 @@ static TestCase tests[] =
 
 	TEST(test_parser, "cond_expression1",      "int a = true ? 1 : 2;")
 	TEST(test_parser, "cond_expression2",      "int a = 1 + 2 == 3 ? 1 : 2;")
+
+	TEST(test_parser, "bitand_assign_statement", "int a = 3; export int main() { a &= 2; return a; }")
+	TEST(test_parser, "bitor_assign_statement",  "int a = 2; export int main() { a |= 1; return a; }")
+
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
 	TEST_WRONG(test_parser, "basic_wrong2",              "int export main() {}")
