@@ -2,7 +2,7 @@
 0.0.2: void, =, variant, function parameter, call argument, compound-statement
 0.0.3: +, -, *, /, %, +=, -=, *=, /=, %=, ++, --
 0.0.4: bool, true, false, if, else, <, >, <=, >=, ==, !=, !
-0.0.5: &, |, ~, ^, <<, >>, &=, |=, ~=, ^=, <<=, >>=, &&, ||, ? : 
+0.0.5: &, |, ~, ^, <<, >>, &=, |=, ^=, <<=, >>=, &&, ||, ? : 
 0.0.6: byte, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, usize, ssize, float, float64
 0.0.7: for, while, switch, defer
 0.0.8: array, slice, string, . [], ...
