@@ -636,6 +636,7 @@ static TestCase tests[] =
 	TEST(test_generator, "cond_expression",       "bool a = true; int b = a ? 2 : 3; export int main() { return b; }")
 	TEST(test_generator, "bitand_assign_statement", "int a = 3; export int main() { a &= 2; return a; }")
 	TEST(test_generator, "bitor_assign_statement",  "int a = 2; export int main() { a |= 1; return a; }")
+	TEST(test_generator, "xor_assign_statement",    "int a = 3; export int main() { a ^= 2; return a; }")
 
 };
 #undef TEST
