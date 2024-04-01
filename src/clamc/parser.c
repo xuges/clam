@@ -358,6 +358,13 @@ Statement _Parser_statement(Parser* p)
 			stat.assign.leftExpr = stat.expr;
 			stat.assign.rightExpr = _Parser_expression(p);
 			break;
+		
+		case TOKEN_VALUE_RSHIFT_ASSIGN:
+			stat.type = STATEMENT_TYPE_RSHIFT_ASSIGN;
+			Lexer_next(p->lex);
+			stat.assign.leftExpr = stat.expr;
+			stat.assign.rightExpr = _Parser_expression(p);
+			break;
 
 		case TOKEN_VALUE_INC:
 			stat.type = STATEMENT_TYPE_INC;

@@ -300,6 +300,7 @@ static TestCase tests[] =
 	TEST(test_parser, "bitor_assign_statement",  "int a = 2; export int main() { a |= 1; return a; }")
 	TEST(test_parser, "xor_assign_statement",    "int a = 3; export int main() { a ^= 2; return a; }")
 	TEST(test_parser, "lshift_assign_statement", "int a = 1; export int main() { a <<= 1; return a; }")
+	TEST(test_parser, "rshift_assign_statement", "int a = 2; export int main() { a >>= 1; return a; }")
 
 
 	TEST_WRONG(test_parser, "basic_wrong1",              "export int main() { 0 return; }")
