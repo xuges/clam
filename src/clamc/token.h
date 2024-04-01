@@ -64,6 +64,7 @@ enum TokenValue
 	TOKEN_VALUE_RSHIFT,          // >>
 
 	TOKEN_VALUE_BITAND_ASSIGN,   // &=
+	TOKEN_VALUE_BITOR_ASSIGN,    // |=
 
 	TOKEN_VALUE_QUES,            // ?
 	TOKEN_VALUE_COLON,           // :
