@@ -526,6 +526,7 @@ void _Generator_unaryExpression(Generator* gen, Expression* expr, StringBuffer* 
 
 void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer* buf)
 {
+	StringBuffer_append(buf, "(");
 	_Generator_expression(gen, expr->binaryExpr.leftExpr, buf);
 
 	switch (expr->type)
@@ -604,6 +605,7 @@ void _Generator_binaryExpression(Generator* gen, Expression* expr, StringBuffer*
 	}
 
 	_Generator_expression(gen, expr->binaryExpr.rightExpr, buf);
+	StringBuffer_append(buf, ")");
 }
 
 void _Generator_callExpression(Generator* gen, Expression* expr, StringBuffer* buf)
