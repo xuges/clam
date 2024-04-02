@@ -257,7 +257,8 @@ static TestCase tests[] =
 	TEST(test_parser, "plus_expression",      "export int main() { int a = 1; a = +1; int b = +a; return a; }")
 	TEST(test_parser, "minus_expression",     "export int main() { int a = -1; int b = -a; return a; }")
 
-	TEST(test_parser, "operation",            "int a = 1 * -2 + 3 * 4 - 6 / 2 + 19 % +2; int b = a + 3 * -4;")
+	TEST(test_parser, "operation1",           "int a = 1 * -2 + 3 * 4 - 6 / 2 + 19 % +2; int b = a + 3 * -4;")
+	TEST(test_parser, "operation2",           "int a = (1 + 1) * 2; int b = (1 + 1) * (2 + 2);")
 	TEST(test_parser, "inc_statement1",       "int a = 0; void foo() { a++; }")
 	TEST(test_parser, "dec_statement1",       "int a = 3; void foo() { a--; }")
 
@@ -340,7 +341,9 @@ static TestCase tests[] =
 	TEST(test_analyzer, "mod_expression",       "int a =  18 % 4; int b = a % 2; int c = 10 % 3 % a;")
 	TEST(test_analyzer, "plus_expression",      "export int main() { int a = 1; a = +1; int b = +a; return a; }")
 	TEST(test_analyzer, "minus_expression",     "export int main() { int a = -1; int b = -a; return a; }")
-	TEST(test_analyzer, "operation",            "int a = 1 * -2 + 3 * 4 - 6 / 2 + 19 % +2; int b = a + 3 * -4;")
+	TEST(test_analyzer, "operation1",           "int a = 1 * -2 + 3 * 4 - 6 / 2 + 19 % +2; int b = a + 3 * -4;")
+	TEST(test_analyzer, "operation2",           "int a = (1 + 1) * 2; int b = (1 + 1) * (2 + 2);")
+
 	TEST(test_analyzer, "inc_statement",        "int a = 0; void foo() { a++; }")
 	TEST(test_analyzer, "dec_statement",        "int a = 3; void foo() { a--; }")
 	TEST(test_analyzer, "add_assign_statement", "int a = 0; void foo() { a += 1; int b = 0; b += a; }")
@@ -514,6 +517,7 @@ static TestCase tests[] =
 	TEST(test_executor, "operation2",           "int a = 1 * 2 + 3 * 4 - 5 * 6; export int main() { return a; }")
 	TEST(test_executor, "operation3",           "int a = 1 * 2 + 3 * 4 - 6 / 2; export int main() { return a; }")
 	TEST(test_executor, "operation4",           "int a = 1 * 2 + 3 * 4 - 6 / 2 + 19 % 2; export int main() { return a; }")
+	TEST(test_executor, "operation5",           "int a = (1 + 1) * 2; int b = (1 + 1) * (2 + 2); export int main() { return b; }")
 	TEST(test_executor, "inc_statement1",       "int a = 1; export int main() { a++; return a; }")
 	TEST(test_executor, "inc_statement2",       "int a = 1; export int main() { a++; a++; return a; }")
 	TEST(test_executor, "dec_statement1",       "int a = 2; export int main() { a--; return a; }")

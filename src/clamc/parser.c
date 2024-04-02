@@ -753,6 +753,13 @@ Expression* _Parser_primaryExpression(Parser* p)
 		expr = Expression_createIdent(&token->location, token);
 		Lexer_next(p->lex);
 		break;
+
+	case TOKEN_VALUE_LP:
+		Lexer_next(p->lex);
+		expr = _Parser_expression(p);
+		_Parser_expect(p, TOKEN_VALUE_RP, "expected ')'");
+		Lexer_next(p->lex);
+		break;
 	}
 
 	return expr;
