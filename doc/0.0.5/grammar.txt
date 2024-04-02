@@ -1,0 +1,185 @@
+<under>::="_"
+<alpha>::="a"|"b"|"c"|"d"|"e"|"f"|"g"|"h"|"i"|"j"|"k"|"l"|"m"|"n"|"o"|"p"|"q"|"r"|"s"|"t"|"u"|"v"|"w"|"x"|"y"|"z"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"
+<digit>::="0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"
+<white>::=" "|"\t"|"\r"|"\n"
+<punct>::="+"|"-"|"*"|"/"|"%"|"="|"."|"&"|"|"|"^"|"~"|"!"|"<"|">"|"("|")"|"["|"]"|"{"|"}"|","|";"|"'"|"\""|"#"|"?"|":"
+<eof>::="\xFF"
+
+<void>::="void"
+<int>::="int"
+<bool>::="bool"
+
+<true>::="true"
+<false>::="false"
+
+<if>::="if"
+<else>::="else"
+<return>::="return"
+<export>::="export"
+
+<assign>::="="
+<add>::="+"
+<sub>::="-"
+<star>::="*"
+<div>::="/"
+<mod>::="%"
+<add_assign>::="+="
+<sub_assign>::="-="
+<mul_assign>::="*="
+<div_assign>::="/="
+<mod_assign>::="%="
+
+<inc>::="++"
+<dec>::="--"
+
+<lt>::="<"
+<gt>::=">"
+<le>::="<="
+<ge>::=">="
+<eq>::="=="
+<ne>::="!="
+<and>::="&&"
+<or>::="||"
+<not>::="!"
+
+<neg>::="~"
+<bitand>::="&"
+<bitor>::="|"
+<xor>::="^"
+<lshift>::="<<"
+<rshift>::=">>"
+
+<bitand_assign>::="&="
+<bitor_assign>::="|="
+<xor_assign>::="^="
+<lshift_assign>::="<<="
+<rshift_assign>::=">>="
+
+<ques>::="?"
+<colon>::=":"
+
+<lp>::="("
+<rp>::=")"
+<lc>::="{"
+<rc>::="}"
+<comma>::=","
+<sem>::=";"
+
+<dec_num>::=<dec_digit>{<dec_digit>}
+<dec_digit>::="0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"
+
+<ident>::=<under>|<alpha>{<under>|<digit>|<alpha>}
+
+<type_desc>::=<type_keyword>
+<type_keyword>::=<void>|<int>|<bool>
+
+<declaration>::=<variant_decl>|<function_def>
+<variant_decl>::=[<export>]<type_desc><ident>[<assign><expression>]<sem>
+<function_def>::=[<export>]<type_desc><ident><lp>[<parameter_list>]<rp><compound_statement>
+<parameter_list>::=<type_desc><ident>{<comma><type_desc><ident>}
+
+<statement>::=<empty_statement>
+             |<declaration_statement>
+             |<assign_statement>
+             |<add_assign_statement>
+             |<sub_assign_statement>
+             |<mul_assign_statement>
+             |<div_assign_statement>
+             |<mod_assign_statement>
+             |<inc_statement>
+             |<dec_statement>
+             |<bitand_assign_statement>
+             |<bitor_assign_statement>
+             |<xor_assign_statement>
+             |<lshift_assign_statement>
+             |<rshift_assign_statement>
+             |<expression_statement>
+             |<if_statement>
+             |<return_statement>
+             |<compound_statement>
+
+<empty_statement>::=<sem>
+<declaration_statement>::=<variant_decl>
+
+<assign_statement>::=<expression><assign><expression><sem>
+<add_assign_statement>::=<expression><add_assign><expression><sem>
+<sub_assign_statement>::=<expression><sub_assign><expression><sem>
+<mul_assign_statement>::=<expression><mul_assign><expression><sem>
+<div_assign_statement>::=<expression><div_assign><expression><sem>
+<mod_assign_statement>::=<expression><mod_assign><expression><sem>
+
+<inc_statement>::=<expression><inc><sem>
+<dec_statement>::=<expression><dec><sem>
+
+<bitand_assign_statement>::=<expression><bitand_assign><expression><sem>
+<bitor_assign_statement>::=<expression><bitor_assign><expression><sem>
+<xor_assign_statement>::=<expression><xor_assign><expression><sem>
+<lshift_assign_statement>::=<expression><lshift_assign><expression><sem>
+<rshift_assign_statement>::=<expression><rshift_assign><expression><sem>
+
+<expression_statement>::=<expression><sem>
+
+<if_statement>::=<if><lp><expression><rp><statement>[<else><statement>]
+
+<return_statement>::=<return>[<expression>]<sem>
+<compound_statement>::=<lc>{<statement>}<rc>
+
+<expression>::=<primary_expression>
+              |<unary_expression>
+              |<postfix_expression>
+              |<binary_expression>
+              |<logic_expression>
+              |<ternary_expression>
+			  
+<unary_expression>::=<plus_expression>
+					|<minus_expression>
+<plus_expression>::=<add><expression>
+<minus_expression>::=<sub><expression>
+<not_expression>::=<not><expression>
+
+<logic_expression>::=<relation_expression>
+                    |<equality_expression>
+                    |<and_expression>
+                    |<or_expression>
+					
+<relation_expression>::=<expression>(<gt>|<ge>|<lt>|<le>)<expression>
+<equality_expression>::=<expression>(<eq>|<ne>)<expression>
+<and_expression>::=<expression><and><expression>
+<or_expression>::=<expression><or><expression>
+
+<ternary_expression>::=<expression><ques><expression><colon><expression>
+
+<binary_expression>::=<add_expression>
+                     |<sub_expression>
+                     |<mul_expression>
+                     |<div_expression>
+                     |<mod_expression>
+                     |<bitand_expression>
+                     |<bitor_expression>
+                     |<xor_expression>
+                     |<lshift_expression>
+                     |<rshift_expression>
+
+<add_expression>::=<expression><add><expression>
+<sub_expression>::=<expression><sub><expression>
+<mul_expression>::=<expression><star><expression>
+<div_expression>::=<expression><div><expression>
+<mod_expression>::=<expression><mod><expression>
+<bitand_expression>::=<expression><bitand><expression>
+<bitor_expression>::=<expression><bitor><expression>
+<xor_expression>::=<expression><xor><expression>
+<lshift_expression>::=<expression><lshift><expression>
+<rshift_expression>::=<expression><rshift><expression>
+
+<postfix_expression>::=<call_expression>
+<call_expression>::=<ident><lp>[<argument_list>]<rp>
+<argument_list>::=<expression>{<comma><expression>}
+
+<primary_expression>::=<first_expression>
+                      |<int_literal>
+                      |<bool_literal>
+                      |<ident>
+                      
+<first_expression>::=<lp><expression><rp>
+<int_literal>::=<dec_num>
+<bool_literal>::=<true>|<false>
