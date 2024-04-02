@@ -1,3 +1,13 @@
+--- 2024-04-02 clam-0.0.5 ---
+1. 增加&、|、~、^、<<、>> 位运算符。
+   Add the bitwise operators: & | ~ ^ << >> .
+2. 支持位运算复合赋值语句。
+   Add the bitwise-operation compound assign statement.
+3. 增加&&、|| 逻辑运算符。
+   Add the logic operators: && || .
+4. 增加三目运算符与条件表达式。
+   Add the ternary :? operator and supports condition expression.
+
 --- 2024-03-29 clam-0.0.4 ---
 1. 增加bool类型及true、false关键字。
    Add bool type and 'true' 'false' keyword.
